@@ -1,7 +1,7 @@
 #include "play.h"
 
 void deal_hands(Player *player) {
-  list<int> distrib(N_PLAYERS, SIZE_HAND);
+  list<int> distrib(N_PLAYERS, N_HAND);
   list<card> hands = deal(deck, distrib);
   int i = 0;
   for (auto hand : hands) {
@@ -25,6 +25,7 @@ void bidding(Game *game, Player *player, bool printing) {
     }
     update_bid(game, player, b);
   }
+  if (printing) cout << endl;
 }
 
 void update_card(Game *game, Player *player, card c) {
@@ -55,6 +56,13 @@ void trickgame(Game *game, Player *player, bool printing) {
     }
     update_card(game, player, c);
     if (printing) print(*game, player);
+  }
+  if (printing) {
+    if (won(game->declarer, *game))
+      cout << "delarer won with ";
+    else
+      cout << "declarer lost with ";
+    cout << game->points[game->declarer] << " points" << endl;
   }
 }
 

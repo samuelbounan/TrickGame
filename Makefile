@@ -6,7 +6,7 @@ SRCDIR = src
 OBJDIR = obj
 BINDIR = bin
 RULESDIR = rules
-STRATDIR = strategies
+STRATDIR = trickstrat
 BIDSTRATDIR = bidstrat
 
 CFILES = $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/$(RULESDIR)/*.cpp $(SRCDIR)/$(STRATDIR)/*.cpp $(SRCDIR)/$(BIDSTRATDIR)/*.cpp)
@@ -18,7 +18,7 @@ VPATH = $(SRCDIR)
 # Flags
 
 CXXFLAGS = -Wall
-CXXFLAGS += -DRULES_BASIC
+CXXFLAGS += -DRULES_CONTREE
 
 # Inference rules
 

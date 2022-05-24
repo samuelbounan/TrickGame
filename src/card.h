@@ -14,12 +14,12 @@ using namespace std;
 #define D(x) cout << " " << #x << ": " << x << endl;
 
 /* ADAPT TO THE GAME */
-#define N_PLAYERS 2
-#define N_ROUNDS 3
-#define N_CARDS 10
-#define N_SUITS 1
-#define SIZE_HAND 5
-#define N_BIDS 10
+#define N_PLAYERS 4
+#define N_ROUNDS 8
+#define N_CARDS 32
+#define N_SUITS 4
+#define N_HAND N_ROUNDS
+#define N_BIDS 43
 ///////////////////////
 
 #if N_CARDS <= 32
@@ -27,8 +27,7 @@ typedef unsigned int card;  // reprezents several cards (bit vector)
 #elif N_CARDS <= 64
 typedef unsigned long long int card;
 #endif
-#define ONE (card)1  // one bit in good type
-extern card deck;    // set of all cards
+extern card deck;  // set of all cards
 
 /**
  * @brief transform an index into a card

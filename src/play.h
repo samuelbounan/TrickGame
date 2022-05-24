@@ -4,7 +4,7 @@
 #include "player.h"
 
 /**
- * @brief generates random hands of SIZE_HAND, update players
+ * @brief generates random hands of N_HAND, update players
  *
  * @param player
  */

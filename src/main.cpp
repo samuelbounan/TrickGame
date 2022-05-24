@@ -15,8 +15,8 @@ int main() {
   // playing
   deal_hands(player);
   // for (int i = 0; i < N_PLAYERS; i++)
-  //   for (int j = 0; j < N_PLAYERS; j++) player[i].have_not[j] =
-  //   ~player[j].hand;
+  // for (int j = 0; j < N_PLAYERS; j++) player[i].have_not[j] =
+  // ~player[j].hand;
 
   bidding(&game, player, true);
   trickgame(&game, player, true);

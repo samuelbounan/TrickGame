@@ -1,4 +1,4 @@
-#ifdef RULES_CONTREE
+// #ifdef RULES_CONTREE
 #ifndef __CONTREE
 #define __CONTREE
 
@@ -11,4 +11,4 @@ void sort_high(card *hand, int idx, card suit);
 void unsort_high(card *hand, int idx, card suit);
 
 #endif
-#endif
+// #endif

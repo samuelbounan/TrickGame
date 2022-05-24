@@ -5,5 +5,6 @@
 #include <list>      // lists
 
 #include "play.h"
+#include "trickstrat/aos.h"
 
 #endif

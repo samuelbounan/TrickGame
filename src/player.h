@@ -4,7 +4,7 @@
 #define __PLAYER
 
 #include "bidstrat/trivial_bid.h"
-#include "strategies/random_card.h"
+#include "trickstrat/random_card.h"
 
 class Player {
  public:

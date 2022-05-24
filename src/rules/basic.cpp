@@ -1,8 +1,8 @@
 #ifdef RULES_BASIC
 #include "../rules.h"
 
-char bidname[N_CARDS][80] = {"pass", "1", "2", "3", "4",
-                             "5",    "6", "7", "8", "9"};
+char bidname[N_BIDS][80] = {"pass", "1", "2", "3", "4",
+                            "5",    "6", "7", "8", "9"};
 
 card suits[N_SUITS] = {deck};
 
