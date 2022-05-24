@@ -1,5 +1,10 @@
 #include "game.h"
 
+void Game::newBid(int b, int p) {
+  bids.push_front(b);
+  turn = p;
+}
+
 void Game::newTurn(card c) {
   trick.push_back(c);
   played[turn][round] = c;

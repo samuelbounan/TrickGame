@@ -2,47 +2,38 @@
 
 #include "game.h"
 
+/* unicode corresponding to a bid */
+extern char bidname[N_BIDS][80];
+/* suits set */
+extern card suits[N_SUITS];
 /* undicode corresponding to the cards */
 extern char cardname[N_CARDS][80];
 
 /**
- * @brief determines the player who won the current trick in game
+ * @brief list of bidding values that could be taken
+ *
+ * @param bids
+ * @return list<int>
+ */
+list<int> biddable(list<int> bids);
+
+/**
+ * @brief who is the next to bid
  *
  * @param game
  * @return int
  */
-int winner_trick(Game game);
+int next_bid_turn(Game game);
 
 /**
- * @brief points of current trick in game
+ * @brief when bidding phase is over.
+ * Must also actualise game parameters to play the tricktaking game
  *
  * @param game
- * @return int
+ * @return true
+ * @return false
  */
-int points_trick(Game game);
-
-/**
- * @brief to avoid bidding play
- *
- * @param game
- */
-void trivial_bid(Game *game);
-
-/**
- * @brief cards that are playable in current situation, with hand
- *
- * @param hand
- * @param game
- * @return card
- */
-card playable(card hand, Game game);
-
-/**
- * @brief to update game parameters at the end of the game
- *
- * @param game
- */
-void finish(Game *game);
+bool end_bidding(Game *game);
 
 /**
  * @brief sort a set of cards according to the trump chosen
@@ -63,6 +54,39 @@ card sort(card *hand, card trump);
 card unsort(card *hand, card trump);
 
 /**
+ * @brief cards that are playable in current situation, with hand
+ *
+ * @param hand
+ * @param game
+ * @return card
+ */
+card playable(card hand, Game game);
+
+/**
+ * @brief determines the player who won the current trick in game
+ *
+ * @param game
+ * @return int
+ */
+int winner_trick(Game game);
+
+/**
+ * @brief points of current trick in game
+ *
+ * @param game
+ * @return int
+ */
+int points_trick(Game game);
+
+/**
+ * @brief when the trickgame is over
+ *
+ * @param game
+ * @return if end of the trickgame
+ */
+bool end_trickgame(Game *game);
+
+/**
  * @brief returns if player p won the game
  *
  * @param p
@@ -70,6 +94,15 @@ card unsort(card *hand, card trump);
  * @return p's team won
  */
 bool won(int p, Game game);
+
+/// Implementation independent to the games rules
+
+/**
+ * @brief prints all the bids in the list
+ *
+ * @param bids
+ */
+void print_bid(list<int> bids);
 
 /**
  * @brief prints all the cards in hand

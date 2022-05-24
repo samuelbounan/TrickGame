@@ -7,8 +7,9 @@ OBJDIR = obj
 BINDIR = bin
 RULESDIR = rules
 STRATDIR = strategies
+BIDSTRATDIR = bidstrat
 
-CFILES = $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/$(RULESDIR)/*.cpp $(SRCDIR)/$(STRATDIR)/*.cpp)
+CFILES = $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/$(RULESDIR)/*.cpp $(SRCDIR)/$(STRATDIR)/*.cpp $(SRCDIR)/$(BIDSTRATDIR)/*.cpp)
 OFILES = 	$(subst $(SRCDIR)/,$(OBJDIR)/,$(CFILES:.cpp=.o))
 DFILES = $(OFILES:.o=.d)
 
@@ -17,7 +18,7 @@ VPATH = $(SRCDIR)
 # Flags
 
 CXXFLAGS = -Wall
-CXXFLAGS += -DRULES_CONTREE
+CXXFLAGS += -DRULES_BASIC
 
 # Inference rules
 
@@ -32,6 +33,7 @@ $(OBJDIR) :
 	mkdir -p $(OBJDIR)
 	mkdir -p $(OBJDIR)/$(RULESDIR)
 	mkdir -p $(OBJDIR)/$(STRATDIR)
+	mkdir -p $(OBJDIR)/$(BIDSTRATDIR)
 
 $(BINDIR) :
 	mkdir -p $(BINDIR)

@@ -8,13 +8,22 @@ void deal_hands(Player *player) {
     player[i].hand = hand;
     for (int j = 0; j < N_PLAYERS; j++) player[i].have_not[j] = hand;
     player[i].have_not[i] = ~hand;
+    i++;
   }
 }
 
-void bidding(Game *game, Player *player) {
-  trivial_bid(game);
-  for (int i = 0; i < N_PLAYERS; i++) {
-    sort(&player[i].hand, game->trump);
+void update_bid(Game *game, Player *player, int bid) {
+  game->newBid(bid, next_bid_turn(*game));
+}
+
+void bidding(Game *game, Player *player, bool printing) {
+  while (!end_bidding(game)) {
+    int b = player[game->turn].playBid(*game);
+    if (printing) {
+      cout << "P" << game->turn << " bids ";
+      print_bid({b});
+    }
+    update_bid(game, player, b);
   }
 }
 
@@ -37,7 +46,7 @@ void update_card(Game *game, Player *player, card c) {
 
 void trickgame(Game *game, Player *player, bool printing) {
   if (printing) print(*game, player);
-  while (game->round < N_ROUNDS) {
+  while (!end_trickgame(game)) {
     card c = player[game->turn].playCard(*game);
     if (printing) {
       cout << "P" << game->turn << " plays ";
@@ -47,10 +56,11 @@ void trickgame(Game *game, Player *player, bool printing) {
     update_card(game, player, c);
     if (printing) print(*game, player);
   }
-  finish(game);
 }
 
 void print(Game game, Player *player) {
+  cout << "Contract in P" << game.declarer << ": ";
+  print_bid({game.contract});
   cout << "Leader: P" << game.leader << endl;
   cout << "Trick" << game.round << ": ";
   print_trick(game.trick, game.trump);

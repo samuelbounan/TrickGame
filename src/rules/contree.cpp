@@ -126,15 +126,15 @@ bool won(int p, Game game) {
   return game.team[p] != game.team[game.declarer];
 }
 
-void trivial_bid(Game *game) {
-  game->trump = suits[0];
-  game->leader = 0;
-  for (int i = 0; i < N_PLAYERS; i++) {
-    game->team[i] = i % 2;
-  }
-  game->contract = N_ROUNDS / 2;
-  game->declarer = 0;
-  game->turn = 0;
-}
+// void trivial_bid(Game *game) {
+//   game->trump = suits[0];
+//   game->leader = 0;
+//   for (int i = 0; i < N_PLAYERS; i++) {
+//     game->team[i] = i % 2;
+//   }
+//   game->contract = N_ROUNDS / 2;
+//   game->declarer = 0;
+//   game->turn = 0;
+// }
 
 #endif

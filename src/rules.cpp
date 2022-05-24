@@ -1,5 +1,10 @@
 #include "rules.h"
 
+void print_bid(list<int> bids) {
+  for (auto b : bids) cout << bidname[b] << ";";
+  cout << endl;
+}
+
 void print_card(card hand, card trump) {
   if (hand == 0) {
     cout << "\u2205" << endl;

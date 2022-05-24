@@ -5,6 +5,5 @@
 #include <list>      // lists
 
 #include "play.h"
-#include "strategies/aos.h"
 
 #endif

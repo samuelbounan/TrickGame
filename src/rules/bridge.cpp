@@ -37,14 +37,6 @@ int winner_trick(Game game) {
   return (winner + game.leader) % N_PLAYERS;
 }
 int points_trick(Game game) { return 1; }
-void trivial_bid(Game *game) {
-  game->trump = 0;
-  game->contract = (N_ROUNDS / N_PLAYERS) + 1;
-  game->declarer = 0;
-  for (int i = 0; i < N_PLAYERS; i++) game->team[i] = i % 2;
-  game->leader = 0;
-  game->turn = 0;
-}
 
 card playable(card hand, Game game) { return hand; }
 void finish(Game *game){};

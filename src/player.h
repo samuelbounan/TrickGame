@@ -3,15 +3,24 @@
 #ifndef __PLAYER
 #define __PLAYER
 
+#include "bidstrat/trivial_bid.h"
 #include "strategies/random_card.h"
 
 class Player {
  public:
   int id;
   card hand;
-  card have_not[N_PLAYERS];
-  card (*strategy)(Game game, int id, card hand, card *have_not);
-  Player() { strategy = &random_card; }
+  card have_not[N_PLAYERS] = {0};
+  card (*strategy)(Game game, int id, card hand, card *have_not) = &random_card;
+  int (*bidstrat)(Game game, int id, card hand, card *have_not) = &trivial_bid;
+
+  /**
+   * @brief returns a bid according to the player bidding strategy
+   *
+   * @param game
+   * @return int
+   */
+  int playBid(Game game);
 
   /**
    * @brief returns a card according to the player's strategy, and removes it
