@@ -1,0 +1,6 @@
+# ignore build folders
+obj/
+bin/
+
+#ignore vscode
+.vscode/
