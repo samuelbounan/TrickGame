@@ -29,6 +29,8 @@ char cardname[N_CARDS][80] = {
     "\u2665K", "\u2665T", "\u2665A", "\u26607", "\u26608", "\u26609", "\u2660J",
     "\u2660Q", "\u2660K", "\u2660T", "\u2660A"};
 
+int size_hand = 8;
+
 list<int> biddable(list<int> bids) {
   int min_bid = 0;
   for (int b : bids)
@@ -137,8 +139,8 @@ int winner_trick(Game game) {
   return (winner + game.leader) % N_PLAYERS;
 }
 
-int points_trump[8] = {20, 14, 11, 10, 4, 3, 0, 0};
-int points_nt[8] = {11, 10, 4, 3, 2, 0, 0, 0};
+int points_trump[8] = {0, 0, 3, 4, 10, 11, 14, 20};
+int points_nt[8] = {0, 0, 0, 2, 3, 4, 10, 11};
 
 int points_trick(Game game) {
   int res = 0;

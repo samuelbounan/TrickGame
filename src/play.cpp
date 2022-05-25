@@ -67,7 +67,8 @@ void trickgame(Game *game, Player *player, bool printing) {
 }
 
 void print(Game game, Player *player) {
-  cout << "Contract in P" << game.declarer << ": ";
+  cout << "Contract in P" << game.declarer << "(" << game.points[game.declarer]
+       << "): ";
   print_bid({game.contract});
   cout << "Leader: P" << game.leader << endl;
   cout << "Trick" << game.round << ": ";
