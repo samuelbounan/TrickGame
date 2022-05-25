@@ -4,7 +4,7 @@
 
 ## About The Project
 
-General playground for a tricktaking card game with bids
+General playground for a tricktaking card game with bids.
 
 ## Getting Started
 
