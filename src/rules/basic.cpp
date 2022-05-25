@@ -1,13 +1,19 @@
 #ifdef RULES_BASIC
 #include "../rules.h"
 
-char bidname[N_BIDS][80] = {"pass", "1", "2", "3", "4",
-                            "5",    "6", "7", "8", "9"};
+/**N_BIDS = 11
+ * N_SUITS = 1
+ * N_CARDS = 10 */
+
+char bidname[N_BIDS][80] = {"pass", "1", "2", "3", "4", "5",
+                            "6",    "7", "8", "9", "10"};
 
 card suits[N_SUITS] = {deck};
 
 char cardname[N_CARDS][80] = {" 1", " 2", " 3", " 4", " 5",
                               " 6", " 7", " 8", " 9", "10"};
+
+int size_hand = 5;
 
 list<int> biddable(list<int> bids) {
   int min_bid = 0;

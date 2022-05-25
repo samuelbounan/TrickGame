@@ -1,7 +1,7 @@
 #include "play.h"
 
 void deal_hands(Player *player) {
-  list<int> distrib(N_PLAYERS, N_HAND);
+  list<int> distrib(N_PLAYERS, size_hand);
   list<card> hands = deal(deck, distrib);
   int i = 0;
   for (auto hand : hands) {
