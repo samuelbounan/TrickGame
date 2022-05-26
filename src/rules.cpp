@@ -2,7 +2,6 @@
 
 void print_bid(list<int> bids) {
   for (auto b : bids) cout << bidname[b] << ";";
-  cout << endl;
 }
 
 void print_card(card hand, card trump) {
@@ -29,5 +28,4 @@ void print_trick(list<card> trick, card trump) {
     unsort(&i, trump);
     cout << cardname[__builtin_ctzll(i)] << ";";
   }
-  cout << endl;
 }

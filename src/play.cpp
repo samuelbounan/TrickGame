@@ -16,16 +16,17 @@ void update_bid(Game *game, Player *player, int bid) {
   game->newBid(bid, next_bid_turn(*game));
 }
 
-void bidding(Game *game, Player *player, bool printing) {
+void bidding(Game *game, Player *player, int printing) {
   while (!end_bidding(game)) {
     int b = player[game->turn].playBid(*game);
-    if (printing) {
+    if (printing >= 2) {
       cout << "P" << game->turn << " bids ";
       print_bid({b});
+      cout << endl;
     }
     update_bid(game, player, b);
   }
-  if (printing) cout << endl;
+  if (printing >= 2) cout << endl;
 }
 
 void update_card(Game *game, Player *player, card c) {
@@ -45,19 +46,18 @@ void update_card(Game *game, Player *player, card c) {
   }
 }
 
-void trickgame(Game *game, Player *player, bool printing) {
-  if (printing) print(*game, player);
+void trickgame(Game *game, Player *player, int printing) {
   while (!end_trickgame(game)) {
+    if (printing >= 4 && game->trick.empty()) print(*game, player);
     card c = player[game->turn].playCard(*game);
-    if (printing) {
+    if (printing >= 2) {
       cout << "P" << game->turn << " plays ";
       print_card(c, game->trump);
-      cout << endl;
+      if (game->trick.size() >= N_PLAYERS - 1) cout << endl;
     }
     update_card(game, player, c);
-    if (printing) print(*game, player);
   }
-  if (printing) {
+  if (printing >= 2) {
     if (won(game->declarer, *game))
       cout << "delarer won with ";
     else
@@ -67,12 +67,10 @@ void trickgame(Game *game, Player *player, bool printing) {
 }
 
 void print(Game game, Player *player) {
-  cout << "Contract in P" << game.declarer << "(" << game.points[game.declarer]
-       << "): ";
+  cout << "Declarer P" << game.declarer << " - " << game.points[game.declarer]
+       << "/";
   print_bid({game.contract});
-  cout << "Leader: P" << game.leader << endl;
-  cout << "Trick" << game.round << ": ";
-  print_trick(game.trick, game.trump);
+  cout << endl << "round " << game.round << endl;
   for (int i = 0; i < N_PLAYERS; i++) {
     cout << "P" << i << ": ";
     print_card(player[i].hand, game.trump);
