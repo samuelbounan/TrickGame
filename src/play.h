@@ -26,7 +26,7 @@ void update_bid(Game *game, Player *player, int bid);
  * @param game played
  * @param player playing
  */
-void bidding(Game *game, Player *player, bool printing);
+void bidding(Game *game, Player *player, int printing);
 
 /**
  * @brief in a trickgame, update the parameters of the game and the players
@@ -45,7 +45,7 @@ void update_card(Game *game, Player *player, card c);
  * @param player
  * @param printing to print the game played
  */
-void trickgame(Game *game, Player *player, bool printing);
+void trickgame(Game *game, Player *player, int printing);
 
 /**
  * @brief prints the game, and the players hands
