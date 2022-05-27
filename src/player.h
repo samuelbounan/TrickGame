@@ -11,7 +11,8 @@ class Player {
   int id;
   card hand;
   card have_not[N_PLAYERS] = {0};
-  card (*strategy)(Game game, int id, card hand, card *have_not) = &random_card;
+  card (*trickstrat)(Game game, int id, card hand,
+                     card *have_not) = &random_card;
   int (*bidstrat)(Game game, int id, card hand, card *have_not) = &trivial_bid;
 
   /**

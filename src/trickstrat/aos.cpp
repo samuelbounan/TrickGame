@@ -11,7 +11,7 @@ card aos(Game game, int id, card hand, card *have_not) {
   Player virtual_player[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) {
     virtual_player[i].id = i;
-    virtual_player[i].strategy = &aos;
+    virtual_player[i].trickstrat = &aos;
   }
   Game virtual_game;
 
