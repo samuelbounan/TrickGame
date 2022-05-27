@@ -12,8 +12,6 @@ card suits[N_SUITS] = {deck};
 char cardname[N_CARDS][80] = {" 1", " 2", " 3", " 4", " 5",
                               " 6", " 7", " 8", " 9", "10"};
 
-int size_hand = 5;
-
 list<int> biddable(list<int> bids) {
   int min_bid = 0;
   for (int b : bids)
@@ -22,7 +20,7 @@ list<int> biddable(list<int> bids) {
       break;
     }
   list<int> res;
-  for (int b = min_bid + 1; b < N_BIDS; b++) res.push_back(b + 2);
+  for (int b = min_bid + 1; b < N_BIDS; b++) res.push_back(b);
   res.push_back(0);
   return res;
 }
@@ -56,7 +54,11 @@ card sort(card *hand, card trump) { return *hand; };
 
 card unsort(card *hand, card trump) { return *hand; };
 
-card playable(card hand, Game game) { return hand; }
+card playable(card hand, Game game) {
+  // if (!game.trick.empty() && hand & higher(game.trick.front()))
+  //   return hand & higher(game.trick.front());
+  return hand;
+}
 
 int winner_trick(Game game) {
   if (game.trick.empty()) return game.leader;
@@ -77,10 +79,15 @@ int points_trick(Game game) { return 1; }
 
 bool end_trickgame(Game *game) { return (game->round >= N_ROUNDS); }
 
-bool won(int p, Game game) {
-  if (game.team[p] == game.team[game.declarer])
-    return game.points[game.declarer] >= game.contract;
-  return game.points[game.declarer] < game.contract;
+int *score(Game game) {
+  int res[N_PLAYERS];
+  for (int i = 0; i < N_PLAYERS; i++)
+    for (int p = 0; p < N_PLAYERS; p++)
+      if (game.team[i] == game.team[p])
+        res[i] += game.points[p];
+      else
+        res[i] -= game.points[p];
+  return res;
 }
 
 #endif

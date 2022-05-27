@@ -87,13 +87,13 @@ int points_trick(Game game);
 bool end_trickgame(Game *game);
 
 /**
- * @brief returns if player p won the game
+ * @brief score of a player in a game
  *
- * @param p
  * @param game
- * @return p's team won
+ * @param p
+ * @return int
  */
-bool won(int p, Game game);
+int *score(Game game);
 
 /// Implementation independent to the games rules
 

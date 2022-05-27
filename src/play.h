@@ -29,14 +29,12 @@ void update_bid(Game *game, Player *player, int bid);
 void bidding(Game *game, Player *player, int printing);
 
 /**
- * @brief in a trickgame, update the parameters of the game and the players
- * to the card c played
+ * @brief in a trickgame, update the parameters of the game with the card played
  *
  * @param game
- * @param player
  * @param c
  */
-void update_card(Game *game, Player *player, card c);
+void update_card(Game *game, card c);
 
 /**
  * @brief tricktaking game played until round = N_ROUNDS

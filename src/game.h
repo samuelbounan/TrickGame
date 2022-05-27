@@ -16,13 +16,13 @@ class Game {
   card trump = 0;       // suit of the contract
 
   /* modified during the game */
-  list<card> trick;  // list (queue) of cards played during the round
-  int played[N_PLAYERS][N_ROUNDS];  // cards played by each player at each round
-  card remaining = deck;            // cards not played yet
-  int points[N_PLAYERS] = {0};      // points of each player
-  int round = 0;                    // index of the round
-  int leader = 0;                   // player at the beginning of current trick
-  int turn = 0;                     // player that has to play
+  list<card> trick;             // list (queue) of cards played during the round
+  list<card> played[N_ROUNDS];  // cards played by each player at each round
+  card remaining = deck;        // cards not played yet
+  int points[N_PLAYERS] = {0};  // points of each player
+  int round = 0;                // index of the round
+  int leader = 0;               // player at the beginning of current trick
+  int turn = 0;                 // player that has to play
 
   /**
    * @brief ajust game parameters when a bid is played
@@ -46,6 +46,8 @@ class Game {
    * @param pts points in the trick going to winning team
    */
   void newRound(int winner, int pts);
+
+  void removeCard();
 };
 
 #endif

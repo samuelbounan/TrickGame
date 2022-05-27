@@ -3,7 +3,7 @@
 card aos(Game game, int id, card hand, card *have_not) {
   // if game is over, return a card corresponding to the output of the game
   if (end_trickgame(&game)) {
-    if (won(id, game)) return deck;
+    if (score(game, id) > 0) return deck;
     return 0;
   }
 
@@ -26,7 +26,9 @@ card aos(Game game, int id, card hand, card *have_not) {
 
     // play c in virtual game
     virtual_player[id].hand &= ~c;
-    update_card(&virtual_game, virtual_player, c);
+    update_card(&virtual_game, c);
+    for (int p = 0; p < N_PLAYERS; p++)
+      virtual_player[p].updateBelief(virtual_game, c);
 
     // ask the next virtual player to move, and return according to his play
     card next_c = virtual_player[virtual_game.turn].playCard(virtual_game);

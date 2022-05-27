@@ -1,7 +1,7 @@
 #include "play.h"
 
 void deal_hands(Player *player) {
-  list<int> distrib(N_PLAYERS, size_hand);
+  list<int> distrib(N_PLAYERS, SIZE_HAND);
   list<card> hands = deal(deck, distrib);
   int i = 0;
   for (auto hand : hands) {
@@ -29,14 +29,12 @@ void bidding(Game *game, Player *player, int printing) {
   if (printing >= 2) cout << endl;
 }
 
-void update_card(Game *game, Player *player, card c) {
+void update_card(Game *game, card c) {
   // forfeiting
   if (c == 0) {
     game->round = N_ROUNDS;
     return;
   }
-  // update players knowledge and game
-  for (int p = 0; p < N_PLAYERS; p++) player[p].updateBelief(*game, c);
   game->newTurn(c);
   // end of a trick
   if (game->trick.size() == N_PLAYERS) {
@@ -51,18 +49,17 @@ void trickgame(Game *game, Player *player, int printing) {
     if (printing >= 4 && game->trick.empty()) print(*game, player);
     card c = player[game->turn].playCard(*game);
     if (printing >= 2) {
-      cout << "P" << game->turn << " plays ";
+      cout << endl << "P" << game->turn << " plays ";
       print_card(c, game->trump);
+      cout << endl;
       if (game->trick.size() >= N_PLAYERS - 1) cout << endl;
     }
-    update_card(game, player, c);
+    // update players knowledge and game
+    for (int p = 0; p < N_PLAYERS; p++) player[p].updateBelief(*game, c);
+    update_card(game, c);
   }
   if (printing >= 2) {
-    if (won(game->declarer, *game))
-      cout << "delarer won with ";
-    else
-      cout << "declarer lost with ";
-    cout << game->points[game->declarer] << " points" << endl;
+    cout << "delarer score: " << score(*game, game->declarer) << endl;
   }
 }
 
