@@ -2,7 +2,7 @@
 
 card aos(Game game, int id, card hand, card *have_not) {
   // if game is over, return a card corresponding to the output of the game
-  if (game.round >= N_ROUNDS) {
+  if (end_trickgame(&game)) {
     if (won(id, game)) return deck;
     return 0;
   }

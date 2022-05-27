@@ -1,12 +1,11 @@
 #ifdef RULES_BASIC
 #include "../rules.h"
 
-/**N_BIDS = 11
+/**N_BIDS = 4
  * N_SUITS = 1
  * N_CARDS = 10 */
 
-char bidname[N_BIDS][80] = {"pass", "1", "2", "3", "4", "5",
-                            "6",    "7", "8", "9", "10"};
+char bidname[N_BIDS][80] = {"pass", "3", "4", "5"};
 
 card suits[N_SUITS] = {deck};
 
@@ -23,7 +22,7 @@ list<int> biddable(list<int> bids) {
       break;
     }
   list<int> res;
-  for (int b = min_bid + 1; b < N_BIDS; b++) res.push_back(b);
+  for (int b = min_bid + 1; b < N_BIDS; b++) res.push_back(b + 2);
   res.push_back(0);
   return res;
 }

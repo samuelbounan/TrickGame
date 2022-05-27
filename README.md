@@ -48,3 +48,4 @@ make```
 - Each trick every player plays
 - AOS requires only two teams
 - game over when N_ROUNDS are played
+- With alpha-beta, the number of points when entering the game does not influence the game play

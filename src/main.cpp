@@ -8,6 +8,8 @@ int main() {
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
   }
+  player[0].trickstrat = &aos;
+  player[1].trickstrat = &aos;
   Game game;
 
   // playing
