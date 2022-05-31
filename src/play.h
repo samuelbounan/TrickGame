@@ -34,7 +34,7 @@ void bidding(Game *game, Player *player, int printing);
  * @param game
  * @param c
  */
-int update_card(Game *game, card c);
+pair<int, int> update_card(Game *game, card c);
 
 /**
  * @brief tricktaking game played until round = N_ROUNDS

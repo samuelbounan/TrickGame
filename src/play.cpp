@@ -29,21 +29,22 @@ void bidding(Game *game, Player *player, int printing) {
   if (printing >= 2) cout << endl;
 }
 
-int update_card(Game *game, card c) {
+pair<int, int> update_card(Game *game, card c) {
   // forfeiting
   if (c == 0) {
     game->round = N_ROUNDS;
-    return 0;
+    return {0, game->turn};
   }
+  int pts = 0;
+  int p = game->turn;
   game->newTurn(c);
   // end of a trick
   if (game->trick.size() == N_PLAYERS) {
     int winner = winner_trick(*game);
-    int pts = points_trick(*game);
+    pts = points_trick(*game);
     game->newRound(winner, pts);
-    return pts;
   }
-  return 0;
+  return {pts, p};
 }
 
 void trickgame(Game *game, Player *player, int printing) {

@@ -230,11 +230,6 @@ void unsort_high(card *hand, int idx, card suit) {
 
 bool end_trickgame(Game *game) { return (game->round >= N_ROUNDS); }
 
-bool won(int p, Game game) {
-  int objective = ((game.contract - 3) % 4 + 8) * 10;
-  if (game.points[game.declarer] >= objective)
-    return game.team[p] == game.team[game.declarer];
-  return game.team[p] != game.team[game.declarer];
-}
+int score(Game game, int p) { return game.points[p]; }
 
 #endif

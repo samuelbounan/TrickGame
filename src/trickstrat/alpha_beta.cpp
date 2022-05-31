@@ -1,6 +1,7 @@
 #include "alpha_beta.h"
 
 hash_game H;
+int rec;
 
 llu snapg(Game g) {
   llu res = g.points[g.leader] * N_PLAYERS + g.leader;
@@ -40,13 +41,17 @@ int sco(llu x, int p) {
 }
 
 card ab(Game game, int id, card hand, card *have_not) {
+  H.clear();
   int alpha[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) alpha[i] = INT32_MIN;
+  rec = 0;
   ab_aux(&game, have_not, alpha);
+  cout << "rec " << rec << endl;
   return H.find(snapg(game))->second.second;
 }
 
 void ab_aux(Game *game, card *have_not, int *alpha) {
+  rec++;
   llu s = snaps(*game);
   int id = game->turn;
   int a_init = alpha[id];
@@ -54,11 +59,11 @@ void ab_aux(Game *game, card *have_not, int *alpha) {
   if (H.find(g) != H.end()) return;
 
   for (card c : set_cards(playable(~have_not[id], *game))) {
-    int pts_trick = update_card(game, c);
+    auto info = update_card(game, c);
     have_not[id] |= c;
     ab_aux(game, have_not, alpha);
     s = H.find(snapg(*game))->second.first;
-    game->removeCard(pts_trick, id);
+    game->removeCard(info);
     have_not[id] &= ~c;
 
     if (sco(s, id) >= alpha[id]) {
@@ -71,7 +76,7 @@ void ab_aux(Game *game, card *have_not, int *alpha) {
     for (int p = 0; p < N_PLAYERS; p++)
       if (game->team[p] != game->team[id] && sco(s, p) < alpha[p]) {
         H.erase(g);
-        H.insert({g, make_pair(s, c)});
+        H.insert({g, {s, c}});
         alpha[id] = a_init;
         return;
       }

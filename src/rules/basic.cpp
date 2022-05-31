@@ -9,7 +9,8 @@ char bidname[N_BIDS][80] = {"pass", "3", "4", "5"};
 
 card suits[N_SUITS] = {deck};
 
-char cardname[N_CARDS][80] = {" 1", " 2", " 3", " 4", " 5", " 6"};
+char cardname[N_CARDS][80] = {" 1", " 2", " 3", " 4", " 5",
+                              " 6", " 7", " 8", " 9", "10"};
 
 list<int> biddable(list<int> bids) {
   int min_bid = 0;

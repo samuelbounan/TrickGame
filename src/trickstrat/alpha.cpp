@@ -1,14 +1,19 @@
 #include "alpha.h"
 
+int rec2;
+
 // function computing the alpha-beta pruning of solutions tree
 
 card alpha(Game game, int id, card hand, card *have_not) {
+  rec2 = 0;
   int res[N_PLAYERS];
   int alpha[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) {
     alpha[i] = INT32_MIN;
   }
-  return alpha_search(res, game, id, hand, have_not, alpha);
+  card c = alpha_search(res, game, id, hand, have_not, alpha);
+  cout << "rec " << rec2 << endl;
+  return c;
 }
 
 void print_points(int *points) {
@@ -21,6 +26,7 @@ void print_points(int *points) {
 // each player p can enforce a score of alpha[p]
 card alpha_search(int *res, Game game, int id, card hand, card *have_not,
                   int *alpha) {
+  rec2++;
   bool printing = false;
   int hj = game.round * N_PLAYERS + game.trick.size();
 

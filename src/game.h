@@ -47,7 +47,7 @@ class Game {
    */
   void newRound(int winner, int pts);
 
-  void removeCard(int pts, int p);
+  void removeCard(pair<int, int>);
 };
 
 #endif

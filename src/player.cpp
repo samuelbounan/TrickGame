@@ -3,6 +3,7 @@
 int Player::playBid(Game game) { return bidstrat(game, id, hand, have_not); }
 
 card Player::playCard(Game game) {
+  cout << "playCard" << endl;
   card c = trickstrat(game, id, hand, have_not);
   hand &= ~c;
   return c;
