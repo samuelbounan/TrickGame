@@ -8,8 +8,8 @@ int main() {
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
   }
-  player[0].trickstrat = &ab;
-  player[1].trickstrat = &random_card;
+  player[0].trickstrat = &alpha;
+  player[1].trickstrat = &alpha;
   Game game;
 
   // playing

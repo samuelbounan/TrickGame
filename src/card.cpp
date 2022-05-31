@@ -25,8 +25,8 @@ card higher(card c) { return ~((c << 1) - 1); }
 card lower(card c) { return c - 1; }
 
 list<card> deal(card deck, list<int> distribution) {
-  srand(time(nullptr));
-  // srand(80);
+  // srand(time(nullptr));
+  srand(80);
   list<card> res;
   card hand;
 

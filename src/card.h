@@ -15,11 +15,11 @@ using namespace std;
 
 /* ADAPT TO THE GAME */
 #define N_PLAYERS 2
-#define N_ROUNDS 5
-#define N_CARDS 10
+#define N_ROUNDS 3
+#define N_CARDS 6
 #define N_SUITS 1
 #define N_BIDS 4
-#define SIZE_HAND 5
+#define SIZE_HAND 3
 ///////////////////////
 
 #if N_CARDS <= 32

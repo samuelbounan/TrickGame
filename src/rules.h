@@ -93,7 +93,7 @@ bool end_trickgame(Game *game);
  * @param p
  * @return int
  */
-int *score(Game game);
+int score(Game game, int p);
 
 /// Implementation independent to the games rules
 

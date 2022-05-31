@@ -29,11 +29,11 @@ void bidding(Game *game, Player *player, int printing) {
   if (printing >= 2) cout << endl;
 }
 
-void update_card(Game *game, card c) {
+int update_card(Game *game, card c) {
   // forfeiting
   if (c == 0) {
     game->round = N_ROUNDS;
-    return;
+    return 0;
   }
   game->newTurn(c);
   // end of a trick
@@ -41,7 +41,9 @@ void update_card(Game *game, card c) {
     int winner = winner_trick(*game);
     int pts = points_trick(*game);
     game->newRound(winner, pts);
+    return pts;
   }
+  return 0;
 }
 
 void trickgame(Game *game, Player *player, int printing) {

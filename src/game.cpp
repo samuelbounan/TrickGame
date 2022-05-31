@@ -22,14 +22,16 @@ void Game::newRound(int winner, int pts) {
   turn = leader;
 }
 
-void Game::removeCard() {
+void Game::removeCard(int pts, int p) {
   if (trick.empty()) {
     round--;
-    turn = (leader + 1) % N_PLAYERS;
-    leader = turn;
+    for (int i = 0; i < N_PLAYERS; i++)
+      if (team[leader] == team[i]) points[i] -= pts;
+    turn = p;
+    leader = (turn + 1) % N_PLAYERS;
     trick = played[round];
-  }
+  } else
+    turn = (turn - 1 + N_PLAYERS) % N_PLAYERS;
   remaining |= trick.back();
   trick.pop_back();
-  turn = (turn - 1) % N_PLAYERS;
 }

@@ -9,8 +9,7 @@ char bidname[N_BIDS][80] = {"pass", "3", "4", "5"};
 
 card suits[N_SUITS] = {deck};
 
-char cardname[N_CARDS][80] = {" 1", " 2", " 3", " 4", " 5",
-                              " 6", " 7", " 8", " 9", "10"};
+char cardname[N_CARDS][80] = {" 1", " 2", " 3", " 4", " 5", " 6"};
 
 list<int> biddable(list<int> bids) {
   int min_bid = 0;
@@ -79,15 +78,6 @@ int points_trick(Game game) { return 1; }
 
 bool end_trickgame(Game *game) { return (game->round >= N_ROUNDS); }
 
-int *score(Game game) {
-  int res[N_PLAYERS];
-  for (int i = 0; i < N_PLAYERS; i++)
-    for (int p = 0; p < N_PLAYERS; p++)
-      if (game.team[i] == game.team[p])
-        res[i] += game.points[p];
-      else
-        res[i] -= game.points[p];
-  return res;
-}
+int score(Game game, int p) { return game.points[p]; }
 
 #endif
