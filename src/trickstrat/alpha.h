@@ -3,6 +3,8 @@
 
 #include <algorithm>  // copy array
 #include <iterator>   // copy array
+#include <set>
+#include <unordered_map>  // hash
 
 #include "../play.h"
 

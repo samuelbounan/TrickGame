@@ -73,8 +73,6 @@ char cardname[N_CARDS][80] = {
     "\u001b[34m\u2660\u001b[0mQ", "\u001b[34m\u2660\u001b[0mK",
     "\u001b[34m\u2660\u001b[0mT", "\u001b[34m\u2660\u001b[0mA"};
 
-int size_hand = 8;
-
 list<int> biddable(list<int> bids) {
   int min_bid = 0;
   for (int b : bids)
