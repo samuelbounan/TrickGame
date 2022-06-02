@@ -7,7 +7,7 @@ int main() {
   Player player[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
-    player[i].trickstrat = &ab;
+    player[i].trickstrat = &alpha_beta;
   }
   Game game;
 

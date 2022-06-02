@@ -11,9 +11,8 @@
 
 #include "../play.h"
 
-card ab(Game game, int id, card hand, card *have_not);
-
-void ab_aux(Game *game, card *have_not, int *alpha);
+card alpha_beta(Game game, int id, card hand, card *have_not);
+void alpha_beta_aux(Game *game, card *have_not, int *alpha);
 
 typedef long long unsigned llu;
 
