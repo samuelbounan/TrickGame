@@ -70,6 +70,8 @@ card playable(card hand, Game game);
  */
 int winner_trick(Game game);
 
+int points_card(card c);
+
 /**
  * @brief points of current trick in game
  *

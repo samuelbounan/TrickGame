@@ -48,4 +48,5 @@ make```
 - Each trick every player plays
 - AOS requires only two teams
 - game over when N_ROUNDS are played
-- With alpha-beta, the number of points when entering the game does not influence the game play
+- With alpha-beta, if number of teams > 2, algo doesn't find all solutions
+- ab: for equivalence, suits need to be connex (bit vector)

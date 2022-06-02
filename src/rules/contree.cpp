@@ -181,26 +181,16 @@ int winner_trick(Game game) {
   return (winner + game.leader) % N_PLAYERS;
 }
 
-int points_trump[8] = {0, 0, 3, 4, 10, 11, 14, 20};
-int points_nt[8] = {0, 0, 0, 2, 3, 4, 10, 11};
+int tab_points_card[N_CARDS] = {0,  0,  3, 4,  10, 11, 14, 20, 0,  0, 0,
+                                2,  3,  4, 10, 11, 0,  0,  0,  2,  3, 4,
+                                10, 11, 0, 0,  0,  2,  3,  4,  10, 11};
+
+int points_card(card c) { return tab_points_card[__builtin_ctz(c)]; }
 
 int points_trick(Game game) {
   int res = 0;
-  for (card c : game.trick) {
-    int idx;
-    for (card suit : suits)
-      if (suit & c) {
-        idx = __builtin_ctz(c) - __builtin_ctz(suit);
-        break;
-      }
-    if (c & game.trump)
-      res += points_trump[idx];
-    else
-      res += points_nt[idx];
-  }
-  if (game.round == N_ROUNDS - 1) {
-    res += 10;
-  }
+  for (card c : game.trick) res += points_card(c);
+  if (game.round == N_ROUNDS - 1) res += 10;
   return res;
 }
 
@@ -230,6 +220,8 @@ void unsort_high(card *hand, int idx, card suit) {
 
 bool end_trickgame(Game *game) { return (game->round >= N_ROUNDS); }
 
-int score(Game game, int p) { return game.points[p]; }
+int score(Game game, int p) {
+  return game.points[p] - game.points[(p + 1) % N_PLAYERS];
+}
 
 #endif
