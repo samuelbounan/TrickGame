@@ -10,5 +10,6 @@
 #include "trickstrat/alpha_beta.h"
 #include "trickstrat/aos.h"
 #include "trickstrat/interactive_card.h"
+#include "trickstrat/utils.h"
 
 #endif
