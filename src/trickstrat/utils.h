@@ -2,9 +2,6 @@
 #define __UTILS
 
 #include <algorithm>
-#include <iterator>
-#include <random>
-#include <vector>
 
 #include "../rules.h"
 

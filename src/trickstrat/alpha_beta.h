@@ -4,7 +4,8 @@
 #define MAX_SCORE 500
 
 #include <algorithm>  // copy array
-#include <iterator>   // copy array
+#include <chrono>
+#include <iterator>  // copy array
 #include <set>
 #include <string>
 #include <unordered_map>  // hash
