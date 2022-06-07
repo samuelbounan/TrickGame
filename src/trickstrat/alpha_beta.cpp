@@ -15,7 +15,7 @@ llu snapg(Game g) {
   return res + rem;
 }
 
-llu snapeq(Game g, int n_playable) {
+llu snapeq(Game g) {
   llu res = 0;
   if (!g.trick.empty()) {
     card first_card = g.trick.front();
@@ -26,8 +26,6 @@ llu snapeq(Game g, int n_playable) {
   res += g.team[g.leader];
   res *= N_PLAYERS;
   res += g.turn;
-  res *= SIZE_HAND;
-  res += n_playable;
   return res;
 }
 
@@ -53,7 +51,7 @@ int sco(llu x, int p) {
 
 void order(list<card> *possible, Game game) {
   list<card> res;
-  llu equi = snapeq(game, possible->size());
+  llu equi = snapeq(game);
   card recom = 0;
   if (H_equi.find(equi) != H_equi.end()) recom = H_game[H_equi[equi]].second;
   card masks[2] = {recom, ~recom};
@@ -79,8 +77,12 @@ void order(list<card> *possible, Game game) {
 card alpha_beta(Game game, int id, card hand, card *have_not) {
   H_game.clear();
   H_equi.clear();
-  int alpha[N_PLAYERS];
-  for (int i = 0; i < N_PLAYERS; i++) alpha[i] = INT32_MIN;
+  int max_team = 0;
+  for (int i = 0; i < N_PLAYERS; i++)
+    if (game.team[i] > max_team) max_team = game.team[i];
+  int alpha[max_team + 1];
+  cout << "max_team = " << max_team << endl;
+  for (int i = 0; i <= max_team; i++) alpha[i] = INT32_MIN;
   rec = 0;
   alpha_beta_aux(&game, have_not, alpha);
 
@@ -101,10 +103,10 @@ void alpha_beta_aux(Game *game, card *have_not, int *alpha) {
 
   llu s;
   int id = game->turn;
-  int a_init = alpha[id];
+  int tm = game->team[id];
+  int a_init = alpha[tm];
   int sco_id;
-  card playable_cards = playable(~have_not[id], *game);
-  list<card> possible = set_cards(playable_cards);
+  list<card> possible = set_cards(playable(~have_not[id], *game));
   order(&possible, *game);
 
   if (end_trickgame(game))
@@ -119,28 +121,27 @@ void alpha_beta_aux(Game *game, card *have_not, int *alpha) {
       have_not[id] &= ~c;
 
       sco_id = sco(s, id);
-      if (sco_id >= alpha[id]) {
-        if (sco_id > alpha[id])
+      if (sco_id >= alpha[tm]) {
+        if (sco_id > alpha[tm])
           H_game[g] = {s, c};
         else {
           card setc = H_game[g].second;
           H_game[g] = {s, setc | c};
         }
       }
-      for (int p = 0; p < N_PLAYERS; p++)
-        if (game->team[p] != game->team[id]) {
-          if (sco(s, p) < alpha[p]) {
+      for (int p = 0; p < N_PLAYERS; p++) {
+        int tm_p = game->team[p];
+        if (tm_p != tm) {
+          if (sco(s, p) < alpha[tm]) {
             H_game.erase(g);
             goto prune_beta;
           }
-        } else if (sco_id > alpha[p])
-          alpha[p] = sco_id;
+        }
+      }
     }
-    llu equi = snapeq(*game, __builtin_popcountll(playable_cards));
-    H_equi[equi] = g;
+    H_equi[snapeq(*game)] = g;
   }
 prune_beta:
-  for (int i = 0; i < N_PLAYERS; i++)
-    if (game->team[i] == game->team[id]) alpha[i] = a_init;
+  alpha[tm] = a_init;
   if (H_game.find(g) == H_game.end()) H_game[g] = {s, 0};
 }
