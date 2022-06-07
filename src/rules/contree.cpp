@@ -221,7 +221,9 @@ void unsort_high(card *hand, int idx, card suit) {
 bool end_trickgame(Game *game) { return (game->round >= N_ROUNDS); }
 
 int score(Game game, int p) {
-  return game.points[p] - game.points[(p + 1) % N_PLAYERS];
+  for (int i = 0; i < N_PLAYERS; i++)
+    if (game.team[i] == p) return game.points[i];
+  return 0;
 }
 
 #endif

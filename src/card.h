@@ -20,6 +20,7 @@ using namespace std;
 #define N_SUITS 4
 #define N_BIDS 43
 #define SIZE_HAND 6
+#define N_TEAMS 2
 ///////////////////////
 
 #if N_CARDS <= 32

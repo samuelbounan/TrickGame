@@ -31,7 +31,7 @@ llu snapeq(Game g) {
 
 llu snaps(Game g) {
   llu s = 0;
-  for (int i = N_PLAYERS - 1; i >= 0; i--) {
+  for (int i = N_TEAMS - 1; i >= 0; i--) {
     int x = score(g, i);
     if (x >= 0)
       s += 2 * x;
@@ -77,12 +77,8 @@ void order(list<card> *possible, Game game) {
 card alpha_beta(Game game, int id, card hand, card *have_not) {
   H_game.clear();
   H_equi.clear();
-  int max_team = 0;
-  for (int i = 0; i < N_PLAYERS; i++)
-    if (game.team[i] > max_team) max_team = game.team[i];
-  int alpha[max_team + 1];
-  cout << "max_team = " << max_team << endl;
-  for (int i = 0; i <= max_team; i++) alpha[i] = INT32_MIN;
+  int alpha[N_TEAMS];
+  for (int i = 0; i < N_TEAMS; i++) alpha[i] = INT32_MIN;
   rec = 0;
   alpha_beta_aux(&game, have_not, alpha);
 
@@ -96,52 +92,92 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
   return set_cards(possible).front();
 }
 
-void alpha_beta_aux(Game *game, card *have_not, int *alpha) {
+void print_a(int *a) {
+  cout << "a[";
+  for (int i = 0; i < N_TEAMS - 1; i++) cout << a[i] << ", ";
+  cout << a[N_TEAMS - 1] << "]" << endl;
+}
+
+llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
+  string blank;
+  int hj = game->round * N_PLAYERS + game->trick.size();
+  for (int i = 0; i < hj; i++) blank.append("  ");
+  bool printing = false;
+
   rec++;
   llu g = snapg(*game);
-  if (H_game.find(g) != H_game.end()) return;
 
-  llu s;
+  if (printing) cout << blank << "alpha_beta_aux " << g << endl;
+
+  if (game->trick.empty() && H_game.find(g) != H_game.end()) {
+    if (printing) cout << blank << "found g " << g << endl;
+    return H_game[g].first;
+  }
+
+  llu s, best_s = UINT64_MAX;
+  card best_c = 0;
   int id = game->turn;
   int tm = game->team[id];
-  int a_init = alpha[tm];
-  int sco_id;
+  int alpha_init = alpha[tm];
+  int sco_tm;
+
+  if (printing) {
+    cout << blank;
+    print_a(alpha);
+  }
+
   list<card> possible = set_cards(playable(~have_not[id], *game));
   order(&possible, *game);
 
-  if (end_trickgame(game))
-    s = snaps(*game);
-  else {
+  if (end_trickgame(game)) {
+    best_s = snaps(*game);
+    if (printing)
+      cout << blank << "end_trickgame " << sco(best_s, 0) << "-"
+           << sco(best_s, 1) << endl;
+  } else {
     for (card c : possible) {
+      if (printing) {
+        cout << blank << "test ";
+        print_card(c, game->trump);
+      }
+
       auto info = update_card(game, c);
       have_not[id] |= c;
-      alpha_beta_aux(game, have_not, alpha);
-      s = H_game[snapg(*game)].first;
+      s = alpha_beta_aux(game, have_not, alpha);
       game->removeCard(info);
       have_not[id] &= ~c;
 
-      sco_id = sco(s, id);
-      if (sco_id >= alpha[tm]) {
-        if (sco_id > alpha[tm])
-          H_game[g] = {s, c};
-        else {
-          card setc = H_game[g].second;
-          H_game[g] = {s, setc | c};
-        }
-      }
-      for (int p = 0; p < N_PLAYERS; p++) {
-        int tm_p = game->team[p];
-        if (tm_p != tm) {
-          if (sco(s, p) < alpha[tm]) {
-            H_game.erase(g);
-            goto prune_beta;
+      sco_tm = sco(s, tm);
+
+      if (printing) cout << blank << "sco_tm = " << sco_tm << endl;
+      if (sco_tm >= alpha[tm]) {
+        if (sco_tm > alpha[tm]) {
+          alpha[tm] = sco_tm;
+          if (printing) {
+            cout << blank << "update ";
+            print_a(alpha);
           }
-        }
+
+          best_c = c;
+          best_s = s;
+        } else
+          best_c |= c;
       }
+      for (int i = 0; i < N_TEAMS; i++)
+        if ((i != tm) && (sco(s, i) < alpha[i])) {
+          best_s = UINT64_MAX;
+          if (printing) cout << blank << "prune\n";
+          goto prune_beta;
+        }
     }
     H_equi[snapeq(*game)] = g;
   }
 prune_beta:
-  alpha[tm] = a_init;
-  if (H_game.find(g) == H_game.end()) H_game[g] = {s, 0};
+  alpha[tm] = alpha_init;
+  if (best_s == UINT64_MAX) {
+    best_s = s;
+    best_c = 0;
+  }
+  H_game[g] = {best_s, best_c};
+  return best_s;
 }
