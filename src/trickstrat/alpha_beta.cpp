@@ -3,6 +3,7 @@
 unordered_map<llu, pair<llu, card>> H_game;
 unordered_map<llu, llu> H_equi;
 int rec;
+int MAX_SCORE = 162;
 
 llu snapg(Game g) {
   llu res = g.points[g.leader] * N_PLAYERS + g.leader;
@@ -44,7 +45,7 @@ llu snaps(Game g) {
 
 int sco(llu x, int p) {
   for (int i = 0; i < p; i++) x = x / (2 * MAX_SCORE);
-  x = x % MAX_SCORE;
+  x = x % (2 * MAX_SCORE);
   if (x % 2) return -((x - 1) / 2);
   return (x / 2);
 }
@@ -80,9 +81,16 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
   int alpha[N_TEAMS];
   for (int i = 0; i < N_TEAMS; i++) alpha[i] = INT32_MIN;
   rec = 0;
+
+  auto start = std::chrono::high_resolution_clock::now();
+
   alpha_beta_aux(&game, have_not, alpha);
 
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double, std::milli> total_t = end - start;
+
   cout << "rec " << rec << endl;
+  cout << "time " << total_t.count() << endl;
   cout << sco(H_game[snapg(game)].first, 0) << " - "
        << sco(H_game[snapg(game)].first, 1) << endl;
   card possible = H_game[snapg(game)].second;
@@ -129,7 +137,11 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
   list<card> possible = set_cards(playable(~have_not[id], *game));
   order(&possible, *game);
 
-  if (end_trickgame(game)) {
+  int hope_score = MAX_SCORE;
+  for (int t = 0; t < N_TEAMS; t++)
+    if (t != tm) hope_score -= score(*game, t);
+
+  if ((hope_score < alpha[tm]) || end_trickgame(game)) {
     best_s = snaps(*game);
     if (printing)
       cout << blank << "end_trickgame " << sco(best_s, 0) << "-"
@@ -150,7 +162,7 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
       sco_tm = sco(s, tm);
 
       if (printing) cout << blank << "sco_tm = " << sco_tm << endl;
-      if (sco_tm >= alpha[tm]) {
+      if (sco_tm > alpha[tm]) {
         if (sco_tm > alpha[tm]) {
           alpha[tm] = sco_tm;
           if (printing) {
@@ -164,7 +176,7 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
           best_c |= c;
       }
       for (int i = 0; i < N_TEAMS; i++)
-        if ((i != tm) && (sco(s, i) < alpha[i])) {
+        if ((i != tm) && (sco(s, i) <= alpha[i])) {
           best_s = UINT64_MAX;
           if (printing) cout << blank << "prune\n";
           goto prune_beta;
