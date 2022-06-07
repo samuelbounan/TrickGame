@@ -3,7 +3,6 @@
 unordered_map<llu, pair<llu, card>> H_game;
 unordered_map<llu, llu> H_equi;
 int rec;
-int MAX_SCORE = 162;
 
 llu snapg(Game g) {
   llu res = g.points[g.leader] * N_PLAYERS + g.leader;
@@ -100,27 +99,12 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
   return set_cards(possible).front();
 }
 
-void print_a(int *a) {
-  cout << "a[";
-  for (int i = 0; i < N_TEAMS - 1; i++) cout << a[i] << ", ";
-  cout << a[N_TEAMS - 1] << "]" << endl;
-}
-
 llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
-  string blank;
-  int hj = game->round * N_PLAYERS + game->trick.size();
-  for (int i = 0; i < hj; i++) blank.append("  ");
-  bool printing = false;
-
   rec++;
   llu g = snapg(*game);
 
-  if (printing) cout << blank << "alpha_beta_aux " << g << endl;
-
-  if (game->trick.empty() && H_game.find(g) != H_game.end()) {
-    if (printing) cout << blank << "found g " << g << endl;
+  if (game->trick.empty() && H_game.find(g) != H_game.end())
     return H_game[g].first;
-  }
 
   llu s, best_s = UINT64_MAX;
   card best_c = 0;
@@ -129,11 +113,6 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
   int alpha_init = alpha[tm];
   int sco_tm;
 
-  if (printing) {
-    cout << blank;
-    print_a(alpha);
-  }
-
   list<card> possible = set_cards(playable(~have_not[id], *game));
   order(&possible, *game);
 
@@ -141,44 +120,25 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
   for (int t = 0; t < N_TEAMS; t++)
     if (t != tm) hope_score -= score(*game, t);
 
-  if ((hope_score < alpha[tm]) || end_trickgame(game)) {
+  if ((hope_score < alpha[tm]) || end_trickgame(game))
     best_s = snaps(*game);
-    if (printing)
-      cout << blank << "end_trickgame " << sco(best_s, 0) << "-"
-           << sco(best_s, 1) << endl;
-  } else {
+  else {
     for (card c : possible) {
-      if (printing) {
-        cout << blank << "test ";
-        print_card(c, game->trump);
-      }
-
       auto info = update_card(game, c);
       have_not[id] |= c;
       s = alpha_beta_aux(game, have_not, alpha);
       game->removeCard(info);
       have_not[id] &= ~c;
-
       sco_tm = sco(s, tm);
 
-      if (printing) cout << blank << "sco_tm = " << sco_tm << endl;
       if (sco_tm > alpha[tm]) {
-        if (sco_tm > alpha[tm]) {
-          alpha[tm] = sco_tm;
-          if (printing) {
-            cout << blank << "update ";
-            print_a(alpha);
-          }
-
-          best_c = c;
-          best_s = s;
-        } else
-          best_c |= c;
+        alpha[tm] = sco_tm;
+        best_c = c;
+        best_s = s;
       }
       for (int i = 0; i < N_TEAMS; i++)
         if ((i != tm) && (sco(s, i) <= alpha[i])) {
           best_s = UINT64_MAX;
-          if (printing) cout << blank << "prune\n";
           goto prune_beta;
         }
     }
