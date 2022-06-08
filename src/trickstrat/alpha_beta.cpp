@@ -3,7 +3,7 @@
 unordered_map<llu, pair<llu, card>> H_game;
 unordered_map<llu, llu> H_equi;
 int rec;
-int MAX_DEPTH = 33;
+int MAX_DEPTH = 330;
 int n_sample = 1;
 std::chrono::duration<double, std::milli> player_t, trick_t, game_t, comput_t;
 
@@ -40,14 +40,14 @@ llu snaps(int *scores) {
       s += 2 * x;
     else
       s += 2 * (-x) + 1;
-    if (i) s *= (2 * MAX_SCORE);
+    if (i) s *= (2 * (MAX_SCORE + 1));
   }
   return s;
 }
 
 int sco(llu x, int p) {
-  for (int i = 0; i < p; i++) x = x / (2 * MAX_SCORE);
-  x = x % (2 * MAX_SCORE);
+  for (int i = 0; i < p; i++) x = x / (2 * (MAX_SCORE + 1));
+  x = x % (2 * (MAX_SCORE + 1));
   if (x % 2) return -((x - 1) / 2);
   return (x / 2);
 }
@@ -92,12 +92,12 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  alpha_beta_aux(&game, have_not, alpha, 0, 0);
+  alpha_beta_aux(&game, have_not, alpha, 0, 0, (game.round == N_ROUNDS - 1));
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> total_t = end - start;
 
-  cout << "Max depth: " << rec << endl;
+  cout << "Max depth: " << MAX_DEPTH << endl;
   cout << "rec " << rec << endl;
   cout << "time " << total_t.count() << endl;
   cout << "player_t " << player_t.count() << endl;
@@ -115,6 +115,7 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
 
 llu approx_score(Game g, card *have_not) {
   auto vador = std::chrono::high_resolution_clock::now();
+  int id = g.turn;
   rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS - g.trick.size());
   int res[N_TEAMS] = {0};
   auto darth = std::chrono::high_resolution_clock::now();
@@ -125,32 +126,42 @@ llu approx_score(Game g, card *have_not) {
 
   for (int i = 0; i < n_sample; i++) {
     darth = std::chrono::high_resolution_clock::now();
-    Game g_copy = g;
+    Game gv = g;
     vador = std::chrono::high_resolution_clock::now();
     game_t += vador - darth;
     for (int i = 0; i < N_PLAYERS; i++) player[i].hand = ~have_not[i];
     darth = std::chrono::high_resolution_clock::now();
     player_t += darth - vador;
-    trickgame(&g_copy, player, 0);
+
+    while (!end_trickgame(&gv)) {
+      card possible = playable(player[gv.turn].hand, gv);
+      auto possible_l = set_cards(possible);
+      int rd = rand() % possible_l.size();
+      for (int i = 0; i < rd; i++) possible_l.pop_front();
+      card c = possible_l.front();
+      player[gv.turn].hand &= ~c;
+      update_card(&gv, c);
+    }
+
     vador = std::chrono::high_resolution_clock::now();
     trick_t += vador - darth;
-    for (int t = 0; t < N_TEAMS; t++) res[t] += score(g_copy, t);
+    if (score(gv, gv.team[id]) > res[gv.team[id]])
+      for (int t = 0; t < N_TEAMS; t++) res[t] = score(gv, t);
     darth = std::chrono::high_resolution_clock::now();
     comput_t += darth - vador;
   }
   darth = std::chrono::high_resolution_clock::now();
-  for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
+  // for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
   vador = std::chrono::high_resolution_clock::now();
   comput_t += vador - darth;
   return snaps(res);
 }
 
 llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth,
-                   int pts_played) {
+                   int pts_played, bool printing) {
   rec++;
   llu g = snapg(*game);
   string blank = "";
-  bool printing = false;
   for (int i = 0; i < depth; i++) blank += "  ";
 
   if (printing) cout << blank << "g " << g << endl;
@@ -190,17 +201,17 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth,
       auto info = update_card(game, c);
       have_not[id] |= c;
       s = alpha_beta_aux(game, have_not, alpha, depth + 1,
-                         pts_played + info.first);
+                         pts_played + info.first, printing);
       game->removeCard(info);
       have_not[id] &= ~c;
       sco_tm = sco(s, tm);
 
       if (sco_tm > alpha[tm]) {
+        alpha[tm] = sco_tm;
         if (printing) {
           cout << blank << "update ";
           print_a(alpha);
         }
-        alpha[tm] = sco_tm;
         best_c = c;
         best_s = s;
       }
