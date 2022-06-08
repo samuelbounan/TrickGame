@@ -2,10 +2,10 @@
 
 unordered_map<llu, pair<llu, card>> H_game;
 unordered_map<llu, llu> H_equi;
-int rec;
-int MAX_DEPTH = 330;
+int rec, n_equi;
+int max_depth = 40;
 int n_sample = 1;
-std::chrono::duration<double, std::milli> player_t, trick_t, game_t, comput_t;
+int max_equi = 10000;
 
 llu snapg(Game g) {
   llu res = g.points[g.leader] * N_PLAYERS + g.leader;
@@ -52,59 +52,24 @@ int sco(llu x, int p) {
   return (x / 2);
 }
 
-void order(list<card> *possible, Game game) {
-  list<card> res;
-  llu equi = snapeq(game);
-  card recom = 0;
-  if (H_equi.find(equi) != H_equi.end()) recom = H_game[H_equi[equi]].second;
-  card masks[2] = {recom, ~recom};
-  card previous = 0;
-
-  for (auto mask : masks)
-    for (card c : *possible)
-      if (c & mask) {
-        if ((previous != 0) && (points_card(previous) == points_card(c)) &&
-            ((higher(previous) & lower(c) & game.remaining) == 0))
-          for (auto suit : suits)
-            if ((suit & c) && (suit & previous)) {
-              game.remaining &= ~c;
-              goto no_add;
-            }
-        res.push_back(c);
-      no_add:
-        previous = c;
-      }
-  *possible = res;
-}
-
-void print_a(int *a) {
-  cout << "a[";
-  for (int i = 0; i < N_TEAMS - 1; i++) cout << a[i] << ", ";
-  cout << a[N_TEAMS - 1] << "]" << endl;
-}
-
 card alpha_beta(Game game, int id, card hand, card *have_not) {
   H_game.clear();
   H_equi.clear();
   int alpha[N_TEAMS];
   for (int i = 0; i < N_TEAMS; i++) alpha[i] = -1;
   rec = 0;
+  n_equi = 0;
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  alpha_beta_aux(&game, have_not, alpha, 0, 0, (game.round == N_ROUNDS - 1));
+  alpha_beta_aux(&game, have_not, alpha, 0);
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> total_t = end - start;
 
-  cout << "Max depth: " << MAX_DEPTH << endl;
-  cout << "rec " << rec << endl;
-  cout << "time " << total_t.count() << endl;
-  cout << "player_t " << player_t.count() << endl;
-  cout << "trick_t " << trick_t.count() << endl;
-  cout << "game_t " << game_t.count() << endl;
-  cout << "comput_t " << comput_t.count() << endl;
-  cout << sco(H_game[snapg(game)].first, 0) << " - "
+  cout << "max depth: " << max_depth << endl;
+  cout << "rec " << rec << " - time " << total_t.count() << endl;
+  cout << "predicted score: " << sco(H_game[snapg(game)].first, 0) << " - "
        << sco(H_game[snapg(game)].first, 1) << endl;
   card possible = H_game[snapg(game)].second;
   cout << "possible ";
@@ -114,122 +79,108 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
 }
 
 llu approx_score(Game g, card *have_not) {
-  auto vador = std::chrono::high_resolution_clock::now();
-  int id = g.turn;
+  int i, j, rd, id = g.turn;
   rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS - g.trick.size());
   int res[N_TEAMS] = {0};
-  auto darth = std::chrono::high_resolution_clock::now();
-  comput_t += darth - vador;
-  Player player[N_PLAYERS];
-  vador = std::chrono::high_resolution_clock::now();
-  player_t += vador - darth;
+  int hand[N_PLAYERS];
+  card possible, c;
+  Game gv;
 
-  for (int i = 0; i < n_sample; i++) {
-    darth = std::chrono::high_resolution_clock::now();
-    Game gv = g;
-    vador = std::chrono::high_resolution_clock::now();
-    game_t += vador - darth;
-    for (int i = 0; i < N_PLAYERS; i++) player[i].hand = ~have_not[i];
-    darth = std::chrono::high_resolution_clock::now();
-    player_t += darth - vador;
-
+  for (i = 0; i < n_sample; i++) {
+    gv = g;
+    for (j = 0; j < N_PLAYERS; j++) hand[j] = ~have_not[j];
     while (!end_trickgame(&gv)) {
-      card possible = playable(player[gv.turn].hand, gv);
-      auto possible_l = set_cards(possible);
-      int rd = rand() % possible_l.size();
-      for (int i = 0; i < rd; i++) possible_l.pop_front();
-      card c = possible_l.front();
-      player[gv.turn].hand &= ~c;
+      possible = playable(hand[gv.turn], gv);
+      rd = rand() % __builtin_popcountll(possible);
+      for (j = 0; j < rd; j++) possible &= ~(ONE << __builtin_ctzll(possible));
+      c = ONE << __builtin_ctzll(possible);
+      hand[gv.turn] &= ~c;
       update_card(&gv, c);
     }
-
-    vador = std::chrono::high_resolution_clock::now();
-    trick_t += vador - darth;
     if (score(gv, gv.team[id]) > res[gv.team[id]])
-      for (int t = 0; t < N_TEAMS; t++) res[t] = score(gv, t);
-    darth = std::chrono::high_resolution_clock::now();
-    comput_t += darth - vador;
+      for (j = 0; j < N_TEAMS; j++) res[j] = score(gv, j);
   }
-  darth = std::chrono::high_resolution_clock::now();
   // for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
-  vador = std::chrono::high_resolution_clock::now();
-  comput_t += vador - darth;
   return snaps(res);
 }
 
-llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth,
-                   int pts_played, bool printing) {
+llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth) {
   rec++;
   llu g = snapg(*game);
-  string blank = "";
-  for (int i = 0; i < depth; i++) blank += "  ";
-
-  if (printing) cout << blank << "g " << g << endl;
-
-  if (game->trick.empty() && H_game.find(g) != H_game.end()) {
-    if (printing) cout << blank << "found " << endl;
+  if (game->trick.empty() && H_game.find(g) != H_game.end())
     return H_game[g].first;
-  }
-
-  llu s, best_s = UINT64_MAX;
-  card best_c = 0;
-  int id = game->turn;
-  int tm = game->team[id];
-  int alpha_init = alpha[tm];
-  int sco_tm;
+  llu opt_s = UINT64_MAX;
 
   if (end_trickgame(game)) {
     int scores[N_TEAMS];
     for (int i = 0; i < N_TEAMS; i++) scores[i] = score(*game, i);
-    if (printing) {
-      cout << blank << "end points";
-      print_a(scores);
-    }
-    best_s = snaps(scores);
-  } else if (((MAX_SCORE - pts_played) < (alpha[tm] - game->points[id])) ||
-             depth >= MAX_DEPTH) {
-    if (printing) cout << blank << "end depth" << endl;
-    best_s = approx_score(*game, have_not);
-  } else {
-    list<card> possible = set_cards(playable(~have_not[id], *game));
-    order(&possible, *game);
-    for (card c : possible) {
-      if (printing) {
-        cout << blank << "c ";
-        print_card(c, game->trump);
-      }
-      auto info = update_card(game, c);
-      have_not[id] |= c;
-      s = alpha_beta_aux(game, have_not, alpha, depth + 1,
-                         pts_played + info.first, printing);
-      game->removeCard(info);
-      have_not[id] &= ~c;
-      sco_tm = sco(s, tm);
+    opt_s = snaps(scores);
+  } else if (depth >= max_depth)
+    opt_s = approx_score(*game, have_not);
 
-      if (sco_tm > alpha[tm]) {
-        alpha[tm] = sco_tm;
-        if (printing) {
-          cout << blank << "update ";
-          print_a(alpha);
-        }
-        best_c = c;
-        best_s = s;
-      }
-      for (int i = 0; i < N_TEAMS; i++)
-        if ((i != tm) && (sco(s, i) <= alpha[i])) {
-          best_s = UINT64_MAX;
-          if (printing) cout << blank << "prune " << sco(s, i) << endl;
-          goto prune_beta;
-        }
+  else {
+    card c, opt_c = 0;
+    llu s;
+    int i, id = game->turn;
+    int tm = game->team[id];
+    int alpha_init = alpha[tm];
+    int sco_tm;
+    card possible = 0;
+    card previous = 0;
+    card playb = playable(~have_not[id], *game);
+    card rem_eq = game->remaining;
+    while (playb) {
+      c = ONE << __builtin_ctzll(playb);
+      possible |= c;
+      if (previous && (points_card(previous) == points_card(c)) &&
+          ((higher(previous) & lower(c) & rem_eq) == 0))
+        for (auto suit : suits)
+          if ((suit & c) && (suit & previous)) {
+            rem_eq &= ~c;
+            possible &= ~c;
+          }
+      previous = c;
+      playb &= ~c;
     }
-    H_equi[snapeq(*game)] = g;
+    bool save_equi = (__builtin_popcountll(possible) > 1 && n_equi < max_equi);
+    card recom = 0;
+    llu equi = snapeq(*game);
+    if (H_equi.find(equi) != H_equi.end()) recom = H_game[H_equi[equi]].second;
+    card masks[2] = {recom & possible, (~recom) & possible};
+    for (card mask : masks)
+      while (mask) {
+        c = ONE << __builtin_ctzll(mask);
+        auto info = update_card(game, c);
+        have_not[id] |= c;
+        s = alpha_beta_aux(game, have_not, alpha, depth + 1);
+        game->removeCard(info);
+        have_not[id] &= ~c;
+        sco_tm = sco(s, tm);
+
+        if (sco_tm == alpha[tm])
+          opt_c |= c;
+        else if (sco_tm > alpha[tm]) {
+          alpha[tm] = sco_tm;
+          opt_c = c;
+          opt_s = s;
+        }
+        for (i = 0; i < N_TEAMS; i++)
+          if ((i != tm) && (sco(s, i) < alpha[i])) {
+            opt_s = s;
+            opt_c = 0;
+            goto prune_beta;
+          }
+        mask &= ~c;
+      }
+    if (save_equi) {
+      H_equi[snapeq(*game)] = g;
+      n_equi++;
+    }
+    if (opt_s == UINT64_MAX) opt_s = s;
+  prune_beta:
+    alpha[tm] = alpha_init;
+    if (depth == 0 || save_equi || game->trick.empty())
+      H_game[g] = {opt_s, opt_c};
   }
-prune_beta:
-  alpha[tm] = alpha_init;
-  if (best_s == UINT64_MAX) {
-    best_s = s;
-    best_c = 0;
-  }
-  H_game[g] = {best_s, best_c};
-  return best_s;
+  return opt_s;
 }
