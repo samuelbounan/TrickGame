@@ -3,6 +3,9 @@
 unordered_map<llu, pair<llu, card>> H_game;
 unordered_map<llu, llu> H_equi;
 int rec;
+int MAX_DEPTH = 33;
+int n_sample = 1;
+std::chrono::duration<double, std::milli> player_t, trick_t, game_t, comput_t;
 
 llu snapg(Game g) {
   llu res = g.points[g.leader] * N_PLAYERS + g.leader;
@@ -29,10 +32,10 @@ llu snapeq(Game g) {
   return res;
 }
 
-llu snaps(Game g) {
+llu snaps(int *scores) {
   llu s = 0;
   for (int i = N_TEAMS - 1; i >= 0; i--) {
-    int x = score(g, i);
+    int x = scores[i];
     if (x >= 0)
       s += 2 * x;
     else
@@ -74,22 +77,33 @@ void order(list<card> *possible, Game game) {
   *possible = res;
 }
 
+void print_a(int *a) {
+  cout << "a[";
+  for (int i = 0; i < N_TEAMS - 1; i++) cout << a[i] << ", ";
+  cout << a[N_TEAMS - 1] << "]" << endl;
+}
+
 card alpha_beta(Game game, int id, card hand, card *have_not) {
   H_game.clear();
   H_equi.clear();
   int alpha[N_TEAMS];
-  for (int i = 0; i < N_TEAMS; i++) alpha[i] = INT32_MIN;
+  for (int i = 0; i < N_TEAMS; i++) alpha[i] = -1;
   rec = 0;
 
   auto start = std::chrono::high_resolution_clock::now();
 
-  alpha_beta_aux(&game, have_not, alpha);
+  alpha_beta_aux(&game, have_not, alpha, 0, 0);
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> total_t = end - start;
 
+  cout << "Max depth: " << rec << endl;
   cout << "rec " << rec << endl;
   cout << "time " << total_t.count() << endl;
+  cout << "player_t " << player_t.count() << endl;
+  cout << "trick_t " << trick_t.count() << endl;
+  cout << "game_t " << game_t.count() << endl;
+  cout << "comput_t " << comput_t.count() << endl;
   cout << sco(H_game[snapg(game)].first, 0) << " - "
        << sco(H_game[snapg(game)].first, 1) << endl;
   card possible = H_game[snapg(game)].second;
@@ -99,12 +113,52 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
   return set_cards(possible).front();
 }
 
-llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
+llu approx_score(Game g, card *have_not) {
+  auto vador = std::chrono::high_resolution_clock::now();
+  rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS - g.trick.size());
+  int res[N_TEAMS] = {0};
+  auto darth = std::chrono::high_resolution_clock::now();
+  comput_t += darth - vador;
+  Player player[N_PLAYERS];
+  vador = std::chrono::high_resolution_clock::now();
+  player_t += vador - darth;
+
+  for (int i = 0; i < n_sample; i++) {
+    darth = std::chrono::high_resolution_clock::now();
+    Game g_copy = g;
+    vador = std::chrono::high_resolution_clock::now();
+    game_t += vador - darth;
+    for (int i = 0; i < N_PLAYERS; i++) player[i].hand = ~have_not[i];
+    darth = std::chrono::high_resolution_clock::now();
+    player_t += darth - vador;
+    trickgame(&g_copy, player, 0);
+    vador = std::chrono::high_resolution_clock::now();
+    trick_t += vador - darth;
+    for (int t = 0; t < N_TEAMS; t++) res[t] += score(g_copy, t);
+    darth = std::chrono::high_resolution_clock::now();
+    comput_t += darth - vador;
+  }
+  darth = std::chrono::high_resolution_clock::now();
+  for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
+  vador = std::chrono::high_resolution_clock::now();
+  comput_t += vador - darth;
+  return snaps(res);
+}
+
+llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth,
+                   int pts_played) {
   rec++;
   llu g = snapg(*game);
+  string blank = "";
+  bool printing = false;
+  for (int i = 0; i < depth; i++) blank += "  ";
 
-  if (game->trick.empty() && H_game.find(g) != H_game.end())
+  if (printing) cout << blank << "g " << g << endl;
+
+  if (game->trick.empty() && H_game.find(g) != H_game.end()) {
+    if (printing) cout << blank << "found " << endl;
     return H_game[g].first;
+  }
 
   llu s, best_s = UINT64_MAX;
   card best_c = 0;
@@ -113,25 +167,39 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
   int alpha_init = alpha[tm];
   int sco_tm;
 
-  list<card> possible = set_cards(playable(~have_not[id], *game));
-  order(&possible, *game);
-
-  int hope_score = MAX_SCORE;
-  for (int t = 0; t < N_TEAMS; t++)
-    if (t != tm) hope_score -= score(*game, t);
-
-  if ((hope_score < alpha[tm]) || end_trickgame(game))
-    best_s = snaps(*game);
-  else {
+  if (end_trickgame(game)) {
+    int scores[N_TEAMS];
+    for (int i = 0; i < N_TEAMS; i++) scores[i] = score(*game, i);
+    if (printing) {
+      cout << blank << "end points";
+      print_a(scores);
+    }
+    best_s = snaps(scores);
+  } else if (((MAX_SCORE - pts_played) < (alpha[tm] - game->points[id])) ||
+             depth >= MAX_DEPTH) {
+    if (printing) cout << blank << "end depth" << endl;
+    best_s = approx_score(*game, have_not);
+  } else {
+    list<card> possible = set_cards(playable(~have_not[id], *game));
+    order(&possible, *game);
     for (card c : possible) {
+      if (printing) {
+        cout << blank << "c ";
+        print_card(c, game->trump);
+      }
       auto info = update_card(game, c);
       have_not[id] |= c;
-      s = alpha_beta_aux(game, have_not, alpha);
+      s = alpha_beta_aux(game, have_not, alpha, depth + 1,
+                         pts_played + info.first);
       game->removeCard(info);
       have_not[id] &= ~c;
       sco_tm = sco(s, tm);
 
       if (sco_tm > alpha[tm]) {
+        if (printing) {
+          cout << blank << "update ";
+          print_a(alpha);
+        }
         alpha[tm] = sco_tm;
         best_c = c;
         best_s = s;
@@ -139,6 +207,7 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha) {
       for (int i = 0; i < N_TEAMS; i++)
         if ((i != tm) && (sco(s, i) <= alpha[i])) {
           best_s = UINT64_MAX;
+          if (printing) cout << blank << "prune " << sco(s, i) << endl;
           goto prune_beta;
         }
     }

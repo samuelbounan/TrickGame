@@ -26,7 +26,7 @@ card lower(card c) { return c - 1; }
 
 list<card> deal(card deck, list<int> distribution) {
   // srand(time(nullptr));
-  srand(10);
+  srand(0);
   list<card> res;
   card hand;
 
