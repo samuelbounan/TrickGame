@@ -29,10 +29,11 @@ void update_bid(Game *game, Player *player, int bid);
 void bidding(Game *game, Player *player, int printing);
 
 /**
- * @brief in a trickgame, update the parameters of the game with the card played
+ * @brief add a card c to the trick
  *
  * @param game
  * @param c
+ * @return {eventual points, former turn}
  */
 pair<int, int> update_card(Game *game, card c);
 

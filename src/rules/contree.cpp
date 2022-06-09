@@ -130,14 +130,14 @@ card playable(card hand, Game game) {
   card first_played = game.trick.front();
   for (card suit : suits)
     if (first_played & suit) {
-      if (hand & suit) {               // hand has suit
-        if (suit & game.trump) {       // suit required is trump
-          card highs = (hand & suit);  // you should play higher if possible
-          for (card c : game.trick)    // for each card played
-            if (c & suit)              // that is trump
-              highs &= higher(c);      // try to play higner
-          if (highs)                   // if can play higher trump
-            return highs;              // play higher
+      if (hand & suit) {                   // hand has suit
+        if (suit & game.trump) {           // suit required is trump
+          card highs = (hand & suit);      // you should play higher if possible
+          for (card c : game.trick)        // for each card played
+            if (c & suit)                  // that is trump
+              highs &= (~((c << 1) - 1));  // try to play higner
+          if (highs)                       // if can play higher trump
+            return highs;                  // play higher
         }
         return hand & suit;  // play suit
       }
@@ -221,7 +221,9 @@ void unsort_high(card *hand, int idx, card suit) {
 bool end_trickgame(Game *game) { return (game->round >= N_ROUNDS); }
 
 int score(Game game, int p) {
-  return game.points[p] - game.points[(p + 1) % N_PLAYERS];
+  for (int i = 0; i < N_PLAYERS; i++)
+    if (game.team[i] == p) return game.points[i];
+  return 0;
 }
 
 #endif

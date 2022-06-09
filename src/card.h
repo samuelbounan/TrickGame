@@ -20,6 +20,8 @@ using namespace std;
 #define N_SUITS 4
 #define N_BIDS 43
 #define SIZE_HAND 8
+#define N_TEAMS 2
+#define MAX_SCORE 162
 ///////////////////////
 
 #if N_CARDS <= 32
@@ -28,6 +30,7 @@ typedef unsigned int card;  // reprezents several cards (bit vector)
 typedef unsigned long long int card;
 #endif
 extern card deck;  // set of all cards
+#define ONE (card)1
 
 /**
  * @brief transform an index into a card

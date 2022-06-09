@@ -62,7 +62,8 @@ void trickgame(Game *game, Player *player, int printing) {
     update_card(game, c);
   }
   if (printing >= 2) {
-    cout << "delarer score: " << score(*game, game->declarer) << endl;
+    cout << "delarer score: " << score(*game, game->team[game->declarer])
+         << endl;
   }
 }
 
