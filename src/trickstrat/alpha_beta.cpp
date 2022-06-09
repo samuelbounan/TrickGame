@@ -3,8 +3,8 @@
 unordered_map<llu, pair<llu, card>> H_game;
 unordered_map<llu, llu> H_equi;
 int rec, n_equi;
-int max_depth = 40;
-int n_sample = 1;
+int max_depth = 14;
+int n_sample = 3;
 int max_equi = 10000;
 
 llu snapg(Game g) {
@@ -79,7 +79,8 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
 }
 
 llu approx_score(Game g, card *have_not) {
-  int i, j, rd, id = g.turn;
+  srand(time(nullptr));
+  int i, j, rd;
   rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS - g.trick.size());
   int res[N_TEAMS] = {0};
   int hand[N_PLAYERS];
@@ -97,10 +98,9 @@ llu approx_score(Game g, card *have_not) {
       hand[gv.turn] &= ~c;
       update_card(&gv, c);
     }
-    if (score(gv, gv.team[id]) > res[gv.team[id]])
-      for (j = 0; j < N_TEAMS; j++) res[j] = score(gv, j);
+    for (j = 0; j < N_TEAMS; j++) res[j] = score(gv, j);
   }
-  // for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
+  for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
   return snaps(res);
 }
 
