@@ -5,6 +5,6 @@
 
 #include "../rules.h"
 
-void random_world(card *have_not, card *res, Game game);
+void random_world(card *res, Game game);
 
 #endif
