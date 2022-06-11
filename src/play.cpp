@@ -12,7 +12,7 @@ void deal_hands(Player *player) {
   }
 }
 
-void update_bid(Game *game, Player *player, int bid) {
+void update_bid(Game *game, int bid) {
   game->newBid(bid, next_bid_turn(*game));
 }
 
@@ -24,7 +24,7 @@ void bidding(Game *game, Player *player, int printing) {
       print_bid({b});
       cout << endl;
     }
-    update_bid(game, player, b);
+    update_bid(game, b);
   }
   if (printing >= 2) cout << endl;
 }

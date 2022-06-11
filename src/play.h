@@ -18,7 +18,7 @@ void deal_hands(Player *player);
  * @param player
  * @param bid
  */
-void update_bid(Game *game, Player *player, int bid);
+void update_bid(Game *game, int bid);
 
 /**
  * @brief performs the bidding phase

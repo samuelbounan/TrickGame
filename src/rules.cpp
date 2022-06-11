@@ -1,7 +1,7 @@
 #include "rules.h"
 
 void print_bid(list<int> bids) {
-  for (auto b : bids) cout << bidname[b] << ";";
+  // for (auto b : bids) cout << bidname[b] << ";";
 }
 
 void print_card(card hand, card trump) {

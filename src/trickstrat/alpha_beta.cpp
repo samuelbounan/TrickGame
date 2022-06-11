@@ -132,7 +132,7 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth) {
     while (playb) {
       c = ONE << __builtin_ctzll(playb);
       possible |= c;
-      if (previous && (points_card(previous) == points_card(c)) &&
+      if (previous && (points_card(previous, *game) == points_card(c, *game)) &&
           ((higher(previous) & lower(c) & rem_eq) == 0))
         for (auto suit : suits)
           if ((suit & c) && (suit & previous)) {
