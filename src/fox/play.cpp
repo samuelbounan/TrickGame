@@ -1106,9 +1106,8 @@ int Play::suggestCard() {  // only called after count belief
     return index;
   }
 #ifdef KNOWLEDGEPRINT
-  if (printing >= 4)
-    cout << " suggest P" << playerpos << "'s card " << chands
-         << " worlds, score " << decl_score << ":" << opp_score << endl;
+  cout << " suggest P" << playerpos << "'s card " << chands << " worlds, score "
+       << decl_score << ":" << opp_score << endl;
 #endif
   if (chands >= BSSIZE) return -1;
   for (int i = 0; i < DECKSIZE; i++)
@@ -1197,8 +1196,7 @@ int Play::suggestCard() {  // only called after count belief
       return -1;
 #endif
 #ifdef KNOWLEDGEPRINT
-      if (printing >= 4)
-        cout << "no suggestion made based on confidence " << endl;
+      cout << "no suggestion made based on confidence " << endl;
 #endif
       int mini = 0;
       suggest = -1;

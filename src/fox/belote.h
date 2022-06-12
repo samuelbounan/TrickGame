@@ -24,7 +24,6 @@ static const int HANDSIZE = 8;
 static const int DECKSIZE = 32;
 static const int PLAYSIZE = 32;
 static const int WORDSIZE = 32;
-static const int printing = 2;
 
 #ifdef DISPLAY
 #define SHOW(x) card_name[x]

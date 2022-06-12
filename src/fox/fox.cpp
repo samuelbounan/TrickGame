@@ -60,15 +60,16 @@ void CardAI::StartGame(int pos, card hand) {
 }
 
 card CardAI::PlayCard() {
-  cout << "[ Stefan ] ";
-  if (printing >= 4)
-    cout << myplay->kb.decl_score << " vs " << myplay->kb.opp_score;
+  if (printing >= 2) cout << "[ Stefan ] ";
+#ifdef KNOWLEDGEPRINT
+  cout << myplay->kb.decl_score << " vs " << myplay->kb.opp_score;
+#endif
   long long countrec = 0;
   logging("(fox %d) play card player %d trickround %d, trick %d", id, position,
           trickround, tricknumber);
   myplay->killermove = 0;
   int c = -1, index = -1;
-  if (trickcard[1] == -1) {
+  if (trickcard[0] == -1) {
 #ifdef KILLER
     index = -1;
     myplay->killermove = 1;
@@ -210,10 +211,12 @@ card CardAI::PlayCard() {
 int CardAI::PlayBid(int bidval) { return true; }
 
 void CardAI::SetTeams(int* teams, int* bids) {
-  cout << "TEAMS ";
   for (int i = 0; i < PLAYER; i++) g.team[i] = 1 - teams[i];
+#ifdef KNOWLEDGEPRINT
+  cout << "TEAMS ";
   for (int i = 0; i < PLAYER; i++) cout << g.team[i] << ";";
   cout << endl;
+#endif
   for (int i = 0; i < PLAYER; i++) g.bv[i] = bids[i];
 }
 
@@ -295,8 +298,8 @@ void CardAI::SetGame(GameDeclaration* gameDeclaration) {
   }
 #endif
   g.trumpmask = trumpmask;
-  cout << "trumpmask ";
-  g.print_vector(g.trumpmask, g.trumpmask);
+  // cout << "trumpmask ";
+  // g.print_vector(g.trumpmask, g.trumpmask);
   cout << endl;
 
 #ifdef TAROT
@@ -2040,7 +2043,7 @@ void CardAI::mersenne(int seed) {
     cout << g.id++ << " " << g.posdecl << " " << g.game
          << " "
          //	 << g.bv[0] << " " << g.bv[1] << " " << g.bv[2] << " " <<
-         //g.bv[3]
+         // g.bv[3]
          //	 << " "  << g.humanwon
          << " " << won << " ";  // << " " << SHOW(AOS->proposed_card)
     cout << (int)(g.limit < w) << " " << w << " "

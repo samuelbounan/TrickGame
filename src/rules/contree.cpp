@@ -129,30 +129,18 @@ bool end_bidding(Game *game) {
   return false;
 }
 
-card sort(card *hand, card trump) {
-  cout << "hand: ";
-  print_vector(*hand);
-  card res = rev(*hand);
-  cout << "res: ";
-  print_vector(res);
+card sort(card hand, card trump) {
+  card res = rev(hand);
   sort_high(&res, 2, rev(trump));
-  cout << "jac: ";
-  print_vector(res);
   sort_high(&res, 2, rev(trump));
-  cout << "9  : ";
-  print_vector(res);
-  *hand = rev(res);
-  cout << "hand: ";
-  print_vector(*hand);
-  return *hand;
+  return rev(res);
 }
 
-card unsort(card *hand, card trump) {
-  card res = rev(*hand);
+card unsort(card hand, card trump) {
+  card res = rev(hand);
   unsort_high(&res, 2, rev(trump));
   unsort_high(&res, 2, rev(trump));
-  *hand = rev(res);
-  return *hand;
+  return rev(res);
 }
 
 card playable(card hand, Game game) {
@@ -182,8 +170,6 @@ card playable(card hand, Game game) {
 
 int winner_trick(Game game) {
   if (game.trick.empty()) return game.leader;
-  cout << "winner t ";
-  print_card(game.trump, game.trump);
 
   // init best_card and best_suit with the first card played
   card best_card = game.trick.front();
@@ -225,6 +211,7 @@ int points_card(card c, Game g) {
         return tab_pts_nontr[__builtin_ctzll(c) - __builtin_ctzll(suit)];
     }
   }
+  return 0;
 }
 
 int points_trick(Game game) {
@@ -237,7 +224,7 @@ int points_trick(Game game) {
 void sort_high(card *hand, int idx, card suit) {
   if (suit == 0) return;
   card c = _card(__builtin_ctzll(suit << idx));
-  card new_c = (card)((long long unsigned)suit + 1) >> 1;
+  card new_c = _card(sizeof(card) * 8 - 1 - __builtin_clzll(suit));
   card greater = higher(c) & suit;
   card shifted = (*hand & greater) >> 1;
   if (*hand & c) {
@@ -248,7 +235,7 @@ void sort_high(card *hand, int idx, card suit) {
 
 void unsort_high(card *hand, int idx, card suit) {
   if (suit == 0) return;
-  card c = (card)((long long unsigned)suit + 1) >> 1;
+  card c = _card(sizeof(card) * 8 - 1 - __builtin_clzll(suit));
   card new_c = _card(__builtin_ctzll(suit << idx));
   card greater = higher(new_c >> 1) & suit;
   card shifted = (*hand & (suit - c) & greater) << 1;

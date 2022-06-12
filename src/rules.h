@@ -1,5 +1,6 @@
 #include <list>
 
+#include "fox/cards.h"
 #include "game.h"
 
 /* unicode corresponding to a bid */
@@ -42,7 +43,7 @@ bool end_bidding(Game *game);
  * @param trump mask
  * @return card sorted set
  */
-card sort(card *hand, card trump);
+card sort(card hand, card trump);
 
 /**
  * @brief unsort a set of cards according to the trump chosen
@@ -51,7 +52,7 @@ card sort(card *hand, card trump);
  * @param trump mask
  * @return card unsorted set
  */
-card unsort(card *hand, card trump);
+card unsort(card hand, card trump);
 
 /**
  * @brief cards that are playable in current situation, with hand

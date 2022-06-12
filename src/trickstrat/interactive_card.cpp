@@ -15,7 +15,6 @@ card interactive_card(Game game, int id, card hand, card *have_not) {
   for (card mask : sep_masks)
     for (card suit : suits) {
       list<card> printed = set_cards(hand & mask & suit);
-      printed.reverse();  // for well oredered printing
       for (card i : printed) {
         if (i & playable_cards) {
           res[idx] = i;

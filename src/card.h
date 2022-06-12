@@ -24,6 +24,8 @@ using namespace std;
 #define MAX_SCORE 162
 ///////////////////////
 
+static const int printing = 2;
+
 #if N_CARDS <= 32
 typedef unsigned int card;  // reprezents several cards (bit vector)
 #elif N_CARDS <= 64

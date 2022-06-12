@@ -252,25 +252,25 @@ int AlphaMu::run(GamePlay game, card hand, card allopponent, card block1,
   ;
 
   int result = (g.team[player] == 0) ? 0 : sumvalues;
-  if (printing >= 4) {
-    std::cout << " alphamu @" << g.limit << " player " << player << " ";
-    if (P1 != -1) std::cout << card_name[P1] << " ";
-    if (P2 != -1) std::cout << card_name[P2] << " ";
-    if (P3 != -1) std::cout << card_name[P3] << " ";
-    if (P0 != -1) std::cout << card_name[P0] << " ";
-    std::cout << " P0 ";
-    g.print_vector(hand, trumpmask);
-  }
-  /*
- std::cout << " AO "; g.print_vector(allopponent,trumpmask);
-  std::cout << " B1 "; g.print_vector(block1,trumpmask);
-  std::cout << " B2 "; g.print_vector(block2,trumpmask);
-  std::cout << " B3 "; g.print_vector(block3,trumpmask);
-  */
-  if (printing >= 4) {
-    std::cout << " decl score " << score_decl;
-    std::cout << " opp score " << score_opp << " ";
-  }
+#ifdef KNOWLEDGEPRINT
+  std::cout << " alphamu @" << g.limit << " player " << player << " ";
+  if (P1 != -1) std::cout << card_name[P1] << " ";
+  if (P2 != -1) std::cout << card_name[P2] << " ";
+  if (P3 != -1) std::cout << card_name[P3] << " ";
+  if (P0 != -1) std::cout << card_name[P0] << " ";
+  std::cout << " P0 ";
+  g.print_vector(hand, trumpmask);
+#endif
+/*
+std::cout << " AO "; g.print_vector(allopponent,trumpmask);
+std::cout << " B1 "; g.print_vector(block1,trumpmask);
+std::cout << " B2 "; g.print_vector(block2,trumpmask);
+std::cout << " B3 "; g.print_vector(block3,trumpmask);
+*/
+#ifdef KNOWLEDGEPRINT
+  std::cout << " decl score " << score_decl;
+  std::cout << " opp score " << score_opp << " ";
+#endif
   //  std::cout << std::endl;
 
   State s(P0, P1, P2, P3, play, score_decl, score_opp);
@@ -304,18 +304,18 @@ int AlphaMu::run(GamePlay game, card hand, card allopponent, card block1,
     }
   }
 
-  if (printing >= 4) {
-    cout << " best vector ";
-    std::cout << "(";
-    for (int i = 0; i < WORLDS; i++) {
-      if (b & (ONE << i))
-        std::cout << "1";
-      else
-        std::cout << "0";
-    }
-    std::cout << "),";
-    cout << endl;
+#ifdef KNOWLEDGEPRINT
+  cout << " best vector ";
+  std::cout << "(";
+  for (int i = 0; i < WORLDS; i++) {
+    if (b & (ONE << i))
+      std::cout << "1";
+    else
+      std::cout << "0";
   }
+  std::cout << "),";
+  cout << endl;
+#endif
   card playc = 0;
   int issuer = s.issuer(player);
   for (int i = 0; i < worlds.size(); i++) {

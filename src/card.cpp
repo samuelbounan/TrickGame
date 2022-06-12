@@ -20,9 +20,9 @@ list<card> set_cards(card x) {
   return res;
 }
 
-card higher(card c) { return c - 1; }
+card lower(card c) { return c - 1; }
 
-card lower(card c) { return ~((c << 1) - 1); }
+card higher(card c) { return ~((c << 1) - 1); }
 
 list<card> deal(card deck, list<int> distribution) {
   // srand(time(nullptr));

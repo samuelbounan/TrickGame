@@ -11,7 +11,7 @@ int main() {
   int printing = 4;
   for (int i = 0; i < N_PLAYERS; i++)
     if (i % 2 == 0)
-      ai[i] = new AI_samuel;
+      ai[i] = new Human;
     else
       ai[i] = new CardAI;
 
@@ -48,6 +48,7 @@ int main() {
     ai[i]->SetTeams(game.team, trashbid);
     ai[i]->DeclareGame(trashskat, &gd);
     ai[i]->SetGame(&gd);
+    player[i].hand = sort(player[i].hand, game.trump);
   }
   // trickgame
   while (!end_trickgame(&game)) {
@@ -63,16 +64,17 @@ int main() {
       cout << endl;
     }
     card c = ai[game.turn]->PlayCard();
-    player[game.turn].hand &= ~c;
+    card sc = sort(c, game.trump);
+    player[game.turn].hand &= ~sc;
 
     if (printing >= 2) cout << endl << "P" << game.turn << " plays ";
-    print_card(c, game.trump);
+    print_card(sc, game.trump);
     //    cout << endl;
     if (game.trick.size() >= N_PLAYERS - 1) cout << endl;
 
     // update players knowledge and game
     for (int p = 0; p < N_PLAYERS; p++) ai[p]->CardPlayed(game.turn, c);
-    update_card(&game, c);
+    update_card(&game, sc);
   }
   if (printing >= 2) {
     cout << "score " << score(game, game.team[game.declarer]) << " - "

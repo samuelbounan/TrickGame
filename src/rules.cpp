@@ -13,11 +13,11 @@ void print_card(card hand, card trump) {
   for (card mask : sep_masks)
     for (card suit : suits) {
       list<card> to_print = set_cards(hand & mask & suit);
-      to_print.reverse();  // for well oredered printing
+      to_print;  // for well oredered printing
       for (card i : to_print) {
-        unsort(&i, trump);  // SE
-        cout << cardname[__builtin_ctzll(i)] << ";";
-        hand &= ~i;
+        card ui = unsort(i, trump);  // SE
+        cout << card_name[__builtin_ctzll(ui)] << " ";
+        hand &= ~ui;
       }
     }
   cout << endl;
@@ -25,7 +25,7 @@ void print_card(card hand, card trump) {
 
 void print_trick(list<card> trick, card trump) {
   for (auto i : trick) {
-    unsort(&i, trump);
-    cout << cardname[__builtin_ctzll(i)] << ";";
+    card ui = unsort(i, trump);
+    cout << card_name[__builtin_ctzll(ui)] << ";";
   }
 }
