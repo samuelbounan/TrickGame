@@ -1,7 +1,7 @@
 #include "rules.h"
 
 void print_bid(list<int> bids) {
-  // for (auto b : bids) cout << bidname[b] << ";";
+  for (auto b : bids) cout << bidname[b] << ";";
 }
 
 void print_card(card hand, card trump) {
@@ -15,7 +15,7 @@ void print_card(card hand, card trump) {
       list<card> to_print = set_cards(hand & mask & suit);
       to_print.reverse();  // for well oredered printing
       for (card i : to_print) {
-        unsort(&i, trump);
+        unsort(&i, trump);  // SE
         cout << cardname[__builtin_ctzll(i)] << ";";
         hand &= ~i;
       }

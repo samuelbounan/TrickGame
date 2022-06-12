@@ -16,10 +16,11 @@ void AI_samuel::SetTeams(int* team, int* bits) {
   for (int i = 0; i < N_PLAYERS; i++) game.team[i] = team[i];
 }
 
-void AI_samuel::DeclareGame(int* skat, GameDeclaration* gameDeclaration) {}
+void AI_samuel::DeclareGame(card skat, GameDeclaration* gameDeclaration) {}
 
 void AI_samuel::SetGame(GameDeclaration* gameDeclaration) {
   game.trump = gameDeclaration->trumpmask;
+  print_card(game.trump, game.trump);
   game.contract = 3;
   game.declarer = game.leader;
   game.turn = 0;
@@ -30,4 +31,7 @@ void AI_samuel::CardPlayed(int pos, card c) {
   player.updateBelief(game, c);
 }
 
-int AI_samuel::PlayCard() { return player.playCard(game); }
+card AI_samuel::PlayCard() {
+  std::cout << "[ Samuel ] ";
+  return player.playCard(game);
+}

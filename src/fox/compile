@@ -1,0 +1,7 @@
+make -f Makebridge clean; make -f Makebridge; cp kiclientpool bridge
+make -f Maketarot clean; make -f Maketarot; cp kiclientpool tarot
+make -f Makedoppel9 clean; make -f Makedoppel9; cp kiclientpool doppel9
+make -f Makedoppel clean; make -f Makedoppel; cp kiclientpool doppel
+make -f Makespades clean; make -f Makespades; cp kiclientpool spades
+make -f Makehearts clean; make -f Makehearts; cp kiclientpool hearts
+make -f Makebelote clean; make -f Makebelote; cp kiclientpool belote

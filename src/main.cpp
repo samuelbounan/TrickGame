@@ -1,5 +1,7 @@
 #include "main.h"
 
+#include "fox/fox.h"
+
 using namespace std;
 
 int main() {
@@ -7,7 +9,12 @@ int main() {
   Player player[N_PLAYERS];
   Game game;
   int printing = 4;
-  for (int i = 0; i < N_PLAYERS; i++) ai[i] = new AI_samuel;
+  for (int i = 0; i < N_PLAYERS; i++)
+    if (i % 2 == 0)
+      ai[i] = new AI_samuel;
+    else
+      ai[i] = new CardAI;
+
   // deal hands
   list<int> distrib(N_PLAYERS, SIZE_HAND);
   list<card> hands = deal(deck, distrib);
@@ -18,7 +25,6 @@ int main() {
     player[i].hand = hand;
     i++;
   }
-
   // bidding
   while (!end_bidding(&game)) {
     int last_bid = -1;
@@ -32,16 +38,17 @@ int main() {
     update_bid(&game, b);
   }
   if (printing >= 2) cout << endl;
-  int trash[0];
+
+  card trashskat;
+  int trashbid[N_PLAYERS];
   GameDeclaration gd;
   gd.trumpmask = game.trump;
   gd.contract = game.contract;
   for (int i = 0; i < N_PLAYERS; i++) {
-    ai[i]->SetTeams(game.team, trash);
-    ai[i]->DeclareGame(trash, &gd);
+    ai[i]->SetTeams(game.team, trashbid);
+    ai[i]->DeclareGame(trashskat, &gd);
     ai[i]->SetGame(&gd);
   }
-
   // trickgame
   while (!end_trickgame(&game)) {
     if (printing >= 4 && game.trick.empty()) {
@@ -57,9 +64,10 @@ int main() {
     }
     card c = ai[game.turn]->PlayCard();
     player[game.turn].hand &= ~c;
+
     if (printing >= 2) cout << endl << "P" << game.turn << " plays ";
     print_card(c, game.trump);
-    cout << endl;
+    //    cout << endl;
     if (game.trick.size() >= N_PLAYERS - 1) cout << endl;
 
     // update players knowledge and game
@@ -67,28 +75,7 @@ int main() {
     update_card(&game, c);
   }
   if (printing >= 2) {
-    cout << score(game, game.team[game.declarer]) << " - "
+    cout << "score " << score(game, game.team[game.declarer]) << " - "
          << score(game, game.team[game.declarer + 1 % N_PLAYERS]) << endl;
   }
 }
-
-// int main() {
-//   // initialization
-//   Player player[N_PLAYERS];
-//   for (int i = 0; i < N_PLAYERS; i++) {
-//     player[i].id = i;
-//     player[i].trickstrat = &alpha_beta;
-//   }
-//   Game game;
-
-//   // playing
-//   deal_hands(player);
-
-//   // initialize have_not with the not hands of players
-//   for (int i = 0; i < N_PLAYERS; i++)
-//     for (int j = 0; j < N_PLAYERS; j++) player[i].have_not[j] =
-//     ~player[j].hand;
-//   bidding(&game, player, 2);
-//   trickgame(&game, player, 4);
-//   return 0;
-// }

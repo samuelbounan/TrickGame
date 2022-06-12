@@ -4,8 +4,11 @@
 #include "card.h"
 
 struct GameDeclaration {
-  card trumpmask;
+  int game;
   int contract;
+  card trumpmask;
+  int limit;
+  int total;
 };
 
 class AI {
@@ -30,7 +33,7 @@ class AI {
    * team: wrt initial posn, 0/1 array of players
    * int* bid: highest bid of players
    *******************************************************************************/
-  virtual void DeclareGame(int* skat, GameDeclaration* gameDeclaration) = 0;
+  virtual void DeclareGame(card skat, GameDeclaration* gameDeclaration) = 0;
   /*******************************************************************************
    * called when ki has requested has to declare a game
    * Parameters:
@@ -45,14 +48,14 @@ class AI {
    * sGameDeclaration *gameDeclaration: pointer to Game Declaration struct
    *  values set: eGameType game,
    *******************************************************************************/
-  virtual void CardPlayed(int pos, card card) = 0;
+  virtual void CardPlayed(int pos, card c) = 0;
   /*******************************************************************************
    * called always when a card is played by a player
    * Parameters:
    * ePosition pos: position of player who played the card
    * card: card code of played card
    *******************************************************************************/
-  virtual int PlayCard(void) = 0;
+  virtual card PlayCard(void) = 0;
   /*******************************************************************************
    * called when ki has to play a card
    * Parameters: none

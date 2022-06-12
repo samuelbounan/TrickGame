@@ -5,6 +5,7 @@
 #include <list>      // lists
 
 #include "ai_samuel.h"
+#include "fox/fox.h"
 #include "bidstrat/interactive_bid.h"
 #include "play.h"
 #include "trickstrat/alpha_beta.h"

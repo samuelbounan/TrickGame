@@ -1,0 +1,102 @@
+# Doppelkopf playing program using expert knowledge, expert games, belief states, and-or search
+# (c) 2021-22, Stefan Edelkamp 
+#
+#######################################
+# CONFIG
+#######################################
+VERSION     = 2.1.3
+#######################################
+# CONSTANTS
+#######################################
+CC      	= g++ -O2
+EXECUTABLE 	= kiclientpool 
+TMPDIR      = /tmp
+ARCHIVE     = kiclientpool-v$(VERSION)
+EXECDIR 	= /usr/bin
+#######################################
+# Compiler Flags
+#######################################
+CFLAGS 		 = -std=c++1y
+#######################################
+# Defines
+#######################################
+
+
+DEFINES += -DCOPYRIGHT='"\nDoppelkopf playing program using expert knowledge, belief states, and-or search (c) 2022, Stefan Edelkamp\n"'
+
+DEFINES    += -DINTERACTPLAYER=3
+DEFINES    += -DDOPPEL
+# Print Information about Knowledge
+DEFINES     += -DKNOWLEDGEPRINT
+# DEFINES     += -DALLPRINT
+# DEFINES     += -DSHOWBELIEF
+# Unicode instead of Numbers
+DEFINES     += -DDISPLAY
+# DEFINES     += -DCERTAINTY
+
+# AI bids
+# DEFINES     += -DBIDDING
+
+# Switches for Factorized Search
+
+# DEFINES     += -DASTRUMP
+# DEFINES     += -DFACTORED
+
+# Switch for Hope Cards
+# DEFINES     += -DNOHOPE
+
+# Switch for Glassbox Analysis 
+# DEFINES     += -DONLYGLAS
+
+DEFINES     += -DCLIENTPOOL_VERSION='"$(VERSION)"'
+
+# Switch for online/offline play
+DEFINES     += -DFROMFILE
+
+# Switches for Endgame play
+DEFINES     += -DSUGGEST
+
+# Switches for Analysis Starting Cards 
+DEFINES     += -DFULLIITRICK=28
+DEFINES     += -DDIFFERENCE=3
+DEFINES     += -DBSDEPTH=25
+
+# Belief Space Size and Confidence Level
+DEFINES     += -DBSSIZE=10000
+DEFINES     += -DBSCONF=0.90
+
+# "Killer" Cards 
+DEFINES     += -DKILLER
+
+# Switch Optimization vs Decision Variants
+# DEFINES   += -DOPTCARD
+#######################################
+# Linker Flags
+#######################################
+LDFLAGS      += -lstdc++
+#######################################
+# BUILD OBJECTS
+#######################################
+CPP_FILES = $(wildcard *.cpp)
+OBJS = $(CPP_FILES:.cpp=.o)
+#######################################
+# RULES
+#######################################
+$(EXECUTABLE): $(OBJS)
+	$(CC) $(OBJS) -I. -o $(EXECUTABLE) $(LDFLAGS)
+
+%.o: %.cpp
+	$(CC) -L. -I. $(VERBOSITY) -c $(CFLAGS) $(DEFINES) $< -o $@
+
+clean:
+	@-rm -f $(EXECUTABLE) $(OBJS) *.tgz *.txt cards.h; ln -s doppel.h cards.h; 
+
+install:
+	@cp $(EXECUTABLE) $(EXECDIR)
+
+dist: clean
+	@-mkdir $(TMPDIR)/$(ARCHIVE)
+	@cp -a * $(TMPDIR)/$(ARCHIVE)
+	@tar czf $(ARCHIVE).tgz -C $(TMPDIR) $(ARCHIVE)
+	@-rm -rf $(TMPDIR)/$(ARCHIVE)
+	@echo Distribution package created as $(ARCHIVE).tgz
