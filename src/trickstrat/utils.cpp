@@ -17,9 +17,7 @@ try_again:
     // all cards that can be removed from possible for p
     list<card> poss_list = set_cards(~res[p] & ~only);
     vector<card> poss(poss_list.begin(), poss_list.end());
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(poss.begin(), poss.end(), g);
+    std::shuffle(poss.begin(), poss.end(), mt);
     auto it = poss.begin();
     unsigned k = 0;
     while ((N_CARDS - __builtin_popcountll(res[p])) != n_cards[p]) {

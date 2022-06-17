@@ -24,11 +24,10 @@ card higher(card c) { return ~((c << 1) - 1); }
 
 card lower(card c) { return c - 1; }
 
-list<card> deal(card deck, list<int> distribution) {
-  // srand(time(nullptr));
-  srand(0);
+list<card> deal(card deck, list<int> distribution, int seed) {
   list<card> res;
   card hand;
+  srand(seed);
 
   // for all number of cards to be dealt initialize an empty hand and
   for (int n_to_deal : distribution) {

@@ -1,6 +1,8 @@
 #include "random_card.h"
 
 card random_card(Game game, int id, card hand, card *have_not) {
-  list<card> res = deal(playable(hand, game), {1});
-  return res.front();
+  card plb = playable(hand, game);
+  int idx = mt() % __builtin_popcount(plb);
+  for (int i = 0; i < idx; i++) plb &= ~_card(__builtin_ctzll(plb));
+  return _card(__builtin_ctzll(plb));
 }

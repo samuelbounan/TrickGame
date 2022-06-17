@@ -8,7 +8,7 @@
  *
  * @param player
  */
-void deal_hands(Player *player);
+void deal_hands(Player *player, int seed);
 
 /**
  * @brief during the bidding phase, update the parameters of the game with the

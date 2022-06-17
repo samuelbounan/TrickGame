@@ -1,8 +1,8 @@
 #include "play.h"
 
-void deal_hands(Player *player) {
+void deal_hands(Player *player, int seed) {
   list<int> distrib(N_PLAYERS, SIZE_HAND);
-  list<card> hands = deal(deck, distrib);
+  list<card> hands = deal(deck, distrib, seed);
   int i = 0;
   for (auto hand : hands) {
     player[i].hand = hand;

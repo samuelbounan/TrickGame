@@ -91,7 +91,7 @@ llu approx_score(Game g, card *have_not) {
     for (j = 0; j < N_PLAYERS; j++) hand[j] = ~have_not[j];
     while (!end_trickgame(&gv)) {
       possible = playable(hand[gv.turn], gv);
-      rd = rand() % __builtin_popcountll(possible);
+      rd = mt() % __builtin_popcountll(possible);
       for (j = 0; j < rd; j++) possible &= ~(ONE << __builtin_ctzll(possible));
       c = ONE << __builtin_ctzll(possible);
       hand[gv.turn] &= ~c;

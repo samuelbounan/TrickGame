@@ -32,6 +32,9 @@ typedef unsigned long long int card;
 extern card deck;  // set of all cards
 #define ONE (card)1
 
+static std::random_device rd;
+static std::mt19937 mt{rd()};
+
 /**
  * @brief transform an index into a card
  *
@@ -79,6 +82,6 @@ card lower(card i);
  * 3
  * @return list<card> hands dealt
  */
-list<card> deal(card deck, list<int> distribution);
+list<card> deal(card deck, list<int> distribution, int seed);
 
 #endif

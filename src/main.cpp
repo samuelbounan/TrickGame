@@ -12,7 +12,7 @@ int main() {
   Game game;
 
   // playing
-  deal_hands(player);
+  deal_hands(player, 0);
   bidding(&game, player, 0);
   trickgame(&game, player, 4);
   return 0;
