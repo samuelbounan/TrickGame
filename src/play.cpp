@@ -26,6 +26,8 @@ void bidding(Game *game, Player *player, int printing) {
     }
     update_bid(game, player, b);
   }
+  for (int p = 0; p < N_PLAYERS; p++)
+    player[p].hand = sort(player[p].hand, game->trump);
   if (printing >= 2) cout << endl;
 }
 

@@ -113,16 +113,16 @@ bool end_bidding(Game *game) {
   return false;
 }
 
-card sort(card *hand, card trump) {
-  sort_high(hand, 2, trump);
-  sort_high(hand, 2, trump);
-  return *hand;
+card sort(card hand, card trump) {
+  sort_high(&hand, 2, trump);
+  sort_high(&hand, 2, trump);
+  return hand;
 }
 
-card unsort(card *hand, card trump) {
-  unsort_high(hand, 2, trump);
-  unsort_high(hand, 2, trump);
-  return *hand;
+card unsort(card hand, card trump) {
+  unsort_high(&hand, 2, trump);
+  unsort_high(&hand, 2, trump);
+  return hand;
 }
 
 card playable(card hand, Game game) {
@@ -197,7 +197,7 @@ int points_trick(Game game) {
 void sort_high(card *hand, int idx, card suit) {
   if (suit == 0) return;
   card c = _card(__builtin_ctzll(suit << idx));
-  card new_c = (card)((long long unsigned)suit + 1) >> 1;
+  card new_c = _card(sizeof(card) * 8 - 1 - __builtin_clzll(suit));
   card greater = higher(c) & suit;
   card shifted = (*hand & greater) >> 1;
   if (*hand & c) {
@@ -208,7 +208,7 @@ void sort_high(card *hand, int idx, card suit) {
 
 void unsort_high(card *hand, int idx, card suit) {
   if (suit == 0) return;
-  card c = (card)((long long unsigned)suit + 1) >> 1;
+  card c = _card(sizeof(card) * 8 - 1 - __builtin_clzll(suit));
   card new_c = _card(__builtin_ctzll(suit << idx));
   card greater = higher(new_c >> 1) & suit;
   card shifted = (*hand & (suit - c) & greater) << 1;
