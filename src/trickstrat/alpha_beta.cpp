@@ -3,9 +3,9 @@
 unordered_map<llu, pair<llu, card>> H_game;
 unordered_map<llu, llu> H_equi;
 int rec, n_equi;
-int max_depth = 14;
+int max_depth = 16;
 int n_sample = 3;
-int max_equi = 10000;
+int max_equi = 1000;
 
 llu snapg(Game g) {
   llu res = g.points[g.leader] * N_PLAYERS + g.leader;
@@ -61,25 +61,24 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
   n_equi = 0;
 
   auto start = std::chrono::high_resolution_clock::now();
-
   alpha_beta_aux(&game, have_not, alpha, 0);
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double, std::milli> total_t = end - start;
 
-  cout << "max depth: " << max_depth << endl;
-  cout << "rec " << rec << " - time " << total_t.count() << endl;
-  cout << "predicted score: " << sco(H_game[snapg(game)].first, 0) << " - "
-       << sco(H_game[snapg(game)].first, 1) << endl;
+  // cout << "max depth: " << max_depth << endl;
+  // cout << "rec " << rec << " - time " << total_t.count() << endl;
+  // cout << sco(H_game[snapg(game)].first, 0) << " - "
+  //      << sco(H_game[snapg(game)].first, 1) << endl;
   card possible = H_game[snapg(game)].second;
-  cout << "possible ";
-  print_card(possible, game.trump);
+  // cout << "possible ";
+  // print_card(possible, game.trump);
+  // cout << "total time: " << total_t.count() << " ms" << endl;
 
-  return set_cards(possible).front();
+  return possible;
 }
 
 llu approx_score(Game g, card *have_not) {
-  srand(time(nullptr));
   int i, j, rd;
   rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS - g.trick.size());
   int res[N_TEAMS] = {0};
@@ -98,18 +97,18 @@ llu approx_score(Game g, card *have_not) {
       hand[gv.turn] &= ~c;
       update_card(&gv, c);
     }
-    for (j = 0; j < N_TEAMS; j++) res[j] = score(gv, j);
+    for (j = 0; j < N_TEAMS; j++) res[j] += score(gv, j);
   }
   for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
   return snaps(res);
 }
 
 llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth) {
-  rec++;
+  llu opt_s = UINT64_MAX;
   llu g = snapg(*game);
+  rec++;
   if (game->trick.empty() && H_game.find(g) != H_game.end())
     return H_game[g].first;
-  llu opt_s = UINT64_MAX;
 
   if (end_trickgame(game)) {
     int scores[N_TEAMS];
@@ -157,15 +156,15 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth) {
         have_not[id] &= ~c;
         sco_tm = sco(s, tm);
 
-        if (sco_tm == alpha[tm])
-          opt_c |= c;
-        else if (sco_tm > alpha[tm]) {
+        // if (sco_tm == alpha[tm])
+        //   opt_c |= c;
+        if (sco_tm > alpha[tm]) {
           alpha[tm] = sco_tm;
           opt_c = c;
           opt_s = s;
         }
         for (i = 0; i < N_TEAMS; i++)
-          if ((i != tm) && (sco(s, i) < alpha[i])) {
+          if ((i != tm) && (sco(s, i) <= alpha[i])) {
             opt_s = s;
             opt_c = 0;
             goto prune_beta;
