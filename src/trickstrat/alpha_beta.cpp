@@ -3,7 +3,7 @@
 unordered_map<llu, pair<llu, card>> H_game;
 unordered_map<llu, llu> H_equi;
 int rec, n_equi;
-int max_depth = 33;
+int max_depth = 16;
 int n_sample = 3;
 int max_equi = 1000;
 
@@ -68,12 +68,12 @@ card alpha_beta(Game game, int id, card hand, card *have_not) {
 
   // cout << "max depth: " << max_depth << endl;
   // cout << "rec " << rec << " - time " << total_t.count() << endl;
-  cout << sco(H_game[snapg(game)].first, 0) << ", ";
-  // << " - " << sco(H_game[snapg(game)].first, 1) << endl;
+  // cout << sco(H_game[snapg(game)].first, 0) << " - "
+  //      << sco(H_game[snapg(game)].first, 1) << endl;
   card possible = H_game[snapg(game)].second;
-  cout << "possible ";
+  // cout << "possible ";
   // print_card(possible, game.trump);
-  cout << "total time: " << total_t.count() << " ms" << endl;
+  // cout << "total time: " << total_t.count() << " ms" << endl;
 
   return possible;
 }
@@ -97,7 +97,7 @@ llu approx_score(Game g, card *have_not) {
       hand[gv.turn] &= ~c;
       update_card(&gv, c);
     }
-    for (j = 0; j < N_TEAMS; j++) res[j] = score(gv, j);
+    for (j = 0; j < N_TEAMS; j++) res[j] += score(gv, j);
   }
   for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
   return snaps(res);
@@ -105,9 +105,8 @@ llu approx_score(Game g, card *have_not) {
 
 llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth) {
   llu opt_s = UINT64_MAX;
-  rec++;
-
   llu g = snapg(*game);
+  rec++;
   if (game->trick.empty() && H_game.find(g) != H_game.end())
     return H_game[g].first;
 
@@ -157,15 +156,15 @@ llu alpha_beta_aux(Game *game, card *have_not, int *alpha, int depth) {
         have_not[id] &= ~c;
         sco_tm = sco(s, tm);
 
-        if (sco_tm == alpha[tm])
-          opt_c |= c;
-        else if (sco_tm > alpha[tm]) {
+        // if (sco_tm == alpha[tm])
+        //   opt_c |= c;
+        if (sco_tm > alpha[tm]) {
           alpha[tm] = sco_tm;
           opt_c = c;
           opt_s = s;
         }
         for (i = 0; i < N_TEAMS; i++)
-          if ((i != tm) && (sco(s, i) < alpha[i])) {
+          if ((i != tm) && (sco(s, i) <= alpha[i])) {
             opt_s = s;
             opt_c = 0;
             goto prune_beta;

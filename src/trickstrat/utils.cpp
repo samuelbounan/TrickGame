@@ -1,6 +1,9 @@
 #include "utils.h"
 
-void random_world(card *res, Game game) {
+void random_world(card *res, card *have_not, Game game) {
+try_again:
+  copy_n(have_not, N_PLAYERS, res);
+
   int n_cards[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) n_cards[i] = SIZE_HAND - game.round;
   for (int p = game.leader; p != game.turn; p = ((p + 1) % N_PLAYERS))
@@ -18,7 +21,10 @@ void random_world(card *res, Game game) {
     std::mt19937 g(rd());
     std::shuffle(poss.begin(), poss.end(), g);
     auto it = poss.begin();
-    while ((N_CARDS - __builtin_popcountll(res[p])) != n_cards[p])
+    unsigned k = 0;
+    while ((N_CARDS - __builtin_popcountll(res[p])) != n_cards[p]) {
+      if (k >= poss.size()) goto try_again;
       res[p] |= *(it++);
+    }
   }
 }
