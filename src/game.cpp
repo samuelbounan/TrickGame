@@ -35,3 +35,26 @@ void Game::removeCard(pair<int, int> info) {
   remaining |= trick.back();
   trick.pop_back();
 }
+
+void Game::print() {
+  cout << "GAME: con " << contract;
+  cout << "/ dec " << declarer;
+  cout << "/ tru ";
+  print_vector(trump);
+  cout << "points [";
+  for (int i = 0; i < N_PLAYERS; i++) {
+    cout << points[i];
+    if (i != N_PLAYERS - 1)
+      cout << ",";
+    else
+      cout << "]/ ";
+  }
+  cout << "rnd " << round;
+  cout << "/ lea " << leader;
+  cout << "/ trn " << turn;
+  cout << "/ rem ";
+  print_vector(remaining);
+  cout << "trick:" << endl;
+  for (auto c : trick) print_vector(c);
+  cout << endl;
+}

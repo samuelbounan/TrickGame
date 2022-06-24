@@ -6,8 +6,6 @@ void deal_hands(Player *player, int seed) {
   int i = 0;
   for (auto hand : hands) {
     player[i].hand = hand;
-    for (int j = 0; j < N_PLAYERS; j++) player[i].have_not[j] = hand;
-    player[i].have_not[i] = ~hand;
     i++;
   }
 }
@@ -54,7 +52,11 @@ pair<int, int> update_card(Game *game, card c) {
 
 void trickgame(Game *game, Player *player, int printing) {
   while (!end_trickgame(game)) {
-    if (printing >= 4 && game->trick.empty()) print(*game, player);
+    if (printing >= 3 && game->trick.empty()) print(*game, player);
+    if (printing >= 4) {
+      game->print();
+      for (int i = 0; i < N_PLAYERS; i++) player[i].print(game->trump);
+    }
     card c = player[game->turn].playCard(*game);
     if (printing >= 2) {
       cout << endl << "P" << game->turn << " plays ";
@@ -66,7 +68,7 @@ void trickgame(Game *game, Player *player, int printing) {
     for (int p = 0; p < N_PLAYERS; p++) player[p].updateBelief(*game, c);
     update_card(game, c);
   }
-  if (printing >= 2) {
+  if (printing >= 1) {
     cout << "delarer score: " << score(*game, game->team[game->declarer])
          << endl;
   }

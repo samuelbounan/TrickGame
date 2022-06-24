@@ -50,3 +50,16 @@ make```
 - game over when N_ROUNDS are played
 - With alpha-beta, if number of teams > 2, algo doesn't find all solutions
 - ab: for equivalence, suits need to be connex (bit vector)
+
+### Printing
+
+Several levels of printing are allowed. One level includes every inferior level
+- 0: prints nothing
+- 1: prints only the score obtained
+- 2: prints game as a spectator
+- 3: prints game as an omniscient spectator
+- 4: prints every attribute of the players and the game
+- 5: prints also the main actions of the trickstrat
+- 6: prints details of trickstrat level 1 (basic actions)
+- 7: prints details of trickstrat level 2 (should not overflow)
+- 8: prints details of trickstrat level 3 (could overflow)

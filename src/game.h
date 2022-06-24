@@ -48,6 +48,8 @@ class Game {
   void newRound(int winner, int pts);
 
   void removeCard(pair<int, int>);
+
+  void print();
 };
 
 #endif

@@ -39,6 +39,8 @@ class Player {
    * @param c
    */
   void updateBelief(Game game, card c);
+
+  void print(card trump);
 };
 
 #endif
