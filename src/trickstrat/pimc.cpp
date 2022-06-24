@@ -4,8 +4,8 @@ card pimc(Game game, int id, card hand, card *have_not) {
   if (PRINTING >= 5) cout << "PIMC" << endl;
 
   // hyperparameters
-  int n_sample = 5;
-  int depth_ab = 12;
+  int n_sample = 1;
+  int depth_ab = 33;
   int n_sample_ab = 3;
 
   // for each card gen a random world and add one vote for the best card

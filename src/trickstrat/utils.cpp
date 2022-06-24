@@ -74,7 +74,7 @@ bool aos_aux(Game *g, card *world, int threshold) {
   int id = g->turn;
   card possible = 0;
   card previous = 0;
-  card playb = playable(~world[id], *g);
+  card playb = playable(world[id], *g);
   card c;
   card rem_eq = g->remaining;
   while (playb) {
@@ -99,13 +99,13 @@ bool aos_aux(Game *g, card *world, int threshold) {
   while (possible && explore) {
     c = ONE << __builtin_ctzll(possible);
     info = update_card(g, c);
-    world[id] |= c;
+    world[id] &= ~c;
     res_aos = aos_aux(g, world, threshold);
     if ((res_aos && decl_team) || (!res_aos && !decl_team)) {
       explore = false;
       decl_team = !decl_team;
     }
-    world[id] &= ~c;
+    world[id] |= c;
     g->removeCard(info);
     possible &= ~c;
   }
@@ -176,26 +176,36 @@ llu approx_score(Game g, card *world) {
 llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
   llu opt_s = UINT64_MAX;
   llu g = snapg(*game);
+  int i, id = game->turn;
+  int tm = game->team[id];
   rec++;
   if (game->trick.empty() && H_game.find(g) != H_game.end())
     return H_game[g].first;
 
   // end case
-  if (end_trickgame(game)) {
-    int scores[N_TEAMS];
-    for (int i = 0; i < N_TEAMS; i++) scores[i] = score(*game, i);
+  int scores[N_TEAMS];
+  bool end_search = end_trickgame(game);
+  int points_left = MAX_SCORE;
+  for (i = 0; i < N_TEAMS; i++) {
+    scores[i] = score(*game, i);
+    points_left -= scores[i];
+  }
+  for (i = 0; i < N_TEAMS; i++)
+    if (points_left + scores[i] < alpha[i]) {
+      scores[i] += points_left;
+      end_search = true;
+    }
+  if (end_search)
     opt_s = snaps(scores);
-  } else if (depth >= max_depth)
+  else if (depth >= max_depth)
     opt_s = approx_score(*game, world);
 
   // rec case
   else {
     card c, opt_c = 0;
     llu s;
-    int i, id = game->turn;
-    int tm = game->team[id];
     int alpha_init = alpha[tm];
-    int sco_tm;
+    int i, sco_tm;
 
     // order search
     card possible = 0;
@@ -232,11 +242,14 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
         world[id] |= c;
         sco_tm = sco(s, tm);
 
-        if ((PRINTING >= 8) || (depth < 1 && PRINTING >= 7)) {
-          for (int i = 0; i < depth; i++) cout << "  ";
+#if PRINTING > 6
+        if (PRINTING > 7 || depth < 1) {
+          for (i = 0; i < depth; i++) cout << "  ";
           cout << "tested (" << sco_tm << "): ";
           print_card(c, game->trump);
         }
+#endif
+
         if (sco_tm == alpha[tm]) opt_c |= c;
         if (sco_tm > alpha[tm]) {
           alpha[tm] = sco_tm;
