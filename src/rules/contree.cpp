@@ -101,11 +101,10 @@ bool end_bidding(Game *game) {
     } else
       n_passes++;
   }
-
   if (n_passes >= N_PLAYERS - 1) {
     game->trump = suits[(last_bid - 3) % 4];
     game->contract = last_bid;
-    game->declarer = game->leader;
+    game->declarer = game->turn;
     for (int i = 0; i < N_PLAYERS; i++) game->team[i] = i % 2;
     game->turn = game->leader;
     return true;

@@ -21,8 +21,10 @@ class Game {
   card remaining = deck;        // cards not played yet
   int points[N_PLAYERS] = {0};  // points of each player
   int round = 0;                // index of the round
-  int leader = 0;               // player at the beginning of current trick
+  int leader;                   // player at the beginning of current trick
   int turn = 0;                 // player that has to play
+
+  Game(int first = 0) : leader(first){};
 
   /**
    * @brief ajust game parameters when a bid is played

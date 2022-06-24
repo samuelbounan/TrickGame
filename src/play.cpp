@@ -15,6 +15,7 @@ void update_bid(Game *game, Player *player, int bid) {
 }
 
 void bidding(Game *game, Player *player, int printing) {
+  game->turn = game->leader;
   while (!end_bidding(game)) {
     int b = player[game->turn].playBid(*game);
     if (printing >= 2) {
@@ -52,8 +53,9 @@ pair<int, int> update_card(Game *game, card c) {
 
 void trickgame(Game *game, Player *player, int printing) {
   while (!end_trickgame(game)) {
-    if (printing >= 3 && game->trick.empty()) print(*game, player);
-    if (printing >= 4) {
+    if (printing == 3 && game->trick.empty())
+      print(*game, player);
+    else if (printing >= 4) {
       game->print();
       for (int i = 0; i < N_PLAYERS; i++) player[i].print(game->trump);
     }
@@ -68,10 +70,8 @@ void trickgame(Game *game, Player *player, int printing) {
     for (int p = 0; p < N_PLAYERS; p++) player[p].updateBelief(*game, c);
     update_card(game, c);
   }
-  if (printing >= 1) {
-    cout << "delarer score: " << score(*game, game->team[game->declarer])
-         << endl;
-  }
+  if (printing > 0)
+    cout << "score: " << score(*game, game->team[game->declarer]) << endl;
 }
 
 void print(Game game, Player *player) {

@@ -136,7 +136,6 @@ card alpha_beta(Game game, int id, card hand, card *world, int max_depth_ab,
   card possible = H_game[snapg(game)].second;
 
   if (PRINTING >= 6) {
-    cout << "max depth " << max_depth << " / ";
     cout << "rec " << rec << " / time " << total_t.count() << "ms / ";
     cout << sco(H_game[snapg(game)].first, 0) << " - "
          << sco(H_game[snapg(game)].first, 1) << endl;
@@ -299,11 +298,11 @@ try_again:
     list<card> poss_list = set_cards(~res[p] & ~only);
     vector<card> poss(poss_list.begin(), poss_list.end());
     std::shuffle(poss.begin(), poss.end(), mt);
-    auto it = poss.begin();
     unsigned k = 0;
     while ((N_CARDS - __builtin_popcountll(res[p])) != n_cards[p]) {
       if (k >= poss.size()) goto try_again;
-      res[p] |= *(it++);
+      res[p] |= poss[k];
+      k++;
     }
   }
   for (int i = 0; i < N_PLAYERS; i++) {
