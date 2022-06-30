@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 L = []
 
 with open('result.txt') as f:
+    f.readline()
     for line in f:
         L.append(int(line))
     f.close()

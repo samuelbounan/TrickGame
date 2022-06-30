@@ -22,7 +22,7 @@ using namespace std;
 #define SIZE_HAND 8
 #define N_TEAMS 2
 #define MAX_SCORE 162
-#define PRINTING 7
+#define PRINTING 1
 ///////////////////////
 
 #if N_CARDS <= 32
