@@ -19,7 +19,7 @@ class Game {
   list<card> trick;             // list (queue) of cards played during the round
   list<card> played[N_ROUNDS];  // cards played by each player at each round
   card remaining = deck;        // cards not played yet
-  int points[N_PLAYERS] = {0};  // points of each player
+  int points[2] = {0};          // points of each team
   int round = 0;                // index of the round
   int leader;                   // player at the beginning of current trick
   int turn = 0;                 // player that has to play

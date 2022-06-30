@@ -88,15 +88,6 @@ int points_trick(Game game);
  */
 bool end_trickgame(Game *game);
 
-/**
- * @brief score of a player in a game
- *
- * @param game
- * @param p
- * @return int
- */
-int score(Game game, int p);
-
 /// Implementation independent to the games rules
 
 /**

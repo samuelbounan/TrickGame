@@ -71,12 +71,12 @@ void trickgame(Game *game, Player *player, int printing) {
     update_card(game, c);
   }
   if (printing > 0)
-    cout << "score: " << score(*game, game->team[game->declarer]) << endl;
+    cout << "score: " << game->points[game->team[game->declarer]] << endl;
 }
 
 void print(Game game, Player *player) {
-  cout << "Declarer P" << game.declarer << " - " << game.points[game.declarer]
-       << "/";
+  cout << "Declarer P" << game.declarer << " - "
+       << game.points[game.team[game.declarer]] << "/";
   print_bid({game.contract});
   cout << endl << "round " << game.round << endl;
   for (int i = 0; i < N_PLAYERS; i++) {

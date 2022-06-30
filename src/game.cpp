@@ -12,8 +12,7 @@ void Game::newTurn(card c) {
 }
 
 void Game::newRound(int winner, int pts) {
-  for (int i = 0; i < N_PLAYERS; i++)
-    if (team[winner] == team[i]) points[i] += pts;
+  points[team[winner]] += pts;
   list<card> last_trick(trick);
   played[round] = last_trick;
   trick.clear();
@@ -25,8 +24,7 @@ void Game::newRound(int winner, int pts) {
 void Game::removeCard(pair<int, int> info) {
   if (trick.empty()) {
     round--;
-    for (int i = 0; i < N_PLAYERS; i++)
-      if (team[leader] == team[i]) points[i] -= info.first;
+    points[team[leader]] -= info.first;
     turn = info.second;
     leader = (turn + 1) % N_PLAYERS;
     trick = played[round];
@@ -41,14 +39,7 @@ void Game::print() {
   cout << "/ dec " << declarer;
   cout << "/ tru ";
   print_vector(trump);
-  cout << "points [";
-  for (int i = 0; i < N_PLAYERS; i++) {
-    cout << points[i];
-    if (i != N_PLAYERS - 1)
-      cout << ",";
-    else
-      cout << "]/ ";
-  }
+  cout << "points [" << points[0] << ", " << points[1] << "]/ ";
   cout << "rnd " << round;
   cout << "/ lea " << leader;
   cout << "/ trn " << turn;

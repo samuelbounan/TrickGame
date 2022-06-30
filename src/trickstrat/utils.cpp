@@ -6,7 +6,7 @@ unordered_map<llu, llu> H_equi;
 int rec, n_equi, n_sample, max_equi, max_depth;
 
 llu snapg(Game g) {
-  llu res = g.points[g.leader] * N_PLAYERS + g.leader;
+  llu res = g.points[g.team[g.leader]] * N_PLAYERS + g.leader;
   for (card c : g.trick) {
     res *= N_CARDS;
     res += __builtin_ctzll(c);
@@ -32,7 +32,7 @@ llu snapeq(Game g) {
 
 llu snaps(int *scores) {
   llu s = 0;
-  for (int i = N_TEAMS - 1; i >= 0; i--) {
+  for (int i = 1; i >= 0; i--) {
     int x = scores[i];
     if (x >= 0)
       s += 2 * x;
@@ -58,9 +58,9 @@ bool aos(Game *g, card *world, int threshold) {
 
 bool aos_aux(Game *g, card *world, int threshold) {
   // end case
-  if (g->points[g->declarer] >= threshold) return true;
-  if (g->points[(g->declarer + 1) % N_PLAYERS] > MAX_SCORE - threshold)
-    return false;
+  int team_decl = g->team[g->declarer];
+  if (g->points[team_decl] >= threshold) return true;
+  if (g->points[1 - team_decl] > MAX_SCORE - threshold) return false;
 
   // check if saved
   bool write_H = g->trick.empty();
@@ -123,8 +123,8 @@ card alpha_beta(Game game, int id, card hand, card *world, int max_depth_ab,
   n_sample = n_sample_ab;
 
   // run aux
-  int alpha[N_TEAMS];
-  for (int i = 0; i < N_TEAMS; i++) alpha[i] = -1;
+  int alpha[2];
+  for (int i = 0; i < 2; i++) alpha[i] = -1;
 
   if (PRINTING >= 7) cout << "run ab_aux" << endl;
 
@@ -150,7 +150,7 @@ card alpha_beta(Game game, int id, card hand, card *world, int max_depth_ab,
 llu approx_score(Game g, card *world) {
   int i, j, rd;
   rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS - g.trick.size());
-  int res[N_TEAMS] = {0};
+  int res[2] = {0};
   int world_cp[N_PLAYERS];
   card possible, c;
   Game g_cp;
@@ -166,9 +166,9 @@ llu approx_score(Game g, card *world) {
       world_cp[g_cp.turn] &= ~c;
       update_card(&g_cp, c);
     }
-    for (j = 0; j < N_TEAMS; j++) res[j] += score(g_cp, j);
+    for (j = 0; j < 2; j++) res[j] += g_cp.points[j];
   }
-  for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
+  for (int t = 0; t < 2; t++) res[t] /= n_sample;
   return snaps(res);
 }
 
@@ -182,21 +182,19 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
     return H_game[g].first;
 
   // end case
-  int scores[N_TEAMS];
   bool end_search = end_trickgame(game);
-  int points_left = MAX_SCORE;
-  for (i = 0; i < N_TEAMS; i++) {
-    scores[i] = score(*game, i);
-    points_left -= scores[i];
-  }
-  for (i = 0; i < N_TEAMS; i++)
-    if (points_left + scores[i] < alpha[i]) {
-      scores[i] += points_left;
+  int points_left = MAX_SCORE - game->points[0] - game->points[1];
+  int save_loser = 0;
+  for (i = 0; i < 2; i++)
+    if (points_left + game->points[i] < alpha[i]) {
+      game->points[i] += points_left;
       end_search = true;
+      save_loser = i;
     }
-  if (end_search)
-    opt_s = snaps(scores);
-  else if (depth >= max_depth)
+  if (end_search) {
+    opt_s = snaps(game->points);
+    game->points[save_loser] -= points_left;
+  } else if (depth >= max_depth)
     opt_s = approx_score(*game, world);
 
   // rec case
@@ -255,7 +253,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
           opt_c = c;
           opt_s = s;
         }
-        for (i = 0; i < N_TEAMS; i++)
+        for (i = 0; i < 2; i++)
           if ((i != tm) && (sco(s, i) < alpha[i])) {
             opt_s = s;
             opt_c = 0;
