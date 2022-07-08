@@ -7,7 +7,7 @@ card hope_card(Game game, int id, card hand, card *have_not) {
   int n_sample = 10;
 
   // for each card gen a random world and add one vote for the best card
-  card playb = playable(hand, game);
+  card playb = legal(hand, game);
   int n_playb = __builtin_popcountll(playb);
   int won[n_playb];
   card outcome[n_playb];

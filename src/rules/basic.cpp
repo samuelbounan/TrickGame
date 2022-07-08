@@ -54,7 +54,7 @@ card sort(card *hand, card trump) { return *hand; };
 
 card unsort(card *hand, card trump) { return *hand; };
 
-card playable(card hand, Game game) {
+card legal(card hand, Game game) {
   // if (!game.trick.empty() && hand & higher(game.trick.front()))
   //   return hand & higher(game.trick.front());
   return hand;

@@ -54,13 +54,13 @@ card sort(card hand, card trump);
 card unsort(card hand, card trump);
 
 /**
- * @brief cards that are playable in current situation, with hand
+ * @brief cards that are legal in current situation, with hand
  *
  * @param hand
  * @param game
  * @return card
  */
-card playable(card hand, Game game);
+card legal(card hand, Game game);
 
 /**
  * @brief determines the player who won the current trick in game

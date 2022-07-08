@@ -11,7 +11,7 @@ card Player::playCard(Game game) {
 void Player::updateBelief(Game game, card c) {
   for (int p = 0; p < N_PLAYERS; p++) have_not[p] |= c;
   for (card cand : set_cards(~have_not[game.turn]))
-    if ((c & playable(c | cand, game)) == 0) have_not[game.turn] |= cand;
+    if ((c & legal(c | cand, game)) == 0) have_not[game.turn] |= cand;
 }
 
 void Player::print(card trump) {

@@ -124,8 +124,8 @@ card unsort(card hand, card trump) {
   return hand;
 }
 
-card playable(card hand, Game game) {
-  if (game.trick.empty()) return hand;  // if leader everything is playable
+card legal(card hand, Game game) {
+  if (game.trick.empty()) return hand;  // if leader everything is legal
   card first_played = game.trick.front();
   for (card suit : suits)
     if (first_played & suit) {

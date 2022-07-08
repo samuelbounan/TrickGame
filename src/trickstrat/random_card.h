@@ -4,7 +4,7 @@
 #include "../rules.h"
 
 /**
- * @brief strategy of the player random among playable
+ * @brief strategy of the player random among legal
  *
  * @param game current situation
  * @param id of the player

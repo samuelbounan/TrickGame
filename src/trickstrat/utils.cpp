@@ -74,7 +74,7 @@ bool aos_aux(Game *g, card *world, int threshold) {
   int id = g->turn;
   card possible = 0;
   card previous = 0;
-  card playb = playable(world[id], *g);
+  card playb = legal(world[id], *g);
   card c;
   card rem_eq = g->remaining;
   while (playb) {
@@ -159,7 +159,7 @@ llu approx_score(Game g, card *world) {
     g_cp = g;
     copy_n(world, N_PLAYERS, world_cp);
     while (!end_trickgame(&g_cp)) {
-      possible = playable(world_cp[g_cp.turn], g_cp);
+      possible = legal(world_cp[g_cp.turn], g_cp);
       rd = mt() % __builtin_popcountll(possible);
       for (j = 0; j < rd; j++) possible &= ~(ONE << __builtin_ctzll(possible));
       c = ONE << __builtin_ctzll(possible);
@@ -207,7 +207,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
     // order search
     card possible = 0;
     card previous = 0;
-    card playb = playable(world[id], *game);
+    card playb = legal(world[id], *game);
     card rem_eq = game->remaining;
     while (playb) {
       c = ONE << __builtin_ctzll(playb);
