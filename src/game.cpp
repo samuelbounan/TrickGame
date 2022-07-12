@@ -5,7 +5,7 @@ void Game::newBid(int b, int p) {
   turn = p;
 }
 
-void Game::newTurn(card c) {
+void Game::newTurn(const card& c) {
   trick.push_back(c);
   remaining &= ~c;
   turn = (turn + 1) % N_PLAYERS;
@@ -21,7 +21,7 @@ void Game::newRound(int winner, int pts) {
   turn = leader;
 }
 
-void Game::removeCard(pair<int, int> info) {
+void Game::removeCard(const pair<int, int>& info) {
   if (trick.empty()) {
     round--;
     points[team[leader]] -= info.first;

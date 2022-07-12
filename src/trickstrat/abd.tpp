@@ -1,19 +1,24 @@
 #include "abd.h"
 
 template <typename Value>
-card abd(Game g, card** w, unsigned valid_worlds, Value* alpha,
-         Algorithm algo) {
-  unordered_map<Game, Value> H;
+card abd(Game g, card w[][N_PLAYERS], Algorithm algo) {
+  card card_res = 0;
   Value res[N_PLAYERS];
-  abd_aux(res, g, w, valid_worlds, alpha, H);
-  return 0;
+  unsigned valid_worlds = (((unsigned)1) << algo.n_worlds) - 1;
+  Value alpha[N_PLAYERS];
+  algo.init_alpha(alpha);
+  unordered_map<Game, Value[N_PLAYERS]> H;
+  abd_aux(card_res, res, g, w, valid_worlds, alpha, algo, H, 0);
+  H.clear();
+  return card_res;
 }
 
 template <typename Value>
-void abd_aux(Value* res, Game& g, card** w, unsigned valid_worlds,
-             Value* _alpha, Algorithm algo, unordered_map<Game, Value> H) {
+void abd_aux(card& card_res, Value* res, Game& g, card w[][N_PLAYERS],
+             unsigned& valid_worlds, Value* _alpha, Algorithm algo,
+             unordered_map<Game, Value[N_PLAYERS]>& H, int depth) {
   // init
-  bool save_H = g.trick.empty();
+  bool save_H = g.trick.empty() || depth <= 1;
   Value init[N_PLAYERS];
   if (save_H && H.find(g) != H.end()) {
     copy_n(H[g], N_PLAYERS, init);
@@ -50,12 +55,12 @@ void abd_aux(Value* res, Game& g, card** w, unsigned valid_worlds,
     int id_w = __builtin_ctzll(valid_worlds_copy);
     unsigned vc_w = ((unsigned)1) << id_w;
     valid_worlds_copy &= ~vc_w;
-    card legal = legal(w[id_w][id], g);
-    possible |= legal;
-    while (~legal) {
-      int id_c = __builtin_ctzll(~legal);
-      legal |= ONE << id_c;
-      valid_world[id_c] &= ~vc_w;
+    card legal_w = legal(w[id_w][id], g);
+    possible |= legal_w;
+    while (~legal_w) {
+      int id_c = __builtin_ctzll(~legal_w);
+      legal_w |= ONE << id_c;
+      valid_with[id_c] &= ~vc_w;
     }
   }
 
@@ -87,7 +92,7 @@ void abd_aux(Value* res, Game& g, card** w, unsigned valid_worlds,
     }
     new_valid = valid_with[id_c];
     Value v[N_PLAYERS];
-    abd_aux(v, g, w, new_valid, alpha, algo, H);
+    abd_aux(card_res, v, g, w, new_valid, alpha, algo, H, depth + 1);
     while (new_valid) {
       int id_w = __builtin_ctzll(new_valid);
       new_valid &= ~(((unsigned)1) << id_w);
@@ -96,10 +101,13 @@ void abd_aux(Value* res, Game& g, card** w, unsigned valid_worlds,
     g.removeCard(update_save);
 
     // update alpha and res
-    max(id, alpha[id], v[id], alpha[id]);
+    max(id, alpha[id], v[id], algo, alpha[id]);
     if (algo.lower(id, res[id], v[id])) {
       for (int i = 0; i < N_PLAYERS; i++) {
-        copy(v[i], res[i]);
+        algo.copy(v[i], res[i]);
+        if (depth == 0) {
+          card_res = c;
+        }
       }
     } else if (!algo.lower(id, v[id], res[id])) {
       for (int i = 0; i < N_PLAYERS; i++) {
@@ -107,8 +115,11 @@ void abd_aux(Value* res, Game& g, card** w, unsigned valid_worlds,
       }
     }
   }
+end:
   if (save_H) {
-    H[g] = res;
+    for (int i = 0; i < N_PLAYERS; i++) {
+      H[g][i] = res[i];
+    }
   }
 }
 

@@ -26,6 +26,15 @@ class Game {
 
   Game(int first = 0) : leader(first){};
 
+  bool operator==(const Game& other) const {
+    bool res = (remaining == other.remaining && leader == other.leader &&
+                turn == other.turn);
+    for (int i = 0; i < 2; i++) {
+      if (points[i] != other.points[i]) res = false;
+    }
+    return res;
+  }
+
   /**
    * @brief ajust game parameters when a bid is played
    *
@@ -39,7 +48,7 @@ class Game {
    *
    * @param c card played
    */
-  void newTurn(card c);
+  void newTurn(const card& c);
 
   /**
    * @brief ajust game parameters when a round is over
@@ -49,9 +58,22 @@ class Game {
    */
   void newRound(int winner, int pts);
 
-  void removeCard(pair<int, int>);
+  void removeCard(const pair<int, int>& info);
 
   void print();
+};
+
+template <>
+struct std::hash<Game> {
+  std::size_t operator()(const Game& g) const {
+    using std::hash;
+    unsigned x = g.turn * N_PLAYERS + g.leader;
+    for (int i = 0; i < 2; i++) {
+      x *= (MAX_SCORE + 1);
+      x += g.points[i];
+    }
+    return (hash<card>()(g.remaining) ^ hash<unsigned>()(x));
+  }
 };
 
 #endif

@@ -35,7 +35,7 @@ void bidding(Game *game, Player *player, int printing);
  * @param c
  * @return {eventual points, former turn}
  */
-pair<int, int> update_card(Game *game, card c);
+pair<int, int> update_card(Game *game, const card &c);
 
 /**
  * @brief tricktaking game played until round = N_ROUNDS
@@ -52,6 +52,6 @@ void trickgame(Game *game, Player *player, int printing);
  * @param game
  * @param player
  */
-void print(Game game, Player *player);
+void print(const Game &game, Player *player);
 
 #endif

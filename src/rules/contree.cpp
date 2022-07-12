@@ -49,7 +49,7 @@ char bidname[N_BIDS][80] = {"pass",
                             "All\u001b[31m\u2665\u001b[0m",
                             "All\u001b[34m\u2660\u001b[0m"};
 
-card clubs = (_card(N_CARDS / N_SUITS)) - 1;
+card clubs = (ONE << (N_CARDS / N_SUITS)) - 1;
 card diamo = clubs << (N_CARDS / N_SUITS);
 card heart = diamo << (N_CARDS / N_SUITS);
 card spade = heart << (N_CARDS / N_SUITS);
@@ -112,19 +112,19 @@ bool end_bidding(Game *game) {
   return false;
 }
 
-card sort(card hand, card trump) {
+card sort(card hand, const card &trump) {
   sort_high(&hand, 2, trump);
   sort_high(&hand, 2, trump);
   return hand;
 }
 
-card unsort(card hand, card trump) {
+card unsort(card hand, const card &trump) {
   unsort_high(&hand, 2, trump);
   unsort_high(&hand, 2, trump);
   return hand;
 }
 
-card legal(card hand, Game game) {
+card legal(const card &hand, const Game &game) {
   if (game.trick.empty()) return hand;  // if leader everything is legal
   card first_played = game.trick.front();
   for (card suit : suits)
@@ -149,7 +149,7 @@ card legal(card hand, Game game) {
   return hand;  // piss
 }
 
-int winner_trick(Game game) {
+int winner_trick(const Game &game) {
   if (game.trick.empty()) return game.leader;
 
   // init best_card and best_suit with the first card played
@@ -184,19 +184,19 @@ int tab_points_card[N_CARDS] = {0,  0,  3, 4,  10, 11, 14, 20, 0,  0, 0,
                                 2,  3,  4, 10, 11, 0,  0,  0,  2,  3, 4,
                                 10, 11, 0, 0,  0,  2,  3,  4,  10, 11};
 
-int points_card(card c) { return tab_points_card[__builtin_ctz(c)]; }
+int points_card(const card &c) { return tab_points_card[__builtin_ctz(c)]; }
 
-int points_trick(Game game) {
+int points_trick(const Game &game) {
   int res = 0;
   for (card c : game.trick) res += points_card(c);
   if (game.round == N_ROUNDS - 1) res += 10;
   return res;
 }
 
-void sort_high(card *hand, int idx, card suit) {
+void sort_high(card *hand, int idx, const card &suit) {
   if (suit == 0) return;
-  card c = _card(__builtin_ctzll(suit << idx));
-  card new_c = _card(sizeof(card) * 8 - 1 - __builtin_clzll(suit));
+  card c = ONE << (__builtin_ctzll(suit << idx));
+  card new_c = ONE << (sizeof(card) * 8 - 1 - __builtin_clzll(suit));
   card greater = higher(c) & suit;
   card shifted = (*hand & greater) >> 1;
   if (*hand & c) {
@@ -205,10 +205,10 @@ void sort_high(card *hand, int idx, card suit) {
     *hand = (*hand & ~greater) | shifted;
 }
 
-void unsort_high(card *hand, int idx, card suit) {
+void unsort_high(card *hand, int idx, const card &suit) {
   if (suit == 0) return;
-  card c = _card(sizeof(card) * 8 - 1 - __builtin_clzll(suit));
-  card new_c = _card(__builtin_ctzll(suit << idx));
+  card c = ONE << (sizeof(card) * 8 - 1 - __builtin_clzll(suit));
+  card new_c = ONE << (__builtin_ctzll(suit << idx));
   card greater = higher(new_c >> 1) & suit;
   card shifted = (*hand & (suit - c) & greater) << 1;
   if (*hand & c) {

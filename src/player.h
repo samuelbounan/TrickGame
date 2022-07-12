@@ -30,7 +30,7 @@ class Player {
    * @param game
    * @return card
    */
-  card playCard(Game game);
+  card playCard(const Game &game);
 
   /**
    * @brief update player knowledge according to the card played
@@ -38,9 +38,9 @@ class Player {
    * @param game
    * @param c
    */
-  void updateBelief(Game game, card c);
+  void updateBelief(const Game &game, const card &c);
 
-  void print(card trump);
+  void print(const card &trump);
 };
 
 #endif

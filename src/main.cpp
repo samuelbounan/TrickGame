@@ -7,7 +7,7 @@ int main() {
   Player player[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
-    player[i].trickstrat = &pimc;
+    player[i].trickstrat = &ab;
   }
   for (int seed = 0; seed < 1; seed++) {
     // playing

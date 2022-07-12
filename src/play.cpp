@@ -33,7 +33,7 @@ void bidding(Game *game, Player *player, int printing) {
   if (printing >= 2) cout << endl;
 }
 
-pair<int, int> update_card(Game *game, card c) {
+pair<int, int> update_card(Game *game, const card &c) {
   // forfeiting
   if (c == 0) {
     game->round = N_ROUNDS;
@@ -74,7 +74,7 @@ void trickgame(Game *game, Player *player, int printing) {
     cout << "score: " << game->points[game->team[game->declarer]] << endl;
 }
 
-void print(Game game, Player *player) {
+void print(const Game &game, Player *player) {
   cout << "Declarer P" << game.declarer << " - "
        << game.points[game.team[game.declarer]] << "/";
   print_bid({game.contract});

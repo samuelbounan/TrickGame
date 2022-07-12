@@ -36,19 +36,11 @@ static std::random_device rd;
 static std::mt19937 mt{rd()};
 
 /**
- * @brief transform an index into a card
- *
- * @param i index
- * @return card (1 << i)
- */
-card _card(int i);
-
-/**
  * @brief prints card in bit vector representation
  *
  * @param c card to print
  */
-void print_vector(card c);
+void print_vector(const card &c);
 
 /**
  * @brief transforms a set of cards into a list of every card in it
@@ -64,7 +56,7 @@ list<card> set_cards(card x);
  * @param c
  * @return card
  */
-card higher(card i);
+card higher(const card &c);
 
 /**
  * @brief cards strictly lower than c
@@ -72,7 +64,7 @@ card higher(card i);
  * @param c
  * @return card
  */
-card lower(card i);
+card lower(const card &c);
 
 /**
  * @brief returns a list of card dealt according to the distribution
@@ -82,6 +74,6 @@ card lower(card i);
  * 3
  * @return list<card> hands dealt
  */
-list<card> deal(card deck, list<int> distribution, int seed);
+list<card> deal(card deck, const list<int> distribution, int seed);
 
 #endif

@@ -42,7 +42,7 @@ bool end_bidding(Game *game);
  * @param trump mask
  * @return card sorted set
  */
-card sort(card hand, card trump);
+card sort(card hand, const card &trump);
 
 /**
  * @brief unsort a set of cards according to the trump chosen
@@ -51,7 +51,7 @@ card sort(card hand, card trump);
  * @param trump mask
  * @return card unsorted set
  */
-card unsort(card hand, card trump);
+card unsort(card hand, const card &trump);
 
 /**
  * @brief cards that are legal in current situation, with hand
@@ -60,7 +60,7 @@ card unsort(card hand, card trump);
  * @param game
  * @return card
  */
-card legal(card hand, Game game);
+card legal(const card &hand, const Game &game);
 
 /**
  * @brief determines the player who won the current trick in game
@@ -68,9 +68,9 @@ card legal(card hand, Game game);
  * @param game
  * @return int
  */
-int winner_trick(Game game);
+int winner_trick(const Game &game);
 
-int points_card(card c);
+int points_card(const card &c);
 
 /**
  * @brief points of current trick in game
@@ -78,7 +78,7 @@ int points_card(card c);
  * @param game
  * @return int
  */
-int points_trick(Game game);
+int points_trick(const Game &game);
 
 /**
  * @brief when the trickgame is over
@@ -103,7 +103,7 @@ void print_bid(list<int> bids);
  * @param hand set of cards to print
  * @param trump to find unicode
  */
-void print_card(card c, card trump);
+void print_card(card c, const card &trump);
 
 /**
  * @brief prints the cards in the order of the list
@@ -111,4 +111,4 @@ void print_card(card c, card trump);
  * @param trick list of cards
  * @param trump to find unicode
  */
-void print_trick(list<card>, card trump);
+void print_trick(list<card>, const card &trump);
