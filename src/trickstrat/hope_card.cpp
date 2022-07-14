@@ -8,7 +8,7 @@ card hope_card(Game game, int id, card hand, card *have_not) {
 
   // for each card gen a random world and add one vote for the best card
   card playb = legal(hand, game);
-  int n_playb = __builtin_popcountll(playb);
+  int n_playb = POPCOUNT(playb);
   int won[n_playb];
   card outcome[n_playb];
 
@@ -19,7 +19,7 @@ card hope_card(Game game, int id, card hand, card *have_not) {
     card poss = playb;
     int k = 0;
     while (poss) {
-      card c = ONE << __builtin_ctzll(poss);
+      card c = ONE << CTZ(poss);
       if (i == 0) outcome[k] = c;
       auto info = update_card(&game, c);
       if (PRINTING >= 5) cout << "running aos " << endl;

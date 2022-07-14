@@ -1,9 +1,5 @@
 #include "rules.h"
 
-void print_bid(list<int> bids) {
-  for (auto b : bids) cout << bidname[b] << ";";
-}
-
 void print_card(card hand, const card &trump) {
   if (hand == 0) {
     cout << "\u2205" << endl;
@@ -16,7 +12,7 @@ void print_card(card hand, const card &trump) {
       to_print.reverse();  // for well oredered printing
       for (card i : to_print) {
         card c = unsort(i, trump);
-        cout << cardname[__builtin_ctzll(c)] << ";";
+        cout << cardname[CTZ(c)] << ";";
         hand &= ~i;
       }
     }
@@ -25,6 +21,6 @@ void print_card(card hand, const card &trump) {
 
 void print_trick(list<card> trick, const card &trump) {
   for (auto i : trick) {
-    cout << cardname[__builtin_ctzll(unsort(i, trump))] << ";";
+    cout << cardname[CTZ(unsort(i, trump))] << ";";
   }
 }

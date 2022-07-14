@@ -1,10 +1,5 @@
 #include "game.h"
 
-void Game::newBid(int b, int p) {
-  bids.push_front(b);
-  turn = p;
-}
-
 void Game::newTurn(const card& c) {
   trick.push_back(c);
   remaining &= ~c;
@@ -35,8 +30,7 @@ void Game::removeCard(const pair<int, int>& info) {
 }
 
 void Game::print() {
-  cout << "GAME: con " << contract;
-  cout << "/ dec " << declarer;
+  cout << "GAME: dec " << declarer;
   cout << "/ tru ";
   print_vector(trump);
   cout << "points [" << points[0] << ", " << points[1] << "]/ ";

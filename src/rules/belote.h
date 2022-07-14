@@ -1,6 +1,5 @@
-// #ifdef RULES_CONTREE
-#ifndef __CONTREE
-#define __CONTREE
+#ifndef __BELOTE
+#define __BELOTE
 
 #include <algorithm>
 #include <iterator>
@@ -11,4 +10,3 @@ void sort_high(card *hand, int idx, const card &suit);
 void unsort_high(card *hand, int idx, const card &suit);
 
 #endif
-// #endif

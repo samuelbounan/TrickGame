@@ -11,16 +11,6 @@
 void deal_hands(Player *player, int seed);
 
 /**
- * @brief during the bidding phase, update the parameters of the game with the
- * bid played
- *
- * @param game
- * @param player
- * @param bid
- */
-void update_bid(Game *game, Player *player, int bid);
-
-/**
  * @brief performs the bidding phase
  *
  * @param game played

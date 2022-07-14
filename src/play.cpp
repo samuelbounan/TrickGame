@@ -10,21 +10,8 @@ void deal_hands(Player *player, int seed) {
   }
 }
 
-void update_bid(Game *game, Player *player, int bid) {
-  game->newBid(bid, next_bid_turn(*game));
-}
-
 void bidding(Game *game, Player *player, int printing) {
-  game->turn = game->leader;
-  while (!end_bidding(game)) {
-    int b = player[game->turn].playBid(*game);
-    if (printing >= 2) {
-      cout << "P" << game->turn << " bids ";
-      print_bid({b});
-      cout << endl;
-    }
-    update_bid(game, player, b);
-  }
+  end_bidding(game);
   for (int p = 0; p < N_PLAYERS; p++) {
     player[p].hand = sort(player[p].hand, game->trump);
     for (int i = 0; i < N_PLAYERS; i++)
@@ -76,8 +63,7 @@ void trickgame(Game *game, Player *player, int printing) {
 
 void print(const Game &game, Player *player) {
   cout << "Declarer P" << game.declarer << " - "
-       << game.points[game.team[game.declarer]] << "/";
-  print_bid({game.contract});
+       << game.points[game.team[game.declarer]] << endl;
   cout << endl << "round " << game.round << endl;
   for (int i = 0; i < N_PLAYERS; i++) {
     cout << "P" << i << ": ";

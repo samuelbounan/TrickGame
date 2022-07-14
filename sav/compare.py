@@ -4,7 +4,7 @@ L = []
 scores = [0, 0]
 
 k = 0
-with open('pimc-pimc.txt') as f:
+with open('voting-voting.txt') as f:
     f.readline()
     for line in f:
         L.append(int(line.split(" ")[1]))

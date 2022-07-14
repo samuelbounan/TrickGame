@@ -1,6 +1,6 @@
-#include "pimc.h"
+#include "voting.h"
 
-card pimc(Game game, int id, card hand, card *have_not) {
+card voting(Game game, int id, card hand, card *have_not) {
   if (PRINTING >= 5) cout << "PIMC" << endl;
 
   // hyperparameters

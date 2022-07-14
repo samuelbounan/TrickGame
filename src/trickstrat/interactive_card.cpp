@@ -7,7 +7,7 @@ card interactive_card(Game game, int id, card hand, card *have_not) {
   cout << blanks << "      ";
 
   card legal_cards = legal(hand, game);
-  int n_legal = __builtin_popcountll(legal_cards);
+  int n_legal = POPCOUNT(legal_cards);
   card res[n_legal] = {0};
   int idx = 1;
 

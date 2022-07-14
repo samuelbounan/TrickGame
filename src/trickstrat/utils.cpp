@@ -9,7 +9,7 @@ llu snapg(Game g) {
   llu res = g.points[g.team[g.leader]] * N_PLAYERS + g.leader;
   for (card c : g.trick) {
     res *= N_CARDS;
-    res += __builtin_ctzll(c);
+    res += CTZ(c);
   }
   res = (res << N_CARDS);
   card rem = g.remaining;
@@ -21,7 +21,7 @@ llu snapeq(Game g) {
   if (!g.trick.empty()) {
     card first_card = g.trick.front();
     for (card suit : suits)
-      if (suit & first_card) res = __builtin_ctzll(suit);
+      if (suit & first_card) res = CTZ(suit);
     res *= N_PLAYERS;
   }
   res += g.team[g.leader];
@@ -78,7 +78,7 @@ bool aos_aux(Game *g, card *world, int threshold) {
   card c;
   card rem_eq = g->remaining;
   while (playb) {
-    c = ONE << __builtin_ctzll(playb);
+    c = ONE << CTZ(playb);
     possible |= c;
     if (previous && (points_card(previous) == points_card(c)) &&
         ((higher(previous) & lower(c) & rem_eq) == 0))
@@ -97,7 +97,7 @@ bool aos_aux(Game *g, card *world, int threshold) {
   bool res_aos;
   bool explore = true;
   while (possible && explore) {
-    c = ONE << __builtin_ctzll(possible);
+    c = ONE << CTZ(possible);
     info = update_card(g, c);
     world[id] &= ~c;
     res_aos = aos_aux(g, world, threshold);
@@ -160,9 +160,9 @@ llu approx_score(Game g, card *world) {
     copy_n(world, N_PLAYERS, world_cp);
     while (!end_trickgame(&g_cp)) {
       possible = legal(world_cp[g_cp.turn], g_cp);
-      rd = mt() % __builtin_popcountll(possible);
-      for (j = 0; j < rd; j++) possible &= ~(ONE << __builtin_ctzll(possible));
-      c = ONE << __builtin_ctzll(possible);
+      rd = mt() % POPCOUNT(possible);
+      for (j = 0; j < rd; j++) possible &= ~(ONE << CTZ(possible));
+      c = ONE << CTZ(possible);
       world_cp[g_cp.turn] &= ~c;
       update_card(&g_cp, c);
     }
@@ -183,17 +183,17 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
 
   // end case
   bool end_search = end_trickgame(game);
-  int points_left = MAX_SCORE - game->points[0] - game->points[1];
-  int save_loser = 0;
-  for (i = 0; i < 2; i++)
-    if (points_left + game->points[i] < alpha[i]) {
-      game->points[i] += points_left;
-      end_search = true;
-      save_loser = i;
-    }
+  // int points_left = MAX_SCORE - game->points[0] - game->points[1];
+  // int save_loser = 0;
+  // for (i = 0; i < 2; i++)
+  //   if (points_left + game->points[i] < alpha[i]) {
+  //     game->points[i] += points_left;
+  //     end_search = true;
+  //     save_loser = i;
+  //   }
   if (end_search) {
     opt_s = snaps(game->points);
-    game->points[save_loser] -= points_left;
+    // game->points[save_loser] -= points_left;
   } else if (depth >= max_depth)
     opt_s = approx_score(*game, world);
 
@@ -210,7 +210,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
     card playb = legal(world[id], *game);
     card rem_eq = game->remaining;
     while (playb) {
-      c = ONE << __builtin_ctzll(playb);
+      c = ONE << CTZ(playb);
       possible |= c;
       if (previous && (points_card(previous) == points_card(c)) &&
           ((higher(previous) & lower(c) & rem_eq) == 0))
@@ -222,7 +222,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
       previous = c;
       playb &= ~c;
     }
-    bool save_equi = (__builtin_popcountll(possible) > 1 && n_equi < max_equi);
+    bool save_equi = (POPCOUNT(possible) > 1 && n_equi < max_equi);
     card recom = 0;
     llu equi = snapeq(*game);
     if (H_equi.find(equi) != H_equi.end()) recom = H_game[H_equi[equi]].second;
@@ -231,7 +231,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
     // main loop
     for (card mask : masks)
       while (mask) {
-        c = ONE << __builtin_ctzll(mask);
+        c = ONE << CTZ(mask);
         auto info = update_card(game, c);
         world[id] &= ~c;
         s = alpha_beta_aux(game, world, alpha, depth + 1);
@@ -242,7 +242,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
 #if PRINTING > 6
         if (PRINTING > 7 || depth < 1) {
           for (i = 0; i < depth; i++) cout << "  ";
-          cout << "tested (" << sco_tm << "): ";
+          cout << "(" << sco_tm << "): ";
           print_card(c, game->trump);
         }
 #endif
@@ -297,7 +297,7 @@ try_again:
     vector<card> poss(poss_list.begin(), poss_list.end());
     std::shuffle(poss.begin(), poss.end(), mt);
     unsigned k = 0;
-    while ((N_CARDS - __builtin_popcountll(res[p])) != n_cards[p]) {
+    while ((N_CARDS - POPCOUNT(res[p])) != n_cards[p]) {
       if (k >= poss.size()) goto try_again;
       res[p] |= poss[k];
       k++;

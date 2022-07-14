@@ -1,4 +1,4 @@
-scores obtained with t0=pimc, t1=pimc with 100 games and exchanged teams
+scores obtained with t0=voting, t1=voting with 100 games and exchanged teams
 score: 43
 score: 64
 score: 56

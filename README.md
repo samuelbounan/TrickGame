@@ -15,7 +15,7 @@ General playground for a tricktaking card game with bids.
 ### Usage
 
 1. Define the rules wanted in the Makefile changing the line
-`CXXFLAGS += -DRULES_XXX`, XXX in {BASIC, CONTREE}
+`CXXFLAGS += -DRULES_XXX`, XXX in {BASIC, belote}
 2. Define the global constant for the game in 'card.h' (highly dependent on the rules see at the beginning of 'XXX.cpp')
 3. Setup the strategies wanted for each player and the wanted behavior of a game (how to deal cards, number of games, how to show results) in 'main.cpp'
 4. run ```sh

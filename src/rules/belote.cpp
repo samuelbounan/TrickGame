@@ -1,53 +1,9 @@
-#ifdef RULES_CONTREE
-#include "contree.h"
+#ifdef RULES_BELOTE
+#include "belote.h"
 
-/**N_BIDS = 43
- * N_SUITS = 4
+/** N_SUITS = 4
  * N_CARDS = 32
  */
-char bidname[N_BIDS][80] = {"pass",
-                            "X",
-                            "XX",
-                            "80\u001b[32m\u2663\u001b[0m",
-                            "80\u001b[33m\u25C6\u001b[0m",
-                            "80\u001b[31m\u2665\u001b[0m",
-                            "80\u001b[34m\u2660\u001b[0m",
-                            "90\u001b[32m\u2663\u001b[0m",
-                            "90\u001b[33m\u25C6\u001b[0m",
-                            "90\u001b[31m\u2665\u001b[0m",
-                            "90\u001b[34m\u2660\u001b[0m",
-                            "100\u001b[32m\u2663\u001b[0m",
-                            "100\u001b[33m\u25C6\u001b[0m",
-                            "100\u001b[31m\u2665\u001b[0m",
-                            "100\u001b[34m\u2660\u001b[0m",
-                            "110\u001b[32m\u2663\u001b[0m",
-                            "110\u001b[33m\u25C6\u001b[0m",
-                            "110\u001b[31m\u2665\u001b[0m",
-                            "110\u001b[34m\u2660\u001b[0m",
-                            "120\u001b[32m\u2663\u001b[0m",
-                            "120\u001b[33m\u25C6\u001b[0m",
-                            "120\u001b[31m\u2665\u001b[0m",
-                            "120\u001b[34m\u2660\u001b[0m",
-                            "130\u001b[32m\u2663\u001b[0m",
-                            "130\u001b[33m\u25C6\u001b[0m",
-                            "130\u001b[31m\u2665\u001b[0m",
-                            "130\u001b[34m\u2660\u001b[0m",
-                            "140\u001b[32m\u2663\u001b[0m",
-                            "140\u001b[33m\u25C6\u001b[0m",
-                            "140\u001b[31m\u2665\u001b[0m",
-                            "140\u001b[34m\u2660\u001b[0m",
-                            "150\u001b[32m\u2663\u001b[0m",
-                            "150\u001b[33m\u25C6\u001b[0m",
-                            "150\u001b[31m\u2665\u001b[0m",
-                            "150\u001b[34m\u2660\u001b[0m",
-                            "160\u001b[32m\u2663\u001b[0m",
-                            "160\u001b[33m\u25C6\u001b[0m",
-                            "160\u001b[31m\u2665\u001b[0m",
-                            "160\u001b[34m\u2660\u001b[0m",
-                            "All\u001b[32m\u2663\u001b[0m",
-                            "All\u001b[33m\u25C6\u001b[0m",
-                            "All\u001b[31m\u2665\u001b[0m",
-                            "All\u001b[34m\u2660\u001b[0m"};
 
 card clubs = (ONE << (N_CARDS / N_SUITS)) - 1;
 card diamo = clubs << (N_CARDS / N_SUITS);
@@ -73,43 +29,12 @@ char cardname[N_CARDS][80] = {
     "\u001b[34m\u2660\u001b[0mQ", "\u001b[34m\u2660\u001b[0mK",
     "\u001b[34m\u2660\u001b[0mT", "\u001b[34m\u2660\u001b[0mA"};
 
-list<int> biddable(list<int> bids) {
-  int min_bid = 0;
-  for (int b : bids)
-    if (b > 2) {
-      min_bid = b;
-      break;
-    }
-  list<int> res;
-  for (int b = min_bid + ((6 - min_bid) % 4) + 1; b < N_BIDS; b++)
-    res.push_back(b);
-  res.push_back(0);
-  res.push_back(1);
-  res.push_back(2);
-  return res;
-}
-
-int next_bid_turn(Game game) { return (game.turn + 1) % N_PLAYERS; }
-
 bool end_bidding(Game *game) {
-  int last_bid = 0;
-  int n_passes = 0;
-  for (int b : game->bids) {
-    if (b > 2) {
-      last_bid = b;
-      break;
-    } else
-      n_passes++;
-  }
-  if (n_passes >= N_PLAYERS - 1) {
-    game->trump = suits[(last_bid - 3) % 4];
-    game->contract = last_bid;
-    game->declarer = game->turn;
-    for (int i = 0; i < N_PLAYERS; i++) game->team[i] = i % 2;
-    game->turn = game->leader;
-    return true;
-  }
-  return false;
+  game->trump = clubs;
+  for (int i = 0; i < N_PLAYERS; i++) game->team[i] = i % 2;
+  game->declarer = game->leader;
+  game->turn = game->leader;
+  return true;
 }
 
 card sort(card hand, const card &trump) {
@@ -184,7 +109,7 @@ int tab_points_card[N_CARDS] = {0,  0,  3, 4,  10, 11, 14, 20, 0,  0, 0,
                                 2,  3,  4, 10, 11, 0,  0,  0,  2,  3, 4,
                                 10, 11, 0, 0,  0,  2,  3,  4,  10, 11};
 
-int points_card(const card &c) { return tab_points_card[__builtin_ctz(c)]; }
+int points_card(const card &c) { return tab_points_card[CTZ(c)]; }
 
 int points_trick(const Game &game) {
   int res = 0;
@@ -195,7 +120,7 @@ int points_trick(const Game &game) {
 
 void sort_high(card *hand, int idx, const card &suit) {
   if (suit == 0) return;
-  card c = ONE << (__builtin_ctzll(suit << idx));
+  card c = ONE << (CTZ(suit << idx));
   card new_c = ONE << (sizeof(card) * 8 - 1 - __builtin_clzll(suit));
   card greater = higher(c) & suit;
   card shifted = (*hand & greater) >> 1;
@@ -208,7 +133,7 @@ void sort_high(card *hand, int idx, const card &suit) {
 void unsort_high(card *hand, int idx, const card &suit) {
   if (suit == 0) return;
   card c = ONE << (sizeof(card) * 8 - 1 - __builtin_clzll(suit));
-  card new_c = ONE << (__builtin_ctzll(suit << idx));
+  card new_c = ONE << (CTZ(suit << idx));
   card greater = higher(new_c >> 1) & suit;
   card shifted = (*hand & (suit - c) & greater) << 1;
   if (*hand & c) {

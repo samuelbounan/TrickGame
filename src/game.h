@@ -11,8 +11,6 @@ class Game {
   /* constants of a game */
   int team[N_PLAYERS];  // all players have a team
   int declarer;         // the one who took the contract
-  list<int> bids;       // list (stack) of all the biddings
-  int contract;         // contract taken
   card trump = 0;       // suit of the contract
 
   /* modified during the game */
@@ -22,7 +20,7 @@ class Game {
   int points[2] = {0};          // points of each team
   int round = 0;                // index of the round
   int leader;                   // player at the beginning of current trick
-  int turn = 0;                 // player that has to play
+  int turn;                     // player that has to play
 
   Game(int first = 0) : leader(first){};
 
@@ -34,14 +32,6 @@ class Game {
     }
     return res;
   }
-
-  /**
-   * @brief ajust game parameters when a bid is played
-   *
-   * @param b bid played
-   * @param p next player to bid
-   */
-  void newBid(int b, int p);
 
   /**
    * @brief ajust game parameters when a card is played

@@ -2,28 +2,10 @@
 
 #include "game.h"
 
-/* unicode corresponding to a bid */
-extern char bidname[N_BIDS][80];
 /* suits set */
 extern card suits[N_SUITS];
 /* undicode corresponding to the cards */
 extern char cardname[N_CARDS][80];
-
-/**
- * @brief list of bidding values that could be taken
- *
- * @param bids
- * @return list<int>
- */
-list<int> biddable(list<int> bids);
-
-/**
- * @brief who is the next to bid
- *
- * @param game
- * @return int
- */
-int next_bid_turn(Game game);
 
 /**
  * @brief when bidding phase is over.
@@ -70,6 +52,13 @@ card legal(const card &hand, const Game &game);
  */
 int winner_trick(const Game &game);
 
+/**
+ * @brief only used to compute equivalences, if two cards are adjacent + same
+ * points -> equivalent
+ *
+ * @param c
+ * @return points of c
+ */
 int points_card(const card &c);
 
 /**
@@ -89,13 +78,6 @@ int points_trick(const Game &game);
 bool end_trickgame(Game *game);
 
 /// Implementation independent to the games rules
-
-/**
- * @brief prints all the bids in the list
- *
- * @param bids
- */
-void print_bid(list<int> bids);
 
 /**
  * @brief prints all the cards in hand
