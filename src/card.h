@@ -14,13 +14,13 @@ using namespace std;
 #define D(x) cout << " " << #x << ": " << x << endl;
 
 /* ADAPT TO THE GAME */
-#define N_PLAYERS 2
-#define N_ROUNDS 4
-#define N_CARDS 10
-#define N_SUITS 1
-#define SIZE_HAND 4
-#define MAX_SCORE N_ROUNDS
-#define PRINTING 6
+#define N_PLAYERS 4
+#define N_ROUNDS 6
+#define N_CARDS 32
+#define N_SUITS 4
+#define SIZE_HAND 8
+#define MAX_SCORE 162
+#define PRINTING 7
 #define N_TEAMS 2
 ///////////////////////
 
