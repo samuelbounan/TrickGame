@@ -42,7 +42,7 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
             unsigned& valid_worlds, Value alpha[N_TEAMS], int parent[N_TEAMS],
             Algorithm algo, int depth);
 template <typename Value>
-inline void max(int& i, Value& a, Value& b, Algorithm& algo, Value& res);
+void max(int& i, Value& a, Value& b, Algorithm& algo, Value& res);
 
 #include "ab.tpp"
 #endif

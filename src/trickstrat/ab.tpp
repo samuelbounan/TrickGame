@@ -14,7 +14,7 @@ card xav(Game g, card w[][N_PLAYERS], Algorithm algo) {
 }
 
 template <typename Value>
-inline void max(int& i, Value& a, Value& b, Algorithm& algo, Value& res) {
+void max(int& i, Value& a, Value& b, Algorithm& algo, Value& res) {
   algo.fusion(i, a, b, res);
 }
 
@@ -26,10 +26,10 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
   int res = -1;
   if (end_trickgame(&g)) {
     algo.value_init(0, g, valid_worlds, r);
-    if (PRINTING > 8) {
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "game over" << endl;
-    }
+#if (PRINTING > 8)
+    for (int i = 0; i < depth; i++) cout << "  ";
+    cout << "game over" << endl;
+#endif
   } else {
     int id = g.turn;
     int tm = g.team[id];
@@ -39,19 +39,19 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
     parent[tm] = id;
     algo.value_init(id, g, valid_worlds, r);
 
-    if (PRINTING > 8) {
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "id: " << id << endl;
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "value_init: ";
-      algo.print_value(r);
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "alpha[0]: ";
-      algo.print_value(alpha[0]);
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "alpha[1]: ";
-      algo.print_value(alpha[1]);
-    }
+#if (PRINTING > 8)
+    for (int i = 0; i < depth; i++) cout << "  ";
+    cout << "id: " << id << endl;
+    for (int i = 0; i < depth; i++) cout << "  ";
+    cout << "value_init: ";
+    algo.print_value(r);
+    for (int i = 0; i < depth; i++) cout << "  ";
+    cout << "alpha[0]: ";
+    algo.print_value(alpha[0]);
+    for (int i = 0; i < depth; i++) cout << "  ";
+    cout << "alpha[1]: ";
+    algo.print_value(alpha[1]);
+#endif
 
     // compute possible and new valid worlds
     card possible = 0;
@@ -92,24 +92,24 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       // update alpha and check pruning condition
       max(id, alpha[tm], r, algo, alpha[tm]);
 
-      if (PRINTING > 8) {
-        for (int i = 0; i < depth; i++) cout << "  ";
-        cout << "update alpha: ";
-        algo.print_value(alpha[tm]);
-      }
+#if (PRINTING > 8)
+      for (int i = 0; i < depth; i++) cout << "  ";
+      cout << "update alpha: ";
+      algo.print_value(alpha[tm]);
+#endif
 
       for (int i = 0; i < N_TEAMS; i++) {
         if (i != tm && algo.better(parent[i], alpha[i], r)) {
-          if (PRINTING > 8) {
-            for (int i = 0; i < depth; i++) cout << "  ";
-            cout << "pruning: " << endl;
-            for (int i = 0; i < depth; i++) cout << "  ";
-            cout << "alpha[" << i << " ]: ";
-            algo.print_value(alpha[i]);
-            for (int i = 0; i < depth; i++) cout << "  ";
-            cout << "r ";
-            algo.print_value(r);
-          }
+#if PRINTING > 8
+          for (int i = 0; i < depth; i++) cout << "  ";
+          cout << "pruning: " << endl;
+          for (int i = 0; i < depth; i++) cout << "  ";
+          cout << "alpha[" << i << " ]: ";
+          algo.print_value(alpha[i]);
+          for (int i = 0; i < depth; i++) cout << "  ";
+          cout << "r ";
+          algo.print_value(r);
+#endif
           res = i;
           goto end;
         }
@@ -145,38 +145,38 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       // update r with v
       if (res != -1) {
         if (res == tm) {
-          if (PRINTING > 8) {
-            for (int i = 0; i < depth; i++) cout << "  ";
-            cout << "pruning allies asked" << endl;
-          }
+#if (PRINTING > 8)
+          for (int i = 0; i < depth; i++) cout << "  ";
+          cout << "pruning allies asked" << endl;
+#endif
           res = -1;
           continue;
         } else {
-          if (PRINTING > 8) {
-            for (int i = 0; i < depth; i++) cout << "  ";
-            cout << "pruning enemies asked" << endl;
-          }
+#if (PRINTING > 8)
+          for (int i = 0; i < depth; i++) cout << "  ";
+          cout << "pruning enemies asked" << endl;
+#endif
           goto end;
         }
       }
 
       if (depth == 0 && !algo.criterion(id, r, v)) {
         card_res = c;
-        if (PRINTING > 8) {
-          cout << "update card_res: ";
-          print_card(card_res, g.trump);
-          cout << "r: ";
-          algo.print_value(r);
-          cout << "v: ";
-          algo.print_value(v);
-        }
+#if (PRINTING > 8)
+        cout << "update card_res: ";
+        print_card(card_res, g.trump);
+        cout << "r: ";
+        algo.print_value(r);
+        cout << "v: ";
+        algo.print_value(v);
+#endif
       }
       max(id, r, v, algo, r);
-      if (PRINTING > 8) {
-        for (int i = 0; i < depth; i++) cout << "  ";
-        cout << "update r: ";
-        algo.print_value(r);
-      }
+#if (PRINTING > 8)
+      for (int i = 0; i < depth; i++) cout << "  ";
+      cout << "update r: ";
+      algo.print_value(r);
+#endif
     }
   end:
     algo.copy(alpha_save, alpha[tm]);

@@ -119,8 +119,8 @@ card alpha_beta(Game game, int id, card hand, card *world, int max_depth_ab,
   n_sample = n_sample_ab;
 
   // run aux
-  int alpha[2];
-  for (int i = 0; i < 2; i++) alpha[i] = -1;
+  int alpha[N_TEAMS];
+  for (int i = 0; i < N_TEAMS; i++) alpha[i] = -1;
 
   if (PRINTING >= 7) cout << "run ab_aux" << endl;
 
@@ -147,7 +147,7 @@ llu approx_score(Game g, card *world) {
   int i, j, rd;
   rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS -
                      ((N_PLAYERS + g.turn - g.leader) % N_PLAYERS));
-  int res[2] = {0};
+  int res[N_TEAMS] = {0};
   int world_cp[N_PLAYERS];
   card possible, c;
   Game g_cp;
@@ -163,9 +163,9 @@ llu approx_score(Game g, card *world) {
       world_cp[g_cp.turn] &= ~c;
       update_card(&g_cp, c);
     }
-    for (j = 0; j < 2; j++) res[j] += g_cp.points[j];
+    for (j = 0; j < N_TEAMS; j++) res[j] += g_cp.points[j];
   }
-  for (int t = 0; t < 2; t++) res[t] /= n_sample;
+  for (int t = 0; t < N_TEAMS; t++) res[t] /= n_sample;
   return snaps(res);
 }
 
@@ -250,7 +250,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
           opt_c = c;
           opt_s = s;
         }
-        for (i = 0; i < 2; i++)
+        for (i = 0; i < N_TEAMS; i++)
           if ((i != tm) && (sco(s, i) < alpha[i])) {
             opt_s = s;
             opt_c = 0;

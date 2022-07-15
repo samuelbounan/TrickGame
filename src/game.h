@@ -16,19 +16,19 @@ class Game {
   /* modified during the game */
   card trick[N_PLAYERS];  // list (queue) of cards played during the round
   card played[N_ROUNDS]
-             [N_PLAYERS];  // cards played by each player at each round
-  card remaining = deck;   // cards not played yet
-  int points[2] = {0};     // points of each team
-  int round = 0;           // index of the round
-  int leader;              // player at the beginning of current trick
-  int turn;                // player that has to play
+             [N_PLAYERS];     // cards played by each player at each round
+  card remaining = deck;      // cards not played yet
+  int points[N_TEAMS] = {0};  // points of each team
+  int round = 0;              // index of the round
+  int leader;                 // player at the beginning of current trick
+  int turn;                   // player that has to play
 
   Game(int first = 0) : leader(first){};
 
   bool operator==(const Game& other) const {
     bool res = (remaining == other.remaining && leader == other.leader &&
                 turn == other.turn);
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < N_TEAMS; i++) {
       if (points[i] != other.points[i]) res = false;
     }
     return res;
@@ -59,7 +59,7 @@ struct std::hash<Game> {
   std::size_t operator()(const Game& g) const {
     using std::hash;
     unsigned x = g.turn * N_PLAYERS + g.leader;
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < N_TEAMS; i++) {
       x *= (MAX_SCORE + 1);
       x += g.points[i];
     }
