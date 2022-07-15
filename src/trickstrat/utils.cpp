@@ -175,7 +175,7 @@ llu approx_score(Game g, card *world) {
 llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
   llu opt_s = UINT64_MAX;
   llu g = snapg(*game);
-  int i, id = game->turn;
+  int id = game->turn;
   int tm = game->team[id];
   rec++;
   if (game->trick.empty() && H_game.find(g) != H_game.end())
@@ -276,35 +276,55 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
 
 void random_world(card *res, card *have_not, card hand, Game game) {
 try_again:
+
+  // add information of hand to res
   copy_n(have_not, N_PLAYERS, res);
   for (int p = 0; p < N_PLAYERS; p++)
     if (p != game.turn)
       res[p] |= hand;
     else
       res[p] = ~hand;
+
+  // compute the number of cards of each player
   int n_cards[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) n_cards[i] = SIZE_HAND - game.round;
   for (int p = game.leader; p != game.turn; p = ((p + 1) % N_PLAYERS))
     n_cards[p] -= 1;
 
+  // for each player, set his hand
   for (int p = 0; p < N_PLAYERS; p++) {
+    // remove the cards already set
     for (int i = 0; i < p; i++) res[p] |= ~res[i];
+
+    // only is cards that only p can have
     card only = ~res[p];
-    for (int i = p + 1; i < N_PLAYERS; i++)
-      only &= res[i];  // only is cards that only p can have
-    // all cards that can be removed from possible for p
-    list<card> poss_list = set_cards(~res[p] & ~only);
-    vector<card> poss(poss_list.begin(), poss_list.end());
-    std::shuffle(poss.begin(), poss.end(), mt);
-    unsigned k = 0;
-    while ((N_CARDS - POPCOUNT(res[p])) != n_cards[p]) {
-      if (k >= poss.size()) goto try_again;
-      res[p] |= poss[k];
-      k++;
+    for (int i = p + 1; i < N_PLAYERS; i++) only &= res[i];
+
+    int waste = POPCOUNT(only & deck) - n_cards[p];
+    if (waste > 0) {
+      list<card> only_list = set_cards(only);
+      vector<card> only_v(only_list.begin(), only_list.end());
+      std::shuffle(only_v.begin(), only_v.end(), mt);
+      for (int i = 0; i < waste; i++) {
+        res[p] |= only_v[i];
+      }
+    } else {
+      // poss_list are the cards that p could have or not
+      list<card> poss_list = set_cards(~res[p] & ~only);
+      vector<card> poss(poss_list.begin(), poss_list.end());
+      std::shuffle(poss.begin(), poss.end(), mt);
+
+      // while p has too much cards possible add one card to res
+      unsigned k = 0;
+      while ((N_CARDS - POPCOUNT(res[p] & deck)) > n_cards[p]) {
+        if (k >= poss.size()) goto try_again;
+        res[p] |= poss[k];
+        k++;
+      }
     }
   }
   for (int i = 0; i < N_PLAYERS; i++) {
-    res[i] = ~res[i];
+    res[i] = ~res[i] & deck;
     if (PRINTING >= 6) print_card(res[i], game.trump);
   }
 }

@@ -6,7 +6,7 @@
 
 card suits[N_SUITS] = {deck};
 
-char cardname[N_CARDS][80] = {" 0", " 1", " 2", " 3", " 4", " 5"};
+char cardname[N_CARDS][80] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
 bool end_bidding(Game *game) {
   game->trump = 0;

@@ -8,9 +8,9 @@ int main() {
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
     if (i % 2 == 0)
-      player[i].trickstrat = &voting;
+      player[i].trickstrat = &pimc;
     else
-      player[i].trickstrat = &voting;
+      player[i].trickstrat = &pimc;
   }
   for (int seed = 0; seed < 1; seed++) {
     // playing
@@ -21,8 +21,7 @@ int main() {
       Game game(rot);
       for (int p = 0; p < N_PLAYERS; p++) {
         player[p].hand = hands[(p - rot + N_PLAYERS) % N_PLAYERS];
-        for (int i = 0; i < N_PLAYERS; i++)
-          player[i].have_not[p] = ~player[p].hand;
+        for (int i = 0; i < N_PLAYERS; i++) player[i].have_not[p] = 0;
       }
       bidding(&game, player, PRINTING);
       trickgame(&game, player, PRINTING);

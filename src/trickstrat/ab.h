@@ -16,18 +16,22 @@ class Algorithm {
     n_worlds = _n_worlds;
   };
 
+  void print_value(int a);
   void init_alpha(int* alpha);
   void value_init(int i, const Game& g, unsigned valid_worlds, int& res);
   void fusion(int i, int a, int b, int& res);
   bool better(int i, int a, int b);
+  bool criterion(int i, int a, int b);
   void copy(int a, int& b);
 
+  void print_value(const vector<int>& a);
   void init_alpha(vector<int> alpha[N_TEAMS]);
   void value_init(int i, const Game& g, unsigned valid_worlds,
                   vector<int>& res);
   void fusion(int i, const vector<int>& a, const vector<int>& b,
               vector<int>& res);
   bool better(int i, const vector<int>& a, const vector<int>& b);
+  bool criterion(int i, const vector<int>& a, const vector<int>& b);
   void copy(const vector<int>& a, vector<int>& b);
 };
 

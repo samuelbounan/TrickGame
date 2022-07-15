@@ -2,6 +2,8 @@
 
 // int
 
+void Algorithm::print_value(int a) { cout << a << endl; }
+
 void Algorithm::init_alpha(int* alpha) {
   for (int i = 0; i < N_PLAYERS; i++) {
     if (node_type[i])
@@ -23,48 +25,83 @@ bool Algorithm::better(int i, int a, int b) {
   if (node_type[i]) return a < b;
   return a > b;
 }
+
+bool Algorithm::criterion(int i, int a, int b) {
+  if (node_type[i]) return a < b;
+  return a > b;
+}
+
 void Algorithm::copy(int a, int& b) { b = a; }
 
 // vector<int>
 
+void Algorithm::print_value(const vector<int>& a) {
+  for (auto v : a) {
+    if (v == -1)
+      cout << "X;";
+    else
+      cout << v << ";";
+  }
+  cout << endl;
+}
+
 void Algorithm::init_alpha(vector<int> alpha[N_TEAMS]) {
   for (int i = 0; i < n_worlds; i++) {
-    alpha[0].push_back(0);
-    alpha[1].push_back(MAX_SCORE);
+    alpha[0].push_back(-1);
+    alpha[1].push_back(-1);
   }
 }
 
 void Algorithm::value_init(int i, const Game& g, unsigned valid_worlds,
                            vector<int>& res) {
   res.clear();
-  if (node_type[i])
-    res.push_back(MAX_SCORE - g.points[1]);
-  else
-    res.push_back(g.points[0]);
+  for (int w = 0; w < n_worlds; w++) {
+    if ((((unsigned)1) << w) & valid_worlds) {
+      if (node_type[i])
+        res.push_back(MAX_SCORE - g.points[1]);
+      else
+        res.push_back(g.points[0]);
+    } else
+      res.push_back(-1);
+  }
 }
 
 void Algorithm::fusion(int i, const vector<int>& a, const vector<int>& b,
                        vector<int>& res) {
-  if (node_type[i])
-    res[0] = min(a[0], b[0]);
-  else
-    res[0] = max(a[0], b[0]);
-}
-
-bool Algorithm::better(int i, const vector<int>& a, const vector<int>& b) {
   for (int w = 0; w < n_worlds; w++) {
-    // if (a[w] == -1 && b[w] != -1) return false;
-    if (node_type[i]) {
-      return a[w] < b[w];  // || (b[w] == -1 && a[w] != -1)
-    } else {
-      return a[w] > b[w];
+    if (a[w] == -1)
+      res[w] = b[w];
+    else if (b[w] == -1)
+      res[w] = a[w];
+    else {
+      if (node_type[i])
+        res[w] = min(a[w], b[w]);
+      else
+        res[w] = max(a[w], b[w]);
     }
   }
 }
 
-void Algorithm::copy(const vector<int>& a, vector<int>& b) {
-  b.clear();
-  for (int i = 0; i < n_worlds; i++) {
-    b.push_back(a[i]);
-  };
+bool Algorithm::better(int i, const vector<int>& a, const vector<int>& b) {
+  bool res = false;
+  for (int w = 0; w < n_worlds; w++) {
+    if ((a[w] == -1 || b[w] == -1) && (a[w] != b[w])) return false;
+    if (node_type[i]) {
+      if (a[w] > b[w]) return false;
+      if (a[w] < b[w]) res = true;
+    } else {
+      if (a[w] < b[w]) return false;
+      if (a[w] > b[w]) res = true;
+    }
+  }
+  return res;
 }
+
+bool Algorithm::criterion(int i, const vector<int>& a, const vector<int>& b) {
+  int sum_a = accumulate(a.begin(), a.end(), 0);
+  int sum_b = accumulate(b.begin(), b.end(), 0);
+  if (node_type[i]) return sum_a < sum_b;
+  return sum_a > sum_b;
+}
+
+void Algorithm::copy(const vector<int>& a, vector<int>& b) { b = a; }
