@@ -23,18 +23,16 @@ card unsort(card hand, const card &trump) { return hand; }
 card legal(const card &hand, const Game &game) { return hand; }
 
 int winner_trick(const Game &game) {
-  if (game.trick.empty()) return game.leader;
-  card best_card = game.trick.front();
-  int p = 0;
-  int winner = 0;
-  for (card c : game.trick) {
-    if (c > best_card) {
+  int winner = -1;
+  card best_card = 0;
+  for (int i = 0; i < N_PLAYERS; i++) {
+    int p = (game.leader + i) % N_PLAYERS;
+    if (trick[p] > best_card) {
       best_card = c;
       winner = p;
     }
-    p++;
   }
-  return (winner + game.leader) % N_PLAYERS;
+  return winner;
 }
 
 int points_card(const card &c) { return 0; }

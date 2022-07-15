@@ -1,32 +1,29 @@
 #include "game.h"
 
 void Game::newTurn(const card& c) {
-  trick.push_back(c);
+  trick[turn] = c;
   remaining &= ~c;
   turn = (turn + 1) % N_PLAYERS;
 }
 
 void Game::newRound(int winner, int pts) {
   points[team[winner]] += pts;
-  list<card> last_trick(trick);
-  played[round] = last_trick;
-  trick.clear();
+  copy_n(trick, N_PLAYERS, played[round]);
   round++;
   leader = winner;
   turn = leader;
 }
 
 void Game::removeCard(const pair<int, int>& info) {
-  if (trick.empty()) {
+  if (turn == leader) {
     round--;
     points[team[leader]] -= info.first;
     turn = info.second;
     leader = (turn + 1) % N_PLAYERS;
-    trick = played[round];
+    copy_n(played[round], N_PLAYERS, trick);
   } else
     turn = (turn - 1 + N_PLAYERS) % N_PLAYERS;
-  remaining |= trick.back();
-  trick.pop_back();
+  remaining |= trick[turn];
 }
 
 void Game::print() {
@@ -40,6 +37,6 @@ void Game::print() {
   cout << "/ rem ";
   print_vector(remaining);
   cout << "trick:" << endl;
-  for (auto c : trick) print_vector(c);
+  for (int i = 0; i < N_PLAYERS; i++) print_vector(trick[i]);
   cout << endl;
 }

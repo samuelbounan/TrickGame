@@ -50,18 +50,19 @@ card unsort(card hand, const card &trump) {
 }
 
 card legal(const card &hand, const Game &game) {
-  if (game.trick.empty()) return hand;  // if leader everything is legal
-  card first_played = game.trick.front();
+  if (game.turn == game.leader) return hand;  // if leader everything is legal
+  card first_played = game.trick[game.leader];
   for (card suit : suits)
     if (first_played & suit) {
-      if (hand & suit) {                   // hand has suit
-        if (suit & game.trump) {           // suit required is trump
-          card highs = (hand & suit);      // you should play higher if possible
-          for (card c : game.trick)        // for each card played
-            if (c & suit)                  // that is trump
-              highs &= (~((c << 1) - 1));  // try to play higner
-          if (highs)                       // if can play higher trump
-            return highs;                  // play higher
+      if (hand & suit) {               // hand has suit
+        if (suit & game.trump) {       // suit required is trump
+          card highs = (hand & suit);  // you should play higher if possible
+          for (int i = game.leader; i != game.turn;
+               i = ((i + 1) % N_PLAYERS))              // for each card played
+            if (game.trick[i] & suit)                  // that is trump
+              highs &= (~((game.trick[i] << 1) - 1));  // try to play higner
+          if (highs)       // if can play higher trump
+            return highs;  // play higher
         }
         return hand & suit;  // play suit
       }
@@ -75,10 +76,8 @@ card legal(const card &hand, const Game &game) {
 }
 
 int winner_trick(const Game &game) {
-  if (game.trick.empty()) return game.leader;
-
   // init best_card and best_suit with the first card played
-  card best_card = game.trick.front();
+  card best_card = game.trick[game.leader];
   card best_suit = 0;
   for (card suit : suits) {
     if (suit & best_card) {
@@ -87,22 +86,21 @@ int winner_trick(const Game &game) {
     }
   }
   // for each card in the trick actualize the best vars
-  int winner = 0;
-  int p = 0;
-  for (card c : game.trick) {
+  int winner = game.leader;
+  for (int i = (game.leader + 1) % N_PLAYERS; i != game.turn;
+       i = ((i + 1) % N_PLAYERS)) {
+    card c = game.trick[i];
     if (c & best_suit &&
         c >= best_card) {  // best_suit is followed with higher value
       best_card = c;
-      winner = p;
-    }
-    if ((best_suit != game.trump) && (c & game.trump)) {  // suit is cut
+      winner = i;
+    } else if ((best_suit != game.trump) && (c & game.trump)) {  // suit is cut
       best_card = c;
       best_suit = game.trump;  // best_suit becomes trump
-      winner = p;
+      winner = i;
     }
-    p++;
   }
-  return (winner + game.leader) % N_PLAYERS;
+  return winner;
 }
 
 int tab_points_card[N_CARDS] = {0,  0,  3, 4,  10, 11, 14, 20, 0,  0, 0,
@@ -113,7 +111,7 @@ int points_card(const card &c) { return tab_points_card[CTZ(c)]; }
 
 int points_trick(const Game &game) {
   int res = 0;
-  for (card c : game.trick) res += points_card(c);
+  for (int i = 0; i < N_PLAYERS; i++) res += points_card(game.trick[i]);
   if (game.round == N_ROUNDS - 1) res += 10;
   return res;
 }

@@ -30,7 +30,7 @@ pair<int, int> update_card(Game *game, const card &c) {
   int p = game->turn;
   game->newTurn(c);
   // end of a trick
-  if (game->trick.size() == N_PLAYERS) {
+  if (game->turn == game->leader) {
     int winner = winner_trick(*game);
     pts = points_trick(*game);
     game->newRound(winner, pts);
@@ -40,7 +40,7 @@ pair<int, int> update_card(Game *game, const card &c) {
 
 void trickgame(Game *game, Player *player, int printing) {
   while (!end_trickgame(game)) {
-    if (printing == 3 && game->trick.empty())
+    if (printing >= 3 && game->turn == game->leader)
       print(*game, player);
     else if (printing >= 4) {
       game->print();
@@ -51,7 +51,7 @@ void trickgame(Game *game, Player *player, int printing) {
       cout << endl << "P" << game->turn << " plays ";
       print_card(c, game->trump);
       cout << endl;
-      if (game->trick.size() >= N_PLAYERS - 1) cout << endl;
+      if ((game->turn + 1 - game->leader) % N_PLAYERS == 0) cout << endl;
     }
     // update players knowledge and game
     for (int p = 0; p < N_PLAYERS; p++) player[p].updateBelief(*game, c);

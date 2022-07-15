@@ -1,7 +1,7 @@
 #ifndef __GAME
 #define __GAME
 
-#include <list>
+#include <algorithm>
 
 #include "card.h"
 
@@ -14,13 +14,14 @@ class Game {
   card trump = 0;       // suit of the contract
 
   /* modified during the game */
-  list<card> trick;             // list (queue) of cards played during the round
-  list<card> played[N_ROUNDS];  // cards played by each player at each round
-  card remaining = deck;        // cards not played yet
-  int points[2] = {0};          // points of each team
-  int round = 0;                // index of the round
-  int leader;                   // player at the beginning of current trick
-  int turn;                     // player that has to play
+  card trick[N_PLAYERS];  // list (queue) of cards played during the round
+  card played[N_ROUNDS]
+             [N_PLAYERS];  // cards played by each player at each round
+  card remaining = deck;   // cards not played yet
+  int points[2] = {0};     // points of each team
+  int round = 0;           // index of the round
+  int leader;              // player at the beginning of current trick
+  int turn;                // player that has to play
 
   Game(int first = 0) : leader(first){};
 

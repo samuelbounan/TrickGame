@@ -7,10 +7,6 @@ int rec, n_equi, n_sample, max_equi, max_depth;
 
 llu snapg(Game g) {
   llu res = g.points[g.team[g.leader]] * N_PLAYERS + g.leader;
-  for (card c : g.trick) {
-    res *= N_CARDS;
-    res += CTZ(c);
-  }
   res = (res << N_CARDS);
   card rem = g.remaining;
   return res + rem;
@@ -18,8 +14,8 @@ llu snapg(Game g) {
 
 llu snapeq(Game g) {
   llu res = 0;
-  if (!g.trick.empty()) {
-    card first_card = g.trick.front();
+  if (g.leader != g.turn) {
+    card first_card = g.trick[g.leader];
     for (card suit : suits)
       if (suit & first_card) res = CTZ(suit);
     res *= N_PLAYERS;
@@ -63,7 +59,7 @@ bool aos_aux(Game *g, card *world, int threshold) {
   if (g->points[1 - team_decl] > MAX_SCORE - threshold) return false;
 
   // check if saved
-  bool write_H = g->trick.empty();
+  bool write_H = g->turn == g->leader;
   llu sg;
   if (write_H) {
     sg = snapg(*g);
@@ -149,7 +145,8 @@ card alpha_beta(Game game, int id, card hand, card *world, int max_depth_ab,
 
 llu approx_score(Game g, card *world) {
   int i, j, rd;
-  rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS - g.trick.size());
+  rec += n_sample * ((N_ROUNDS - g.round) * N_PLAYERS -
+                     ((N_PLAYERS + g.turn - g.leader) % N_PLAYERS));
   int res[2] = {0};
   int world_cp[N_PLAYERS];
   card possible, c;
@@ -178,7 +175,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
   int id = game->turn;
   int tm = game->team[id];
   rec++;
-  if (game->trick.empty() && H_game.find(g) != H_game.end())
+  if (game->turn == game->leader && H_game.find(g) != H_game.end())
     return H_game[g].first;
 
   // end case
@@ -268,7 +265,7 @@ llu alpha_beta_aux(Game *game, card *world, int *alpha, int depth) {
     if (opt_s == UINT64_MAX) opt_s = s;
   prune_beta:
     alpha[tm] = alpha_init;
-    if (depth == 0 || save_equi || game->trick.empty())
+    if (depth == 0 || save_equi || game->turn == game->leader)
       H_game[g] = {opt_s, opt_c};
   }
   return opt_s;

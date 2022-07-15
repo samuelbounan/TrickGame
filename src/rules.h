@@ -93,4 +93,4 @@ void print_card(card c, const card &trump);
  * @param trick list of cards
  * @param trump to find unicode
  */
-void print_trick(list<card>, const card &trump);
+void print_trick(card trick[N_CARDS], const card &trump);
