@@ -8,21 +8,6 @@ card xav(Game g, card w[][N_PLAYERS], Algorithm algo) {
   Value alpha[N_TEAMS];
   algo.init_alpha(alpha);
   int parent[N_TEAMS] = {0, 1};
-
-  vector<int> a, b, c, d;
-  a.push_back(1);
-  a.push_back(-1);
-  b.push_back(0);
-  b.push_back(-1);
-  c.push_back(1);
-  c.push_back(1);
-  d.push_back(1);
-  d.push_back(-1);
-  cout << algo.better(0, a, b) << endl;
-  cout << algo.better(1, a, b) << endl;
-  cout << algo.better(0, c, d) << endl;
-  cout << algo.better(1, c, d) << endl;
-
   xav_aux(card_res, r, g, w, valid_worlds, alpha, parent, algo, 0);
   if (PRINTING > 5) algo.print_value(r);
   return card_res;
@@ -112,17 +97,6 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
         cout << "update alpha: ";
         algo.print_value(alpha[tm]);
       }
-
-      // if (PRINTING > 5) {
-      //   for (int i = 0; i < depth; i++) cout << "  ";
-      //   cout << "pruning in node" << tm << " ? " << endl;
-      //   for (int i = 0; i < depth; i++) cout << "  ";
-      //   cout << "alpha[0]: ";
-      //   algo.print_value(alpha[0]);
-      //   for (int i = 0; i < depth; i++) cout << "  ";
-      //   cout << "alpha[1]: ";
-      //   algo.print_value(alpha[1]);
-      // }
 
       for (int i = 0; i < N_TEAMS; i++) {
         if (i != tm && algo.better(parent[i], alpha[i], r)) {
