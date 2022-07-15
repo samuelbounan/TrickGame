@@ -20,7 +20,12 @@ void Algorithm::value_init(int i, const Game& g, unsigned valid_worlds,
     res = g.points[0];
   }
 }
-void Algorithm::fusion(int i, int a, int b, int& res) { res = a; }
+void Algorithm::fusion(int i, int a, int b, int& res) {
+  if (node_type[i])
+    res = min(a, b);
+  else
+    res = max(a, b);
+}
 bool Algorithm::better(int i, int a, int b) {
   if (node_type[i]) return a < b;
   return a > b;
@@ -85,13 +90,14 @@ void Algorithm::fusion(int i, const vector<int>& a, const vector<int>& b,
 bool Algorithm::better(int i, const vector<int>& a, const vector<int>& b) {
   bool res = false;
   for (int w = 0; w < n_worlds; w++) {
-    if ((a[w] == -1 || b[w] == -1) && (a[w] != b[w])) return false;
-    if (node_type[i]) {
-      if (a[w] > b[w]) return false;
-      if (a[w] < b[w]) res = true;
-    } else {
-      if (a[w] < b[w]) return false;
-      if (a[w] > b[w]) res = true;
+    if (b[w] != -1) {
+      if (node_type[i]) {
+        if (a[w] > b[w] || a[w] == -1) return false;
+        if (a[w] < b[w]) res = true;
+      } else {
+        if (a[w] < b[w]) return false;
+        if (a[w] > b[w]) res = true;
+      }
     }
   }
   return res;
