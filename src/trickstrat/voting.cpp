@@ -1,7 +1,7 @@
 #include "voting.h"
 
 card voting(Game game, int id, card hand, card *have_not) {
-  if (PRINTING >= 5) cout << "PIMC" << endl;
+  if (PRINTING >= 5) cout << "VOTING" << endl;
 
   // hyperparameters
   int n_sample = 1;

@@ -18,7 +18,7 @@ VPATH = $(SRCDIR)
 
 CXXFLAGS = -Wall
 CXXFLAGS += -DRULES_BELOTE
-CXXFLAGS += -O2
+CXXFLAGS += -g
 
 # Inference rules
 

@@ -23,10 +23,12 @@ class Algorithm {
   void copy(int a, int& b);
 
   void init_alpha(vector<int> alpha[N_TEAMS]);
-  void value_init(int i, const Game& g, unsigned valid_worlds, vector<int> res);
-  void fusion(int i, vector<int> a, vector<int> b, vector<int> res);
-  bool better(int i, vector<int> a, vector<int> b);
-  void copy(vector<int> a, vector<int> b);
+  void value_init(int i, const Game& g, unsigned valid_worlds,
+                  vector<int>& res);
+  void fusion(int i, const vector<int>& a, const vector<int>& b,
+              vector<int>& res);
+  bool better(int i, const vector<int>& a, const vector<int>& b);
+  void copy(const vector<int>& a, vector<int>& b);
 };
 
 template <typename Value>

@@ -20,7 +20,7 @@ using namespace std;
 #define N_SUITS 4
 #define SIZE_HAND N_ROUNDS
 #define MAX_SCORE 162
-#define PRINTING 3
+#define PRINTING 2
 #define N_TEAMS 2
 ///////////////////////
 

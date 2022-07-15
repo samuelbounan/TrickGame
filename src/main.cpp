@@ -8,9 +8,9 @@ int main() {
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
     if (i % 2 == 0)
-      player[i].trickstrat = &ab;
+      player[i].trickstrat = &voting;
     else
-      player[i].trickstrat = &ab;
+      player[i].trickstrat = &voting;
   }
   for (int seed = 0; seed < 1; seed++) {
     // playing

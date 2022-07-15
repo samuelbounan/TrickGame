@@ -3,12 +3,13 @@
 template <typename Value>
 card xav(Game g, card w[][N_PLAYERS], Algorithm algo) {
   card card_res = 0;
-  Value res;
+  Value r;
   unsigned valid_worlds = (((unsigned)1) << algo.n_worlds) - 1;
+  algo.value_init(g.turn, g, valid_worlds, r);
   Value alpha[N_TEAMS];
   algo.init_alpha(alpha);
   int parent[N_TEAMS] = {0, 1};
-  xav_aux(card_res, res, g, w, valid_worlds, alpha, parent, algo, 0);
+  xav_aux(card_res, r, g, w, valid_worlds, alpha, parent, algo, 0);
   return card_res;
 }
 
@@ -31,7 +32,8 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
   int res = -1;
   int id = g.turn;
   int tm = g.team[id];
-  Value alpha_save = alpha[tm];
+  Value alpha_save;
+  algo.copy(alpha[tm], alpha_save);
   int parent_save = parent[tm];
   parent[tm] = id;
   algo.value_init(id, g, valid_worlds, r);
@@ -63,12 +65,12 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
     card c = ONE << id_c;
     possible &= ~c;
 
-    if (depth < 0) {
+#if PRINTING > 6
+    if (PRINTING > 7 || depth < 1) {
       for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "test: ";
       print_card(c, g.trump);
-      cout << "";
     }
+#endif
 
     // update alpha and check pruning condition
     max(id, alpha[tm], r, algo, alpha[tm]);
@@ -99,15 +101,15 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
     }
     g.removeCard(update_save);
 
-    // update r with v
-
-    if (depth < 0) {
+#if PRINTING > 6
+    if (PRINTING > 7 || depth < 1) {
       for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "(" << v << ") ";
-      print_card(c, g.trump);
-      cout << "";
+      cout << "(" << v << ")" << endl;
     }
+#endif
 
+    // update r with v
+    if (depth == 0 && !algo.better(id, r, v)) card_res = c;
     if (res != -1) {
       if (res == tm) {
         res = -1;
@@ -116,11 +118,10 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
         goto end;
       }
     }
-    if (depth == 0 && !algo.better(id, r, v)) card_res = c;
     max(id, r, v, algo, r);
   }
 end:
-  alpha[tm] = alpha_save;
+  algo.copy(alpha_save, alpha[tm]);
   parent[tm] = parent_save;
   return res;
 }

@@ -1,28 +1,23 @@
 #include "pimc.h"
 
 card pimc(Game game, int id, card hand, card *have_not) {
-  if (PRINTING >= 5) cout << "PIMC" << endl;
+  // if (PRINTING >= 5) cout << "PIMC" << endl;
 
-  // hyperparameters
-  int n_sample = 1;
-  int depth_ab = 33;
-  int n_sample_ab = 3;
+  // // hyperparameters
+  // int n_sample = 1;
 
-  // for each card gen a random world and add one vote for the best card
-  card rd_world[N_PLAYERS];
-  card opt_cards;
-  int res[N_CARDS] = {0};
-  for (int i = 0; i < n_sample; i++) {
-    if (PRINTING >= 5) cout << "sample " << i << endl;
-    random_world(rd_world, have_not, hand, game);
-    if (PRINTING >= 5) cout << "run ab" << endl;
-    opt_cards = alpha_beta(game, id, hand, rd_world, depth_ab, n_sample_ab);
-    while (opt_cards) {
-      int c = CTZ(opt_cards);
-      res[c]++;
-      opt_cards &= ~(ONE << c);
-    }
-  }
-  int c = distance(res, max_element(res, res + N_CARDS));
-  return (ONE << c);
+  // // init
+  // int node_type[N_PLAYERS];
+  // for (int i = 0; i < N_PLAYERS; i++) node_type[i] = i % 2;
+  // Algorithm algo(node_type, 0, n_sample);
+  // card w[n_sample][N_PLAYERS];
+
+  // // gen worlds and run ab
+  // for (int i = 0; i < n_sample; i++) {
+  //   if (PRINTING >= 5) cout << "sample " << i << endl;
+  //   random_world(w[i], have_not, hand, game);
+  // }
+  // if (PRINTING >= 5) cout << "run ab " << endl;
+  // return xav<vector<int>>(game, w, algo);
+  return 0;
 }
