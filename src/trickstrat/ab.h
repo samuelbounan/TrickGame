@@ -1,6 +1,8 @@
 #ifndef __XAV
 #define __XAV
 
+#include <malloc.h>
+
 #include "utils.h"
 
 class Algorithm {
@@ -17,22 +19,36 @@ class Algorithm {
   };
 
   void print_value(int a);
+  void alloc(int* a);
+  void cleanup(int* a);
   void init_alpha(int* alpha);
-  void value_init(int i, const Game& g, unsigned valid_worlds, int& res);
+  void init_value(int i, const Game& g, unsigned valid_worlds, int& res);
   void fusion(int i, int a, int b, int& res);
   bool better(int i, int a, int b);
   bool criterion(int i, int a, int b);
   void copy(int a, int& b);
 
-  void print_value(const vector<int>& a);
-  void init_alpha(vector<int> alpha[N_TEAMS]);
-  void value_init(int i, const Game& g, unsigned valid_worlds,
-                  vector<int>& res);
-  void fusion(int i, const vector<int>& a, const vector<int>& b,
-              vector<int>& res);
-  bool better(int i, const vector<int>& a, const vector<int>& b);
-  bool criterion(int i, const vector<int>& a, const vector<int>& b);
-  void copy(const vector<int>& a, vector<int>& b);
+  void print_value(int* a);
+  void alloc(int** a);
+  void cleanup(int** a);
+  void init_alpha(int* alpha[N_TEAMS]);
+  void init_value(int i, const Game& g, unsigned valid_worlds, int* res);
+  void fusion(int i, int* a, int* b, int* res);
+  bool better(int i, int* a, int* b);
+  bool criterion(int i, int* a, int* b);
+  void copy(int* a, int* b);
+
+  void print_value(vector<int*>& a);
+  void alloc(vector<int*>* a);
+  void cleanup(vector<int*>* a);
+  void init_alpha(vector<int*> alpha[N_TEAMS]);
+  void init_value(int i, const Game& g, unsigned valid_worlds,
+                  vector<int*>& res);
+  void fusion(int i, vector<int*>& a, vector<int*>& b, vector<int*>& res);
+  bool better(int i, vector<int*>& a, vector<int*>& b);
+  bool criterion(int i, vector<int*>& a, vector<int*>& b);
+  void copy(vector<int*>& a, vector<int*>& b);
+  void add_fronteer(int i, int* x, vector<int*>& res);
 };
 
 template <typename Value>
@@ -41,8 +57,6 @@ template <typename Value>
 int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
             unsigned& valid_worlds, Value alpha[N_TEAMS], int parent[N_TEAMS],
             Algorithm algo, int depth);
-template <typename Value>
-void max(int& i, Value& a, Value& b, Algorithm& algo, Value& res);
 
 #include "ab.tpp"
 #endif

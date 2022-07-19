@@ -44,6 +44,8 @@ card unsort(card hand, const card &trump);
  */
 card legal(const card &hand, const Game &game);
 
+card reduce_legal(const card &h, const Game &g);
+
 /**
  * @brief determines the player who won the current trick in game
  *

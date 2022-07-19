@@ -22,13 +22,15 @@ card unsort(card hand, const card &trump) { return hand; }
 
 card legal(const card &hand, const Game &game) { return hand; }
 
+card reduce_legal(const card &h, const Game &g) { return h; }
+
 int winner_trick(const Game &game) {
   int winner = -1;
   card best_card = 0;
   for (int i = 0; i < N_PLAYERS; i++) {
     int p = (game.leader + i) % N_PLAYERS;
-    if (trick[p] > best_card) {
-      best_card = c;
+    if (game.trick[p] > best_card) {
+      best_card = game.trick[p];
       winner = p;
     }
   }

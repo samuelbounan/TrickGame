@@ -75,6 +75,49 @@ card legal(const card &hand, const Game &game) {
   return hand;  // piss
 }
 
+card reduce_legal(const card &h, const Game &g) {
+  // init
+  card possible = 0;
+  card previous = 0;
+  card rem_eq = g.remaining;
+  card h_cp = h;
+
+  // predict is when we can know the issue of the trick
+  int delta = (g.turn - g.leader + N_PLAYERS) % N_PLAYERS;
+  bool predict = (delta == N_PLAYERS - 1);
+  card best_trump =
+      ONE << (sizeof(card) * 8 - 1 - __builtin_clzll(g.remaining & g.trump));
+  for (int i = 0; i < delta; i++) {
+    int p = (g.leader) + i % N_PLAYERS;
+    if ((g.trick[p] & g.trump) && (g.trick[p] > best_trump)) predict = true;
+  }
+
+  // main loop
+  while (h_cp) {
+    card c = ONE << CTZ(h_cp);
+    possible |= c;
+    if (previous && ((higher(previous) & lower(c) & rem_eq) == 0))
+      for (auto suit : suits)
+        if ((suit & c) && (suit & previous)) {
+          if (points_card(c) - points_card(previous) < 2) {
+            rem_eq &= ~c;
+            possible &= ~c;
+          } else if (predict) {
+            if (g.team[winner_trick(g)] == g.team[g.turn]) {
+              rem_eq &= ~previous;
+              possible &= ~previous;
+            } else {
+              rem_eq &= ~c;
+              possible &= ~c;
+            }
+          }
+        }
+    h_cp &= ~c;
+    previous = c;
+  }
+  return possible;
+}
+
 int winner_trick(const Game &game) {
   // init best_card and best_suit with the first card played
   card best_card = game.trick[game.leader];

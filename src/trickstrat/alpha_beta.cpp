@@ -9,4 +9,5 @@ card ab(Game game, int id, card hand, card* have_not) {
   }
   Algorithm algo(node_type, 0, 1);
   return xav<int>(game, world, algo);
+  return 0;
 }

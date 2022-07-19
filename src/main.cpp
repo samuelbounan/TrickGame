@@ -8,11 +8,11 @@ int main() {
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
     if (i % 2 == 0)
-      player[i].trickstrat = &ab;
+      player[i].trickstrat = &pimc;
     else
-      player[i].trickstrat = &ab;
+      player[i].trickstrat = &pimc;
   }
-  for (int seed = 1; seed < 3; seed++) {
+  for (int seed = 0; seed < 1; seed++) {
     // playing
     deal_hands(player, seed);
     card hands[N_PLAYERS];
@@ -21,8 +21,7 @@ int main() {
       Game game(rot);
       for (int p = 0; p < N_PLAYERS; p++) {
         player[p].hand = hands[(p - rot + N_PLAYERS) % N_PLAYERS];
-        for (int i = 0; i < N_PLAYERS; i++)
-          player[i].have_not[p] = ~player[p].hand;
+        for (int i = 0; i < N_PLAYERS; i++) player[i].have_not[p] = 0;
       }
       bidding(&game, player, PRINTING);
       trickgame(&game, player, PRINTING);
