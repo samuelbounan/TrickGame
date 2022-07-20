@@ -1,4 +1,4 @@
-#include "ab.h"
+#include "template_ab.h"
 
 // int
 
@@ -19,9 +19,9 @@ void Algorithm::init_alpha(int* alpha) {
 void Algorithm::init_value(int i, const Game& g, unsigned valid_worlds,
                            int& res) {
   if (node_type[i] % 2) {
-    res = MAX_SCORE - g.points[1];
+    res = g.max_points;
   } else {
-    res = g.points[0];
+    res = g.min_points;
   }
 }
 void Algorithm::fusion(int i, int a, int b, int& res) {
@@ -42,7 +42,12 @@ bool Algorithm::criterion(int i, int a, int b) {
 
 void Algorithm::copy(int a, int& b) { b = a; }
 
-// vector<int>
+void Algorithm::leaf_case(Game& g, card w[][N_PLAYERS], unsigned valid_worlds,
+                          int& r) {
+  r = solver(g, w[0], depth_rd, n_sample).first;
+}
+
+// int*
 
 void Algorithm::print_value(int* a) {
   for (int i = 0; i < n_worlds; i++) {
@@ -60,11 +65,8 @@ void Algorithm::alloc(int** a) { *a = (int*)malloc(n_worlds * sizeof(int)); }
 void Algorithm::cleanup(int** a) { free(*a); }
 
 void Algorithm::init_alpha(int* alpha[N_TEAMS]) {
-  for (int t = 0; t < N_TEAMS; t++) {
-    for (int i = 0; i < n_worlds; i++) {
-      alpha[t][i] = -1;
-    }
-  }
+  for (int t = 0; t < N_TEAMS; t++)
+    for (int i = 0; i < n_worlds; i++) alpha[t][i] = -1;
 }
 
 void Algorithm::init_value(int i, const Game& g, unsigned valid_worlds,
@@ -72,9 +74,9 @@ void Algorithm::init_value(int i, const Game& g, unsigned valid_worlds,
   for (int w = 0; w < n_worlds; w++) {
     if ((((unsigned)1) << w) & valid_worlds) {
       if (node_type[i] % 2)
-        res[w] = MAX_SCORE - g.points[1];
+        res[w] = g.max_points;
       else
-        res[w] = g.points[0];
+        res[w] = g.min_points;
     } else
       res[w] = -1;
   }
@@ -124,6 +126,16 @@ bool Algorithm::criterion(int i, int* a, int* b) {
 
 void Algorithm::copy(int* a, int* b) { copy_n(a, n_worlds, b); }
 
+void Algorithm::leaf_case(Game& g, card w[][N_PLAYERS], unsigned valid_worlds,
+                          int* r) {
+  for (int i = 0; i < n_worlds; i++) r[i] = -1;
+  while (valid_worlds) {
+    unsigned i = __builtin_ctz(valid_worlds);
+    valid_worlds &= ~(((unsigned)1) << i);
+    r[i] = solver(g, w[i], depth_rd, n_sample).first;
+  }
+}
+
 // vector <int*>
 void Algorithm::print_value(vector<int*>& a) {
   cout << "{";
@@ -167,16 +179,16 @@ void Algorithm::init_value(int i, const Game& g, unsigned valid_worlds,
   res.push_back(p);
 }
 
-void Algorithm::add_fronteer(int i, int* x, vector<int*>& res) {
+void Algorithm::add_fronteer(int* x, vector<int*>& res) {
   bool add = true;
   auto it = res.begin();
   while (it != res.end()) {
     bool erased = false;
-    if (better(i, x, *it)) {
+    if (better(player_root, x, *it)) {
       cleanup(&(*it));
       it = res.erase(it);
       erased = true;
-    } else if (better(i, *it, x)) {
+    } else if (better(player_root, *it, x)) {
       add = false;
       break;
     } else {
@@ -209,7 +221,7 @@ void Algorithm::fusion(int i, vector<int*>& a, vector<int*>& b,
   } else {
     if (node_type[i] < 2) {
       for (int* x : a) {
-        add_fronteer(i, x, res);
+        add_fronteer(x, res);
       }
     } else {
       vector<int*> new_res;
@@ -218,7 +230,7 @@ void Algorithm::fusion(int i, vector<int*>& a, vector<int*>& b,
         alloc(&z);
         for (int* y : res) {
           fusion(i, x, y, z);
-          add_fronteer(i, z, new_res);
+          add_fronteer(z, new_res);
         }
         cleanup(&z);
       }
@@ -269,4 +281,13 @@ void Algorithm::copy(vector<int*>& a, vector<int*>& b) {
     copy(x, y);
     b.push_back(y);
   }
+}
+
+void Algorithm::leaf_case(Game& g, card w[][N_PLAYERS], unsigned valid_worlds,
+                          vector<int*>& r) {
+  cleanup(&r);
+  int* res;
+  alloc(&res);
+  leaf_case(g, w, valid_worlds, res);
+  r.push_back(res);
 }

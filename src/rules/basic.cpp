@@ -8,11 +8,11 @@ card suits[N_SUITS] = {deck};
 
 char cardname[N_CARDS][80] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
-bool end_bidding(Game *game) {
-  game->trump = 0;
-  for (int i = 0; i < N_PLAYERS; i++) game->team[i] = i % 2;
-  game->declarer = game->leader;
-  game->turn = game->leader;
+bool end_bidding(Game &game) {
+  game.trump = 0;
+  for (int i = 0; i < N_PLAYERS; i++) game.team[i] = i % 2;
+  game.declarer = game.leader;
+  game.turn = game.leader;
   return true;
 }
 
@@ -37,10 +37,8 @@ int winner_trick(const Game &game) {
   return winner;
 }
 
-int points_card(const card &c) { return 0; }
-
 int points_trick(const Game &game) { return 1; }
 
-bool end_trickgame(Game *game) { return (game->round >= N_ROUNDS); }
+bool end_trickgame(Game &game) { return (game.round >= N_ROUNDS); }
 
 #endif

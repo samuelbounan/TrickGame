@@ -20,17 +20,19 @@ using namespace std;
 #define N_SUITS 4
 #define SIZE_HAND 8
 #define MAX_SCORE 162
-#define PRINTING 7
+#define PRINTING 3
 #define N_TEAMS 2
 ///////////////////////
 
 #if N_CARDS <= 32
 typedef unsigned int card;  // reprezents several cards (bit vector)
 #define CTZ __builtin_ctz
+#define CLZ __builtin_clz
 #define POPCOUNT __builtin_popcount
 #elif N_CARDS <= 64
 typedef unsigned long long int card;
 #define CTZ __builtin_ctzll
+#define CLZ __builtin_clzll
 #define POPCOUNT __builtin_popcountll
 #endif
 extern card deck;  // set of all cards

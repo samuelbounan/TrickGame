@@ -3,7 +3,7 @@
 
 #include <algorithm>
 
-#include "ab.h"
+#include "template_ab.h"
 
 card pimc(Game game, int id, card hand, card *have_not);
 

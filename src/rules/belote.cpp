@@ -29,11 +29,15 @@ char cardname[N_CARDS][80] = {
     "\u001b[34m\u2660\u001b[0mQ", "\u001b[34m\u2660\u001b[0mK",
     "\u001b[34m\u2660\u001b[0mT", "\u001b[34m\u2660\u001b[0mA"};
 
-bool end_bidding(Game *game) {
-  game->trump = clubs;
-  for (int i = 0; i < N_PLAYERS; i++) game->team[i] = i % 2;
-  game->declarer = game->leader;
-  game->turn = game->leader;
+int tab_points_card[N_CARDS] = {0,  0,  3, 4,  10, 11, 14, 20, 0,  0, 0,
+                                2,  3,  4, 10, 11, 0,  0,  0,  2,  3, 4,
+                                10, 11, 0, 0,  0,  2,  3,  4,  10, 11};
+
+bool end_bidding(Game &game) {
+  game.trump = clubs;
+  for (int i = 0; i < N_PLAYERS; i++) game.team[i] = i % 2;
+  game.declarer = game.leader;
+  game.turn = game.leader;
   return true;
 }
 
@@ -85,8 +89,7 @@ card reduce_legal(const card &h, const Game &g) {
   // predict is when we can know the issue of the trick
   int delta = (g.turn - g.leader + N_PLAYERS) % N_PLAYERS;
   bool predict = (delta == N_PLAYERS - 1);
-  card best_trump =
-      ONE << (sizeof(card) * 8 - 1 - __builtin_clzll(g.remaining & g.trump));
+  card best_trump = ONE << (sizeof(card) * 8 - 1 - CLZ(g.remaining & g.trump));
   for (int i = 0; i < delta; i++) {
     int p = (g.leader) + i % N_PLAYERS;
     if ((g.trick[p] & g.trump) && (g.trick[p] > best_trump)) predict = true;
@@ -99,7 +102,7 @@ card reduce_legal(const card &h, const Game &g) {
     if (previous && ((higher(previous) & lower(c) & rem_eq) == 0))
       for (auto suit : suits)
         if ((suit & c) && (suit & previous)) {
-          if (points_card(c) - points_card(previous) < 2) {
+          if (tab_points_card[CTZ(c)] - tab_points_card[CTZ(previous)] < 2) {
             rem_eq &= ~c;
             possible &= ~c;
           } else if (predict) {
@@ -146,15 +149,10 @@ int winner_trick(const Game &game) {
   return winner;
 }
 
-int tab_points_card[N_CARDS] = {0,  0,  3, 4,  10, 11, 14, 20, 0,  0, 0,
-                                2,  3,  4, 10, 11, 0,  0,  0,  2,  3, 4,
-                                10, 11, 0, 0,  0,  2,  3,  4,  10, 11};
-
-int points_card(const card &c) { return tab_points_card[CTZ(c)]; }
-
 int points_trick(const Game &game) {
   int res = 0;
-  for (int i = 0; i < N_PLAYERS; i++) res += points_card(game.trick[i]);
+  for (int i = 0; i < N_PLAYERS; i++)
+    res += tab_points_card[CTZ(game.trick[i])];
   if (game.round == N_ROUNDS - 1) res += 10;
   return res;
 }
@@ -162,7 +160,7 @@ int points_trick(const Game &game) {
 void sort_high(card *hand, int idx, const card &suit) {
   if (suit == 0) return;
   card c = ONE << (CTZ(suit << idx));
-  card new_c = ONE << (sizeof(card) * 8 - 1 - __builtin_clzll(suit));
+  card new_c = ONE << (sizeof(card) * 8 - 1 - CLZ(suit));
   card greater = higher(c) & suit;
   card shifted = (*hand & greater) >> 1;
   if (*hand & c) {
@@ -173,7 +171,7 @@ void sort_high(card *hand, int idx, const card &suit) {
 
 void unsort_high(card *hand, int idx, const card &suit) {
   if (suit == 0) return;
-  card c = ONE << (sizeof(card) * 8 - 1 - __builtin_clzll(suit));
+  card c = ONE << (sizeof(card) * 8 - 1 - CLZ(suit));
   card new_c = ONE << (CTZ(suit << idx));
   card greater = higher(new_c >> 1) & suit;
   card shifted = (*hand & (suit - c) & greater) << 1;
@@ -183,6 +181,6 @@ void unsort_high(card *hand, int idx, const card &suit) {
     *hand = (*hand & ~((suit - c) & greater)) | shifted;
 }
 
-bool end_trickgame(Game *game) { return (game->round >= N_ROUNDS); }
+bool end_trickgame(Game &game) { return (game.round >= N_ROUNDS); }
 
 #endif

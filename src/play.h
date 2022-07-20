@@ -16,7 +16,7 @@ void deal_hands(Player *player, int seed);
  * @param game played
  * @param player playing
  */
-void bidding(Game *game, Player *player, int printing);
+void bidding(Game &game, Player *player, int printing);
 
 /**
  * @brief add a card c to the trick
@@ -25,7 +25,7 @@ void bidding(Game *game, Player *player, int printing);
  * @param c
  * @return {eventual points, former turn}
  */
-pair<int, int> update_card(Game *game, const card &c);
+pair<int, int> update_card(Game &game, const card &c);
 
 /**
  * @brief tricktaking game played until round = N_ROUNDS
@@ -34,7 +34,7 @@ pair<int, int> update_card(Game *game, const card &c);
  * @param player
  * @param printing to print the game played
  */
-void trickgame(Game *game, Player *player, int printing);
+void trickgame(Game &game, Player *player, int printing);
 
 /**
  * @brief prints the game, and the players hands

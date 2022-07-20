@@ -15,7 +15,7 @@ extern char cardname[N_CARDS][80];
  * @return true
  * @return false
  */
-bool end_bidding(Game *game);
+bool end_bidding(Game &game);
 
 /**
  * @brief sort a set of cards according to the trump chosen
@@ -55,15 +55,6 @@ card reduce_legal(const card &h, const Game &g);
 int winner_trick(const Game &game);
 
 /**
- * @brief only used to compute equivalences, if two cards are adjacent + same
- * points -> equivalent
- *
- * @param c
- * @return points of c
- */
-int points_card(const card &c);
-
-/**
  * @brief points of current trick in game
  *
  * @param game
@@ -77,7 +68,7 @@ int points_trick(const Game &game);
  * @param game
  * @return if end of the trickgame
  */
-bool end_trickgame(Game *game);
+bool end_trickgame(Game &game);
 
 /// Implementation independent to the games rules
 

@@ -7,7 +7,10 @@ void Game::newTurn(const card& c) {
 }
 
 void Game::newRound(int winner, int pts) {
-  points[team[winner]] += pts;
+  if (team[winner] == team[declarer])
+    min_points += pts;
+  else
+    max_points -= pts;
   copy_n(trick, N_PLAYERS, played[round]);
   round++;
   leader = winner;
@@ -17,7 +20,10 @@ void Game::newRound(int winner, int pts) {
 void Game::removeCard(const pair<int, int>& info) {
   if (turn == leader) {
     round--;
-    points[team[leader]] -= info.first;
+    if (team[leader] == team[declarer])
+      min_points -= info.first;
+    else
+      max_points += info.first;
     turn = info.second;
     leader = (turn + 1) % N_PLAYERS;
     copy_n(played[round], N_PLAYERS, trick);
@@ -30,7 +36,7 @@ void Game::print() {
   cout << "GAME: dec " << declarer;
   cout << "/ tru ";
   print_vector(trump);
-  cout << "points [" << points[0] << ", " << points[1] << "]/ ";
+  cout << "points [" << min_points << ", " << max_points << "]/ ";
   cout << "rnd " << round;
   cout << "/ lea " << leader;
   cout << "/ trn " << turn;

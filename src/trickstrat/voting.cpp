@@ -6,7 +6,7 @@ card voting(Game game, int id, card hand, card *have_not) {
   // hyperparameters
   int n_sample = 1;
   int depth_ab = 33;
-  int n_sample_ab = 3;
+  int n_sample_ab = 5;
 
   // for each card gen a random world and add one vote for the best card
   card rd_world[N_PLAYERS];
@@ -16,7 +16,7 @@ card voting(Game game, int id, card hand, card *have_not) {
     if (PRINTING >= 5) cout << "sample " << i << endl;
     random_world(rd_world, have_not, hand, game);
     if (PRINTING >= 5) cout << "run ab" << endl;
-    opt_cards = alpha_beta(game, id, hand, rd_world, depth_ab, n_sample_ab);
+    opt_cards = solver(game, rd_world, depth_ab, n_sample_ab).second;
     while (opt_cards) {
       int c = CTZ(opt_cards);
       res[c]++;

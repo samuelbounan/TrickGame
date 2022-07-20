@@ -6,16 +6,20 @@
 #include "utils.h"
 
 class Algorithm {
-  int node_type[N_PLAYERS];
-  int threshold_score;
-
  public:
+  int node_type[N_PLAYERS];
   int n_worlds;
+  int player_root;
+  int depth_leaf;
+  int depth_rd;
+  int n_sample;
 
-  Algorithm(int* _node_type, int _threshold, int _n_worlds) {
-    copy_n(_node_type, N_PLAYERS, node_type);
-    threshold_score = _threshold;
+  Algorithm(int _n_worlds, int _player_root) {
     n_worlds = _n_worlds;
+    player_root = _player_root;
+    depth_leaf = N_ROUNDS * N_PLAYERS + 1;
+    depth_rd = N_ROUNDS * N_PLAYERS + 1;
+    n_sample = 1;
   };
 
   void print_value(int a);
@@ -27,6 +31,7 @@ class Algorithm {
   bool better(int i, int a, int b);
   bool criterion(int i, int a, int b);
   void copy(int a, int& b);
+  void leaf_case(Game& g, card w[][N_PLAYERS], unsigned valid_worlds, int& r);
 
   void print_value(int* a);
   void alloc(int** a);
@@ -37,6 +42,7 @@ class Algorithm {
   bool better(int i, int* a, int* b);
   bool criterion(int i, int* a, int* b);
   void copy(int* a, int* b);
+  void leaf_case(Game& g, card w[][N_PLAYERS], unsigned valid_worlds, int* r);
 
   void print_value(vector<int*>& a);
   void alloc(vector<int*>* a);
@@ -48,15 +54,17 @@ class Algorithm {
   bool better(int i, vector<int*>& a, vector<int*>& b);
   bool criterion(int i, vector<int*>& a, vector<int*>& b);
   void copy(vector<int*>& a, vector<int*>& b);
-  void add_fronteer(int i, int* x, vector<int*>& res);
+  void add_fronteer(int* x, vector<int*>& res);
+  void leaf_case(Game& g, card w[][N_PLAYERS], unsigned valid_worlds,
+                 vector<int*>& r);
 };
 
 template <typename Value>
-card xav(Game g, card w[][N_PLAYERS], Algorithm algo);
+card template_ab(Game g, card w[][N_PLAYERS], Algorithm algo);
 template <typename Value>
-int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
-            unsigned& valid_worlds, Value alpha[N_TEAMS], int parent[N_TEAMS],
-            Algorithm algo, int depth);
+int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
+                    unsigned& valid_worlds, Value alpha[N_TEAMS],
+                    int parent[N_TEAMS], Algorithm algo, int depth);
 
-#include "ab.tpp"
+#include "template_ab.tpp"
 #endif

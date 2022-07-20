@@ -10,8 +10,6 @@ General playground for a tricktaking card game with bids.
 
 ### Prerequisites
 
-* (mpi ```sudo apt install mpicc```)
-
 ### Usage
 
 1. Define the rules wanted in the Makefile changing the line
@@ -63,3 +61,7 @@ Several levels of printing are allowed. One level includes every inferior level
 - 6: prints details of trickstrat level 1 (basic actions)
 - 7: prints details of trickstrat level 2 (should not overflow)
 - 8: prints details of trickstrat level 3 (could overflow)
+
+### Debug
+- profile: CXXFLAGS += 'pg' and ```make run``` and ```gprof bin/exec > perf.txt```
+- mem leaks: CXXFLAGS += 'g' and ```valgrind --leak-check=full ./bin/exec```

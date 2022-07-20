@@ -1,9 +1,10 @@
-#include "ab.h"
+#include "template_ab.h"
 
 #define depth_print 2
 
 template <typename Value>
-card xav(Game g, card w[][N_PLAYERS], Algorithm algo) {
+card template_ab(Game g, card w[][N_PLAYERS], Algorithm algo) {
+  // init
   card card_res = 0;
   Value r;
   algo.alloc(&r);
@@ -12,7 +13,9 @@ card xav(Game g, card w[][N_PLAYERS], Algorithm algo) {
   for (int i = 0; i < N_TEAMS; i++) algo.alloc(&alpha[i]);
   algo.init_alpha(alpha);
   int parent[N_TEAMS] = {0, 1};
-  xav_aux(card_res, r, g, w, valid_worlds, alpha, parent, algo, 0);
+
+  // run aux
+  template_ab_aux(card_res, r, g, w, valid_worlds, alpha, parent, algo, 0);
   if (PRINTING > 5) algo.print_value(r);
   algo.cleanup(&r);
   for (int i = 0; i < N_TEAMS; i++) algo.cleanup(&alpha[i]);
@@ -20,40 +23,21 @@ card xav(Game g, card w[][N_PLAYERS], Algorithm algo) {
 }
 
 template <typename Value>
-int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
-            unsigned& valid_worlds, Value alpha[N_TEAMS], int parent[N_TEAMS],
-            Algorithm algo, int depth) {
+int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
+                    unsigned& valid_worlds, Value alpha[N_TEAMS],
+                    int parent[N_TEAMS], Algorithm algo, int depth) {
   int res = -1;
 
-  // DEPTH = MAX
-  if (end_trickgame(&g)) {
+  // SPECIAL CASES
+  if (end_trickgame(g))
     algo.init_value(g.declarer, g, valid_worlds, r);
-#if (PRINTING > 8)
-    for (int i = 0; i < depth; i++) cout << "  ";
-    cout << "game over" << endl;
-#endif
-  }  // DEPTH = 0
+  else if (depth == algo.depth_leaf)
+    algo.leaf_case(g, w, valid_worlds, r);
   else if (depth == 0) {
     int id = g.turn;
     Value v;
     algo.alloc(&v);
     algo.init_value(id, g, valid_worlds, r);
-
-#if PRINTING > 6
-    if (PRINTING > 7 || depth < depth_print) {
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "id: " << id << endl;
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "init_value: ";
-      algo.print_value(r);
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "alpha[0]: ";
-      algo.print_value(alpha[0]);
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "alpha[1]: ";
-      algo.print_value(alpha[1]);
-    }
-#endif
 
     // compute possible and new valid worlds
     card possible = 0;
@@ -94,7 +78,7 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       algo.init_alpha(alpha);
 
       // compute rec value
-      auto update_save = update_card(&g, c);
+      auto update_save = update_card(g, c);
       unsigned new_valid = valid_with[id_c];
       while (new_valid) {  // remove c from valid worlds
         int id_w = CTZ(new_valid);
@@ -102,8 +86,8 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
         w[id_w][id] &= ~c;
       }
       new_valid = valid_with[id_c];
-      res =
-          xav_aux(card_res, v, g, w, new_valid, alpha, parent, algo, depth + 1);
+      res = template_ab_aux(card_res, v, g, w, new_valid, alpha, parent, algo,
+                            depth + 1);
       while (new_valid) {  // put c again in every valid world
         int id_w = CTZ(new_valid);
         new_valid &= ~(((unsigned)1) << id_w);
@@ -119,7 +103,7 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       }
 #endif
 
-      if (depth == 0 && !algo.criterion(id, r, v)) {
+      if (!algo.criterion(id, r, v)) {
         algo.copy(v, r);
         card_res = c;
 #if (PRINTING > 8)
@@ -133,7 +117,7 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       }
     }
     algo.cleanup(&v);
-  }  // 0 < DEPTH < MAX
+  }  // CASE 0 < DEPTH < MAX
   else {
     int id = g.turn;
     int tm = g.team[id];
@@ -225,7 +209,7 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       }
 
       // compute rec value
-      auto update_save = update_card(&g, c);
+      auto update_save = update_card(g, c);
       unsigned new_valid = valid_with[id_c];
       while (new_valid) {  // remove c from valid worlds
         int id_w = CTZ(new_valid);
@@ -233,8 +217,8 @@ int xav_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
         w[id_w][id] &= ~c;
       }
       new_valid = valid_with[id_c];
-      res =
-          xav_aux(card_res, v, g, w, new_valid, alpha, parent, algo, depth + 1);
+      res = template_ab_aux(card_res, v, g, w, new_valid, alpha, parent, algo,
+                            depth + 1);
       while (new_valid) {  // put c again in every valid world
         int id_w = CTZ(new_valid);
         new_valid &= ~(((unsigned)1) << id_w);
