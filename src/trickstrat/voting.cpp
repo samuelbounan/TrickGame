@@ -4,7 +4,7 @@ card voting(Game game, int id, card hand, card *have_not) {
   if (PRINTING >= 5) cout << "VOTING" << endl;
 
   // hyperparameters
-  int n_sample = 1;
+  int n_sample = 10;
   int depth_ab = 33;
   int n_sample_ab = 5;
 

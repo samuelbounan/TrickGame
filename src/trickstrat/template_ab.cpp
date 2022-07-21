@@ -30,14 +30,14 @@ void Algorithm::fusion(int i, int a, int b, int& res) {
   else
     res = max(a, b);
 }
-bool Algorithm::better(int i, int a, int b) {
-  if (node_type[i] % 2) return a < b;
-  return a > b;
+bool Algorithm::pruning(int i, int alpha, int x) {
+  if (node_type[i] % 2) return alpha < x;
+  return alpha > x;
 }
 
 bool Algorithm::criterion(int i, int a, int b) {
-  if (node_type[i] % 2) return a < b;
-  return a > b;
+  if (node_type[i] % 2) return a <= b;
+  return a >= b;
 }
 
 void Algorithm::copy(int a, int& b) { b = a; }
@@ -55,7 +55,7 @@ void Algorithm::print_value(int* a) {
       cout << "X";
     else
       cout << a[i];
-    if (i != n_worlds - 1) cout << ";";
+    if (i < n_worlds - 1) cout << ";";
   }
   cout << endl;
 }
@@ -97,16 +97,16 @@ void Algorithm::fusion(int i, int* a, int* b, int* res) {
   }
 }
 
-bool Algorithm::better(int i, int* a, int* b) {
+bool Algorithm::pruning(int i, int* alpha, int* b) {
   bool res = false;
   for (int w = 0; w < n_worlds; w++) {
     if (b[w] != -1) {
       if (node_type[i] % 2) {
-        if (a[w] > b[w] || a[w] == -1) return false;
-        if (a[w] < b[w]) res = true;
+        if (alpha[w] > b[w] || alpha[w] == -1) return false;
+        if (alpha[w] < b[w]) res = true;
       } else {
-        if (a[w] < b[w]) return false;
-        if (a[w] > b[w]) res = true;
+        if (alpha[w] < b[w]) return false;
+        if (alpha[w] > b[w]) res = true;
       }
     }
   }
@@ -120,8 +120,8 @@ bool Algorithm::criterion(int i, int* a, int* b) {
     sum_a += a[w];
     sum_b += b[w];
   }
-  if (node_type[i] % 2) return sum_a < sum_b;
-  return sum_a > sum_b;
+  if (node_type[i] % 2) return sum_a <= sum_b;
+  return sum_a >= sum_b;
 }
 
 void Algorithm::copy(int* a, int* b) { copy_n(a, n_worlds, b); }
@@ -147,7 +147,7 @@ void Algorithm::print_value(vector<int*>& a) {
         cout << "X";
       else
         cout << a[i][j];
-      if (i != n_worlds - 1) cout << ";";
+      if (j != n_worlds - 1) cout << ";";
     }
     cout << ")";
     if (i != size_a - 1) cout << ", ";
@@ -184,11 +184,11 @@ void Algorithm::add_fronteer(int* x, vector<int*>& res) {
   auto it = res.begin();
   while (it != res.end()) {
     bool erased = false;
-    if (better(player_root, x, *it)) {
+    if (pruning(player_root, x, *it)) {
       cleanup(&(*it));
       it = res.erase(it);
       erased = true;
-    } else if (better(player_root, *it, x)) {
+    } else if (pruning(player_root, *it, x)) {
       add = false;
       break;
     } else {
@@ -240,16 +240,16 @@ void Algorithm::fusion(int i, vector<int*>& a, vector<int*>& b,
   }
 }
 
-bool Algorithm::better(int i, vector<int*>& a, vector<int*>& b) {
+bool Algorithm::pruning(int i, vector<int*>& alpha, vector<int*>& b) {
   for (int* y : b) {
-    bool not_dominated = true;
-    for (int* x : a) {
-      if (better(i, x, y)) {
-        not_dominated = false;
+    bool dominated = false;
+    for (int* x : alpha) {
+      if (pruning(i, x, y)) {
+        dominated = true;
         break;
       }
     }
-    if (not_dominated) return false;
+    if (!dominated) return false;
   }
   return true;
 }
@@ -265,7 +265,7 @@ bool Algorithm::criterion(int i, vector<int*>& a, vector<int*>& b) {
       if (init) {
         init = false;
         best_sum[k] = sum;
-      } else if (better(i, sum, best_sum[k]))
+      } else if (pruning(i, sum, best_sum[k]))
         best_sum[k] = sum;
     }
   }

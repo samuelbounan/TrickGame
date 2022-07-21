@@ -20,6 +20,6 @@ int solver_aux(Game &g, card *world, int alpha, int beta, int depth,
                int max_depth_rd, int n_sample, int &rec, int &n_prune,
                int &r_Hequi, int &r_Hgame, int &w_Hequi, int &w_Hgame);
 int approx_score(Game &g, card *world, int n_sample);
-void random_world(card *res, card *have_not, card hand, Game game);
+void random_world(card *res, card *have_not, const card &hand, Game game);
 
 #endif

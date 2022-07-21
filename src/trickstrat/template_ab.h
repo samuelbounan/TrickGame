@@ -28,7 +28,7 @@ class Algorithm {
   void init_alpha(int* alpha);
   void init_value(int i, const Game& g, unsigned valid_worlds, int& res);
   void fusion(int i, int a, int b, int& res);
-  bool better(int i, int a, int b);
+  bool pruning(int i, int a, int b);
   bool criterion(int i, int a, int b);
   void copy(int a, int& b);
   void leaf_case(Game& g, card w[][N_PLAYERS], unsigned valid_worlds, int& r);
@@ -39,7 +39,7 @@ class Algorithm {
   void init_alpha(int* alpha[N_TEAMS]);
   void init_value(int i, const Game& g, unsigned valid_worlds, int* res);
   void fusion(int i, int* a, int* b, int* res);
-  bool better(int i, int* a, int* b);
+  bool pruning(int i, int* a, int* b);
   bool criterion(int i, int* a, int* b);
   void copy(int* a, int* b);
   void leaf_case(Game& g, card w[][N_PLAYERS], unsigned valid_worlds, int* r);
@@ -51,7 +51,7 @@ class Algorithm {
   void init_value(int i, const Game& g, unsigned valid_worlds,
                   vector<int*>& res);
   void fusion(int i, vector<int*>& a, vector<int*>& b, vector<int*>& res);
-  bool better(int i, vector<int*>& a, vector<int*>& b);
+  bool pruning(int i, vector<int*>& a, vector<int*>& b);
   bool criterion(int i, vector<int*>& a, vector<int*>& b);
   void copy(vector<int*>& a, vector<int*>& b);
   void add_fronteer(int* x, vector<int*>& res);

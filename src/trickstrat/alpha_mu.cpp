@@ -4,17 +4,18 @@ card alpha_mu(Game game, int id, card hand, card *have_not) {
   if (PRINTING >= 5) cout << "ALPHA MU" << endl;
 
   // hyperparameters
-  int n_sample = 5;
+  int n_sample = 10;
 
   // init
   Algorithm algo(n_sample, id);
   for (int i = 0; i < N_PLAYERS; i++) {
-    if (game.team[id] == game.team[game.declarer])
+    if (game.team[i] == game.team[game.declarer])
       algo.node_type[i] = 0;
     else
       algo.node_type[i] = 1;
     if (i != id) algo.node_type[i] += 2;
   }
+  algo.depth_leaf = 6;
   card w[n_sample][N_PLAYERS];
 
   // gen worlds and run ab

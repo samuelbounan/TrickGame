@@ -8,13 +8,12 @@ int main() {
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
     if (i % 2 == 0)
-      player[i].trickstrat = &voting;
+      player[i].trickstrat = &alpha_mu;
     else
       player[i].trickstrat = &voting;
   }
-  for (int seed = 3; seed < 4; seed++) {
+  for (int seed = 0; seed < 100; seed++) {
     // playing
-    cout << seed << ": ";
     deal_hands(player, seed);
     card hands[N_PLAYERS];
     for (int p = 0; p < N_PLAYERS; p++) hands[p] = player[p].hand;
@@ -22,8 +21,7 @@ int main() {
       Game game(rot);
       for (int p = 0; p < N_PLAYERS; p++) {
         player[p].hand = hands[(p - rot + N_PLAYERS) % N_PLAYERS];
-        for (int i = 0; i < N_PLAYERS; i++)
-          player[i].have_not[p] = ~player[p].hand;
+        for (int i = 0; i < N_PLAYERS; i++) player[i].have_not[p] = 0;
       }
       bidding(game, player, PRINTING);
       trickgame(game, player, PRINTING);

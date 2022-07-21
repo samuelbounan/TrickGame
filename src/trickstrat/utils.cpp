@@ -75,7 +75,7 @@ pair<int, card> solver(Game &game, card *world, int max_depth_rd,
 
   card possible = H_equi[snapeq(game)];
 
-  if (PRINTING > 7) {
+  if (PRINTING > 9) {
     cout << " / time " << total_t.count() << "ms / ";
     cout << s << " pts" << endl;
     print_card(possible, game.trump);
@@ -206,7 +206,7 @@ int approx_score(Game &g, card *world, int n_sample) {
   return res /= n_sample;
 }
 
-void random_world(card *res, card *have_not, card hand, Game game) {
+void random_world(card *res, card *have_not, const card &hand, Game game) {
 try_again:
 
   // add information of hand to res

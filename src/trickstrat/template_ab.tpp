@@ -1,6 +1,6 @@
 #include "template_ab.h"
 
-#define depth_print 2
+#define depth_print 3
 
 template <typename Value>
 card template_ab(Game g, card w[][N_PLAYERS], Algorithm algo) {
@@ -68,7 +68,7 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       possible &= ~c;
 
 #if PRINTING > 6
-      if (PRINTING > 7 || depth < depth_print) {
+      if (depth < depth_print) {
         for (int i = 0; i < depth; i++) cout << "  ";
         cout << "card: ";
         print_card(c, g.trump);
@@ -96,23 +96,25 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       g.removeCard(update_save);
 
 #if PRINTING > 6
-      if (PRINTING > 7 || depth < depth_print) {
+      if (depth < depth_print) {
         for (int i = 0; i < depth; i++) cout << "  ";
         cout << "value: ";
         algo.print_value(v);
       }
 #endif
 
-      if (!algo.criterion(id, r, v)) {
+      if (algo.criterion(id, v, r)) {
         algo.copy(v, r);
         card_res = c;
 #if (PRINTING > 8)
-        cout << "update card_res: ";
-        print_card(card_res, g.trump);
-        cout << "r: ";
-        algo.print_value(r);
-        cout << "v: ";
-        algo.print_value(v);
+        if (depth < depth_print) {
+          cout << "update card_res: ";
+          print_card(card_res, g.trump);
+          cout << "r: ";
+          algo.print_value(r);
+          cout << "v: ";
+          algo.print_value(v);
+        }
 #endif
       }
     }
@@ -130,8 +132,8 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
     algo.alloc(&v);
     algo.init_value(id, g, valid_worlds, r);
 
-#if PRINTING > 6
-    if (PRINTING > 7 || depth < depth_print) {
+#if PRINTING > 8
+    if (depth < depth_print) {
       for (int i = 0; i < depth; i++) cout << "  ";
       cout << "id: " << id << endl;
       for (int i = 0; i < depth; i++) cout << "  ";
@@ -175,7 +177,7 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       possible &= ~c;
 
 #if PRINTING > 6
-      if (PRINTING > 7 || depth < depth_print) {
+      if (depth < depth_print) {
         for (int i = 0; i < depth; i++) cout << "  ";
         cout << "card: ";
         print_card(c, g.trump);
@@ -186,22 +188,26 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       algo.fusion(id, r, alpha[tm], alpha[tm]);
 
 #if (PRINTING > 8)
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "update alpha: ";
-      algo.print_value(alpha[tm]);
+      if (depth < depth_print) {
+        for (int i = 0; i < depth; i++) cout << "  ";
+        cout << "update alpha: ";
+        algo.print_value(alpha[tm]);
+      }
 #endif
 
       for (int i = 0; i < N_TEAMS; i++) {
-        if (i != tm && algo.better(parent[i], alpha[i], r)) {
+        if (i != tm && algo.pruning(parent[i], alpha[i], r)) {
 #if PRINTING > 8
-          for (int i = 0; i < depth; i++) cout << "  ";
-          cout << "pruning: " << endl;
-          for (int i = 0; i < depth; i++) cout << "  ";
-          cout << "alpha[" << i << " ]: ";
-          algo.print_value(alpha[i]);
-          for (int i = 0; i < depth; i++) cout << "  ";
-          cout << "r ";
-          algo.print_value(r);
+          if (depth < depth_print) {
+            for (int i = 0; i < depth; i++) cout << "  ";
+            cout << "pruning: " << endl;
+            for (int i = 0; i < depth; i++) cout << "  ";
+            cout << "alpha[" << i << " ]: ";
+            algo.print_value(alpha[i]);
+            for (int i = 0; i < depth; i++) cout << "  ";
+            cout << "r ";
+            algo.print_value(r);
+          }
 #endif
           res = i;
           goto end;
@@ -227,7 +233,7 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       g.removeCard(update_save);
 
 #if PRINTING > 6
-      if (PRINTING > 7 || depth < depth_print) {
+      if (depth < depth_print) {
         for (int i = 0; i < depth; i++) cout << "  ";
         cout << "value: ";
         algo.print_value(v);
@@ -238,15 +244,19 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
       if (res != -1) {
         if (res == tm) {
 #if (PRINTING > 8)
-          for (int i = 0; i < depth; i++) cout << "  ";
-          cout << "pruning allies asked" << endl;
+          if (depth < depth_print) {
+            for (int i = 0; i < depth; i++) cout << "  ";
+            cout << "pruning allies asked" << endl;
+          }
 #endif
           res = -1;
           continue;
         } else {
 #if (PRINTING > 8)
-          for (int i = 0; i < depth; i++) cout << "  ";
-          cout << "pruning enemies asked" << endl;
+          if (depth < depth_print) {
+            for (int i = 0; i < depth; i++) cout << "  ";
+            cout << "pruning enemies asked" << endl;
+          }
 #endif
           goto end;
         }
@@ -254,9 +264,11 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
 
       algo.fusion(id, v, r, r);
 #if (PRINTING > 8)
-      for (int i = 0; i < depth; i++) cout << "  ";
-      cout << "update r: ";
-      algo.print_value(r);
+      if (depth < depth_print) {
+        for (int i = 0; i < depth; i++) cout << "  ";
+        cout << "update r: ";
+        algo.print_value(r);
+      }
 #endif
     }
   end:
