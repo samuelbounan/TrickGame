@@ -10,14 +10,8 @@ void deal_hands(Player *player, int seed) {
   }
 }
 
-void bidding(Game &game, Player *player, int printing) {
-  end_bidding(game);
-  for (int p = 0; p < N_PLAYERS; p++) {
-    player[p].hand = sort(player[p].hand, game.trump);
-    for (int i = 0; i < N_PLAYERS; i++)
-      player[p].have_not[i] = sort(player[p].have_not[i], game.trump);
-  }
-  if (printing >= 2) cout << endl;
+void update_bid(Game &game, int bid) {
+  game.newBid(bid, next_bid_turn(game));
 }
 
 pair<int, int> update_card(Game &game, const card &c) {
@@ -38,29 +32,6 @@ pair<int, int> update_card(Game &game, const card &c) {
     game.newRound(winner, pts);
   }
   return {pts, p};
-}
-
-void trickgame(Game &game, Player *player, int printing) {
-  while (!end_trickgame(game)) {
-    if (printing >= 3 && (game.turn == game.leader || printing > 3))
-      print(game, player);
-    if (printing == 4) {
-      game.print();
-      for (int i = 0; i < N_PLAYERS; i++) player[i].print(game.trump);
-    }
-    card c = player[game.turn].playCard(game);
-    if (printing >= 2) {
-      cout << endl
-           << "P" << game.turn << " plays ";
-      print_card(c, game.trump);
-      cout << endl;
-      if ((game.turn + 1 - game.leader) % N_PLAYERS == 0) cout << endl;
-    }
-    // update players knowledge and game
-    for (int p = 0; p < N_PLAYERS; p++) player[p].updateBelief(game, c);
-    update_card(game, c);
-  }
-  if (printing > 0) cout << "score: " << game.min_points << endl;
 }
 
 void print(const Game &game, Player *player) {

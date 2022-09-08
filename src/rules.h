@@ -5,8 +5,10 @@
 
 /* suits set */
 extern card suits[N_SUITS];
-/* undicode corresponding to the cards */
+/* unicode corresponding to the cards */
 extern char cardname[N_CARDS][80];
+/* unicode corresponding to the bids */
+extern char bidname[N_BIDS][80];
 
 /**
  * @brief when bidding phase is over.
@@ -17,6 +19,8 @@ extern char cardname[N_CARDS][80];
  * @return false
  */
 bool end_bidding(Game &game);
+
+int next_bid_turn(const Game &game);
 
 /**
  * @brief sort a set of cards according to the trump chosen
@@ -72,6 +76,8 @@ int points_trick(const Game &game);
 bool end_trickgame(Game &game);
 
 /// Implementation independent to the games rules
+
+void print_bid(list<int> bids);
 
 /**
  * @brief prints all the cards in hand

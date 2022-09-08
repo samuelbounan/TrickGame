@@ -12,6 +12,8 @@ class Game {
   int team[N_PLAYERS];  // all players have a team
   int declarer;         // the one who took the contract
   card trump = 0;       // suit of the contract
+  list<int> bids;       // list (stack) of all the biddings
+  int contract;         // contract taken
 
   /* modified during the game */
   card trick[N_PLAYERS];  // list (queue) of cards played during the round
@@ -29,6 +31,17 @@ class Game {
   inline bool operator==(const Game& other) const {
     return (remaining == other.remaining && leader == other.leader &&
             min_points == other.min_points && max_points == other.max_points);
+  }
+
+  /**
+   * @brief add a bid to the game
+   *
+   * @param b bid value
+   * @param p player that bid
+   */
+  inline void newBid(int b, int p) {
+    bids.push_front(b);
+    turn = p;
   }
 
   /**

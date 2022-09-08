@@ -20,7 +20,7 @@
 #include "util.h"
 
 #ifndef FROMFILE
-#include "../rules/contree.h"
+#include "../rules/belote.h"
 #else
 #include "base.h"
 #endif

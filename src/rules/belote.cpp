@@ -11,6 +11,50 @@ card heart = diamo << (N_CARDS / N_SUITS);
 card spade = heart << (N_CARDS / N_SUITS);
 card suits[N_SUITS] = {clubs, diamo, heart, spade};
 
+char bidname[N_BIDS][80] = {"pass",
+                            "X",
+                            "XX",
+                            "80\u001b[32m\u2663\u001b[0m",
+                            "80\u001b[33m\u25C6\u001b[0m",
+                            "80\u001b[31m\u2665\u001b[0m",
+                            "80\u001b[34m\u2660\u001b[0m",
+                            "90\u001b[32m\u2663\u001b[0m",
+                            "90\u001b[33m\u25C6\u001b[0m",
+                            "90\u001b[31m\u2665\u001b[0m",
+                            "90\u001b[34m\u2660\u001b[0m",
+                            "100\u001b[32m\u2663\u001b[0m",
+                            "100\u001b[33m\u25C6\u001b[0m",
+                            "100\u001b[31m\u2665\u001b[0m",
+                            "100\u001b[34m\u2660\u001b[0m",
+                            "110\u001b[32m\u2663\u001b[0m",
+                            "110\u001b[33m\u25C6\u001b[0m",
+                            "110\u001b[31m\u2665\u001b[0m",
+                            "110\u001b[34m\u2660\u001b[0m",
+                            "120\u001b[32m\u2663\u001b[0m",
+                            "120\u001b[33m\u25C6\u001b[0m",
+                            "120\u001b[31m\u2665\u001b[0m",
+                            "120\u001b[34m\u2660\u001b[0m",
+                            "130\u001b[32m\u2663\u001b[0m",
+                            "130\u001b[33m\u25C6\u001b[0m",
+                            "130\u001b[31m\u2665\u001b[0m",
+                            "130\u001b[34m\u2660\u001b[0m",
+                            "140\u001b[32m\u2663\u001b[0m",
+                            "140\u001b[33m\u25C6\u001b[0m",
+                            "140\u001b[31m\u2665\u001b[0m",
+                            "140\u001b[34m\u2660\u001b[0m",
+                            "150\u001b[32m\u2663\u001b[0m",
+                            "150\u001b[33m\u25C6\u001b[0m",
+                            "150\u001b[31m\u2665\u001b[0m",
+                            "150\u001b[34m\u2660\u001b[0m",
+                            "160\u001b[32m\u2663\u001b[0m",
+                            "160\u001b[33m\u25C6\u001b[0m",
+                            "160\u001b[31m\u2665\u001b[0m",
+                            "160\u001b[34m\u2660\u001b[0m",
+                            "All\u001b[32m\u2663\u001b[0m",
+                            "All\u001b[33m\u25C6\u001b[0m",
+                            "All\u001b[31m\u2665\u001b[0m",
+                            "All\u001b[34m\u2660\u001b[0m"};
+
 char cardname[N_CARDS][80] = {
     "\u001b[32m\u2663\u001b[0m7", "\u001b[32m\u2663\u001b[0m8",
     "\u001b[32m\u2663\u001b[0m9", "\u001b[32m\u2663\u001b[0mJ",
@@ -40,6 +84,8 @@ bool end_bidding(Game &game) {
   game.turn = game.leader;
   return true;
 }
+
+int next_bid_turn(const Game &game) { return (game.turn + 1) % N_PLAYERS; }
 
 card sort(card hand, const card &trump) {
   sort_high(&hand, 2, trump);

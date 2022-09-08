@@ -9,7 +9,7 @@ BINDIR = bin
 RULESDIR = rules
 STRATDIR = trickstrat
 
-CFILES = $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/$(RULESDIR)/*.cpp $(SRCDIR)/$(FOXDIR)/*.cpp $(SRCDIR)/$(STRATDIR)/*.cpp $(SRCDIR)/$(BIDSTRATDIR)/*.cpp)
+CFILES = $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/$(RULESDIR)/*.cpp $(SRCDIR)/$(FOXDIR)/*.cpp $(SRCDIR)/$(STRATDIR)/*.cpp)
 OFILES = $(subst $(SRCDIR)/,$(OBJDIR)/,$(CFILES:.cpp=.o))
 DFILES = $(OFILES:.o=.d)
 
@@ -18,7 +18,7 @@ VPATH = $(SRCDIR)
 # Flags
 
 # CXXFLAGS = -Wall
-CXXFLAGS += -DRULES_CONTREE
+CXXFLAGS += -DRULES_BELOTE
 CXXFLAGS += -g
 
 DEFINES    += -DBELOTE

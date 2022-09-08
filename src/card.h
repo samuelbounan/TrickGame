@@ -17,6 +17,7 @@ using namespace std;
 #define N_PLAYERS 4
 #define N_ROUNDS 8
 #define N_CARDS 32
+#define N_BIDS 43
 #define N_SUITS 4
 #define SIZE_HAND N_ROUNDS
 #define MAX_SCORE 162

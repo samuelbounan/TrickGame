@@ -2,7 +2,6 @@
 #define __HUMAN
 
 #include "ai.h"
-#include "play.h"
 #include "trickstrat/interactive_card.h"
 
 class Human : public AI {

@@ -26,7 +26,7 @@ int main() {
     i++;
   }
   // bidding
-  while (!end_bidding(&game)) {
+  while (!end_bidding(game)) {
     int last_bid = -1;
     if (!game.bids.empty()) last_bid = game.bids.front();
     int b = ai[game.turn]->PlayBid(last_bid);
@@ -35,7 +35,7 @@ int main() {
       print_bid({b});
       cout << endl;
     }
-    update_bid(&game, b);
+    update_bid(game, b);
   }
   if (printing >= 2) cout << endl;
 
@@ -52,9 +52,9 @@ int main() {
   }
   // trickgame
   while (!end_trickgame(game)) {
-    if (printing >= 4 && game.trick.empty()) {
+    if (printing >= 4) {
       cout << "Declarer P" << game.declarer << " - "
-           << game.points[game.declarer] << "/";
+           << game.min_points << "/";
       print_bid({game.contract});
       cout << endl
            << "round " << game.round << endl;
@@ -64,22 +64,25 @@ int main() {
       }
       cout << endl;
     }
-    card c = ai[game.turn]->PlayCard();
-    card sc = sort(c, game.trump);
-    player[game.turn].hand &= ~sc;
+    for (int p = 0; p < N_PLAYERS; p++) {
+      card c = ai[game.turn]->PlayCard();
+      card sc = sort(c, game.trump);
+      player[game.turn].hand &= ~sc;
 
-    if (printing >= 2) cout << endl
-                            << "P" << game.turn << " plays ";
-    print_card(sc, game.trump);
-    //    cout << endl;
-    if (game.trick.size() >= N_PLAYERS - 1) cout << endl;
+      if (printing >= 2) {
+        cout << endl;
+        cout << "P" << game.turn << " plays ";
+        print_card(sc, game.trump);
+      }
 
-    // update players knowledge and game
-    for (int p = 0; p < N_PLAYERS; p++) ai[p]->CardPlayed(game.turn, c);
-    update_card(&game, sc);
+      // update players knowledge and game
+      for (int p = 0; p < N_PLAYERS; p++) ai[p]->CardPlayed(game.turn, c);
+      update_card(game, sc);
+    }
+    if (printing >= 2) cout << endl;
   }
-  if (printing >= 2) {
-    cout << "score " << score(game, game.team[game.declarer]) << " - "
-         << score(game, game.team[game.declarer + 1 % N_PLAYERS]) << endl;
+  if (printing >= 1) {
+    cout << "score " << game.min_points << " - "
+         << MAX_SCORE - game.min_points << endl;
   }
 }

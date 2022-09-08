@@ -21,6 +21,7 @@ void Human::DeclareGame(card skat, GameDeclaration* gameDeclaration) {}
 
 void Human::SetGame(GameDeclaration* gameDeclaration) {
   game.trump = gameDeclaration->trumpmask;
+  game.contract = 3;
   game.declarer = game.leader;
   game.turn = 0;
   player.hand = sort(player.hand, game.trump);
