@@ -20,7 +20,6 @@ void AI_samuel::DeclareGame(card skat, GameDeclaration* gameDeclaration) {}
 
 void AI_samuel::SetGame(GameDeclaration* gameDeclaration) {
   game.trump = gameDeclaration->trumpmask;
-  game.contract = 3;
   game.declarer = game.leader;
   game.turn = 0;
   player.hand = sort(player.hand, game.trump);
@@ -28,7 +27,7 @@ void AI_samuel::SetGame(GameDeclaration* gameDeclaration) {
 
 void AI_samuel::CardPlayed(int pos, card c) {
   card sc = sort(c, game.trump);
-  update_card(&game, sc);
+  update_card(game, sc);
   player.updateBelief(game, sc);
 }
 

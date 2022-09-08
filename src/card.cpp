@@ -2,14 +2,16 @@
 
 card deck = (card)(((long long unsigned)1 << N_CARDS) - 1);
 
-card _card(int i) { return (card)1 << (i % N_CARDS); }
-
-void print_vector(card c) {
-  for (card i : set_cards(deck))
+void print_vector(const card &c) {
+  card deck_cp = deck;
+  while (deck_cp) {
+    card i = ONE << CTZ(deck_cp);
+    deck_cp &= ~i;
     if (c & i)
       cout << 1;
     else
       cout << 0;
+  }
   cout << endl;
 }
 
@@ -20,21 +22,20 @@ list<card> set_cards(card x) {
   return res;
 }
 
-card lower(card c) { return c - 1; }
+card higher(const card &c) { return ~((c << 1) - 1); }
 
-card higher(card c) { return ~((c << 1) - 1); }
+card lower(const card &c) { return c - 1; }
 
-list<card> deal(card deck, list<int> distribution) {
-  // srand(time(nullptr));
-  srand(0);
+list<card> deal(card deck, const list<int> distribution, int seed) {
   list<card> res;
   card hand;
+  srand(seed);
 
   // for all number of cards to be dealt initialize an empty hand and
   for (int n_to_deal : distribution) {
     hand = 0;
-    for (card i = _card(rand() % N_CARDS);
-         __builtin_popcountll(hand) < n_to_deal; i = _card(rand() % N_CARDS))
+    for (card i = ONE << (rand() % N_CARDS); POPCOUNT(hand) < n_to_deal;
+         i = ONE << (rand() % N_CARDS))
       if (i & deck) {  // the card chosen is in the deck
         hand |= i;     // update hand
         deck &= ~i;    // update deck

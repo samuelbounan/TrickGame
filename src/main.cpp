@@ -17,7 +17,7 @@ int main() {
 
   // deal hands
   list<int> distrib(N_PLAYERS, SIZE_HAND);
-  list<card> hands = deal(deck, distrib);
+  list<card> hands = deal(deck, distrib, 0);
   int i = 0;
   for (auto hand : hands) {
     ai[i]->StartGame(i, hand);
@@ -51,12 +51,13 @@ int main() {
     player[i].hand = sort(player[i].hand, game.trump);
   }
   // trickgame
-  while (!end_trickgame(&game)) {
+  while (!end_trickgame(game)) {
     if (printing >= 4 && game.trick.empty()) {
       cout << "Declarer P" << game.declarer << " - "
            << game.points[game.declarer] << "/";
       print_bid({game.contract});
-      cout << endl << "round " << game.round << endl;
+      cout << endl
+           << "round " << game.round << endl;
       for (int i = 0; i < N_PLAYERS; i++) {
         cout << "P" << i << ": ";
         print_card(player[i].hand, game.trump);
@@ -67,7 +68,8 @@ int main() {
     card sc = sort(c, game.trump);
     player[game.turn].hand &= ~sc;
 
-    if (printing >= 2) cout << endl << "P" << game.turn << " plays ";
+    if (printing >= 2) cout << endl
+                            << "P" << game.turn << " plays ";
     print_card(sc, game.trump);
     //    cout << endl;
     if (game.trick.size() >= N_PLAYERS - 1) cout << endl;

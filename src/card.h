@@ -18,36 +18,37 @@ using namespace std;
 #define N_ROUNDS 8
 #define N_CARDS 32
 #define N_SUITS 4
-#define N_BIDS 43
-#define SIZE_HAND 8
-#define N_TEAMS 2
+#define SIZE_HAND N_ROUNDS
 #define MAX_SCORE 162
+#define PRINTING 3
+#define N_TEAMS 2
 ///////////////////////
 
 static const int printing = 2;
 
 #if N_CARDS <= 32
 typedef unsigned int card;  // reprezents several cards (bit vector)
+#define CTZ __builtin_ctz
+#define CLZ __builtin_clz
+#define POPCOUNT __builtin_popcount
 #elif N_CARDS <= 64
 typedef unsigned long long int card;
+#define CTZ __builtin_ctzll
+#define CLZ __builtin_clzll
+#define POPCOUNT __builtin_popcountll
 #endif
 extern card deck;  // set of all cards
 #define ONE (card)1
 
-/**
- * @brief transform an index into a card
- *
- * @param i index
- * @return card (1 << i)
- */
-card _card(int i);
+static std::random_device rd;
+static std::mt19937 mt{rd()};
 
 /**
  * @brief prints card in bit vector representation
  *
  * @param c card to print
  */
-void print_vector(card c);
+void print_vector(const card &c);
 
 /**
  * @brief transforms a set of cards into a list of every card in it
@@ -63,7 +64,7 @@ list<card> set_cards(card x);
  * @param c
  * @return card
  */
-card higher(card i);
+card higher(const card &c);
 
 /**
  * @brief cards strictly lower than c
@@ -71,7 +72,7 @@ card higher(card i);
  * @param c
  * @return card
  */
-card lower(card i);
+card lower(const card &c);
 
 /**
  * @brief returns a list of card dealt according to the distribution
@@ -81,6 +82,6 @@ card lower(card i);
  * 3
  * @return list<card> hands dealt
  */
-list<card> deal(card deck, list<int> distribution);
+list<card> deal(card deck, const list<int> distribution, int seed);
 
 #endif

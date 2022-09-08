@@ -8,7 +8,6 @@ FOXDIR = fox
 BINDIR = bin
 RULESDIR = rules
 STRATDIR = trickstrat
-BIDSTRATDIR = bidstrat
 
 CFILES = $(wildcard $(SRCDIR)/*.cpp $(SRCDIR)/$(RULESDIR)/*.cpp $(SRCDIR)/$(FOXDIR)/*.cpp $(SRCDIR)/$(STRATDIR)/*.cpp $(SRCDIR)/$(BIDSTRATDIR)/*.cpp)
 OFILES = $(subst $(SRCDIR)/,$(OBJDIR)/,$(CFILES:.cpp=.o))
@@ -71,7 +70,6 @@ $(OBJDIR) :
 	mkdir -p $(OBJDIR)/$(RULESDIR)
 	mkdir -p $(OBJDIR)/$(FOXDIR)
 	mkdir -p $(OBJDIR)/$(STRATDIR)
-	mkdir -p $(OBJDIR)/$(BIDSTRATDIR)
 
 $(BINDIR) :
 	mkdir -p $(BINDIR)
