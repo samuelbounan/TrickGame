@@ -7,15 +7,17 @@ card alpha_mu(Game game, int id, card hand, card *have_not) {
   int n_sample = 10;
 
   // init
-  Algorithm algo(n_sample, id);
+  int node_type[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) {
     if (game.team[i] == game.team[game.declarer])
-      algo.node_type[i] = 0;
+      node_type[i] = 0;
     else
-      algo.node_type[i] = 1;
-    if (i != id) algo.node_type[i] += 2;
+      node_type[i] = 1;
+    if (i != id) node_type[i] += 2;
   }
-  algo.depth_leaf = 6;
+  AlphaMu algo(n_sample, id, node_type);
+  algo.base.depth_rd = 16;
+  algo.depth_leaf = 5;
   card w[n_sample][N_PLAYERS];
 
   // gen worlds and run ab
@@ -25,5 +27,4 @@ card alpha_mu(Game game, int id, card hand, card *have_not) {
   }
   if (PRINTING > 4) cout << "run ab " << endl;
   return template_ab<vector<int *>>(game, w, algo);
-  // return 0;
 }

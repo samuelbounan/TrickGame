@@ -29,9 +29,9 @@ char cardname[N_CARDS][80] = {
     "\u001b[34m\u2660\u001b[0mQ", "\u001b[34m\u2660\u001b[0mK",
     "\u001b[34m\u2660\u001b[0mT", "\u001b[34m\u2660\u001b[0mA"};
 
-int tab_points_card[N_CARDS] = {0,  0,  3, 4,  10, 11, 14, 20, 0,  0, 0,
-                                2,  3,  4, 10, 11, 0,  0,  0,  2,  3, 4,
-                                10, 11, 0, 0,  0,  2,  3,  4,  10, 11};
+int tab_points_card[N_CARDS] = {0, 0, 3, 4, 10, 11, 14, 20, 0, 0, 0,
+                                2, 3, 4, 10, 11, 0, 0, 0, 2, 3, 4,
+                                10, 11, 0, 0, 0, 2, 3, 4, 10, 11};
 
 bool end_bidding(Game &game) {
   game.trump = clubs;
@@ -65,8 +65,8 @@ card legal(const card &hand, const Game &game) {
                i = ((i + 1) % N_PLAYERS))              // for each card played
             if (game.trick[i] & suit)                  // that is trump
               highs &= (~((game.trick[i] << 1) - 1));  // try to play higner
-          if (highs)       // if can play higher trump
-            return highs;  // play higher
+          if (highs)                                   // if can play higher trump
+            return highs;                              // play higher
         }
         return hand & suit;  // play suit
       }
@@ -140,7 +140,7 @@ int winner_trick(const Game &game) {
         c >= best_card) {  // best_suit is followed with higher value
       best_card = c;
       winner = i;
-    } else if ((best_suit != game.trump) && (c & game.trump)) {  // suit is cut
+    } else if (best_suit != game.trump && c & game.trump) {  // suit is cut
       best_card = c;
       best_suit = game.trump;  // best_suit becomes trump
       winner = i;

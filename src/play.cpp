@@ -20,17 +20,38 @@ void bidding(Game &game, Player *player, int printing) {
   if (printing >= 2) cout << endl;
 }
 
+pair<int, int> update_card(Game &game, const card &c) {
+  // forfeiting
+  if (c == 0) {
+    cout << "forfeit" << endl;
+    exit(0);
+    game.round = N_ROUNDS;
+    return {0, game.turn};
+  }
+  int pts = 0;
+  int p = game.turn;
+  game.newTurn(c);
+  // end of a trick
+  if (game.turn == game.leader) {
+    int winner = winner_trick(game);
+    pts = points_trick(game);
+    game.newRound(winner, pts);
+  }
+  return {pts, p};
+}
+
 void trickgame(Game &game, Player *player, int printing) {
   while (!end_trickgame(game)) {
-    if (printing >= 3 && game.turn == game.leader)
+    if (printing >= 3 && (game.turn == game.leader || printing > 3))
       print(game, player);
-    else if (printing >= 4) {
+    if (printing == 4) {
       game.print();
       for (int i = 0; i < N_PLAYERS; i++) player[i].print(game.trump);
     }
     card c = player[game.turn].playCard(game);
     if (printing >= 2) {
-      cout << endl << "P" << game.turn << " plays ";
+      cout << endl
+           << "P" << game.turn << " plays ";
       print_card(c, game.trump);
       cout << endl;
       if ((game.turn + 1 - game.leader) % N_PLAYERS == 0) cout << endl;

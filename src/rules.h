@@ -9,7 +9,7 @@ extern char cardname[N_CARDS][80];
 
 /**
  * @brief when bidding phase is over.
- * Must also actualise game parameters to play the tricktaking game
+ * Must also actualise all the game parameters (except the leader that should be set before) to play the tricktaking game
  *
  * @param game
  * @return true

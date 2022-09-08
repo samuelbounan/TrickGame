@@ -67,16 +67,12 @@ pair<int, card> solver(Game &game, card *world, int max_depth_rd,
   int w_Hgame = 0;
   int rec = 0;
   // run aux
-  auto start = std::chrono::high_resolution_clock::now();
   int s = solver_aux(game, world, 0, MAX_SCORE, 0, max_depth_rd, n_sample, rec,
                      n_prune, r_Hequi, r_Hgame, w_Hequi, w_Hgame);
-  auto end = std::chrono::high_resolution_clock::now();
-  std::chrono::duration<double, std::milli> total_t = end - start;
 
   card possible = H_equi[snapeq(game)];
 
   if (PRINTING > 9) {
-    cout << " / time " << total_t.count() << "ms / ";
     cout << s << " pts" << endl;
     print_card(possible, game.trump);
   }
@@ -89,6 +85,15 @@ pair<int, card> solver(Game &game, card *world, int max_depth_rd,
 int solver_aux(Game &g, card *world, int alpha, int beta, int depth,
                int max_depth_rd, int n_sample, int &rec, int &n_prune,
                int &r_Hequi, int &r_Hgame, int &w_Hequi, int &w_Hgame) {
+  for (int i = 0; i < N_PLAYERS; i++)
+    for (int j = 0; j < N_PLAYERS; j++)
+      if ((POPCOUNT(world[i])) - POPCOUNT(world[j]) > 1) {
+        for (int k = 0; k < N_PLAYERS; k++)
+
+          print_card(world[k], g.trump);
+        while (1)
+          ;
+      }
   rec++;
   // end case
   if (end_trickgame(g)) {
@@ -186,7 +191,7 @@ int solver_aux(Game &g, card *world, int alpha, int beta, int depth,
 int approx_score(Game &g, card *world, int n_sample) {
   int i, j, rd;
   int res = 0;
-  int world_cp[N_PLAYERS];
+  card world_cp[N_PLAYERS];
   card possible, c;
   Game g_cp;
 
@@ -198,8 +203,8 @@ int approx_score(Game &g, card *world, int n_sample) {
       rd = mt() % POPCOUNT(possible);
       c = ONE << CTZ(possible);
       for (j = 0; j < rd; j++) possible &= ~c;
-      world_cp[g_cp.turn] &= ~c;
       update_card(g_cp, c);
+      world_cp[g_cp.turn] &= ~c;
     }
     res += g_cp.min_points;
   }
@@ -207,56 +212,40 @@ int approx_score(Game &g, card *world, int n_sample) {
 }
 
 void random_world(card *res, card *have_not, const card &hand, Game game) {
-try_again:
-
-  // add information of hand to res
-  copy_n(have_not, N_PLAYERS, res);
-  for (int p = 0; p < N_PLAYERS; p++)
-    if (p != game.turn)
-      res[p] |= hand;
-    else
-      res[p] = ~hand;
-
   // compute the number of cards of each player
-  int n_cards[N_PLAYERS];
+  unsigned n_cards[N_PLAYERS];
   for (int i = 0; i < N_PLAYERS; i++) n_cards[i] = SIZE_HAND - game.round;
   for (int p = game.leader; p != game.turn; p = ((p + 1) % N_PLAYERS))
     n_cards[p] -= 1;
 
+try_again:
+  // add information of hand to res
+  for (int p = 0; p < N_PLAYERS; p++)
+    if (p != game.turn)
+      res[p] = ~have_not[p] & ~hand & deck;
+    else
+      res[p] = hand;
+
   // for each player, set his hand
   for (int p = 0; p < N_PLAYERS; p++) {
     // remove the cards already set
-    for (int i = 0; i < p; i++) res[p] |= ~res[i];
+    for (int i = 0; i < p; i++) res[p] &= ~res[i];
+    // poss_list are the cards that p could have or not
+    list<card> poss_list = set_cards(res[p]);
+    vector<card> poss(poss_list.begin(), poss_list.end());
+    std::shuffle(poss.begin(), poss.end(), mt);
 
-    // only is cards that only p can have
-    card only = ~res[p];
-    for (int i = p + 1; i < N_PLAYERS; i++) only &= res[i];
-
-    int waste = POPCOUNT(only & deck) - n_cards[p];
-    if (waste > 0) {
-      list<card> only_list = set_cards(only);
-      vector<card> only_v(only_list.begin(), only_list.end());
-      std::shuffle(only_v.begin(), only_v.end(), mt);
-      for (int i = 0; i < waste; i++) {
-        res[p] |= only_v[i];
-      }
-    } else {
-      // poss_list are the cards that p could have or not
-      list<card> poss_list = set_cards(~res[p] & ~only);
-      vector<card> poss(poss_list.begin(), poss_list.end());
-      std::shuffle(poss.begin(), poss.end(), mt);
-
-      // while p has too much cards possible add one card to res
-      unsigned k = 0;
-      while ((N_CARDS - POPCOUNT(res[p] & deck)) > n_cards[p]) {
-        if (k >= poss.size()) goto try_again;
-        res[p] |= poss[k];
-        k++;
-      }
+    // while p has too much cards possible add one card to res
+    unsigned k = 0;  // index of the card that is going to be removed from the hand
+    while (POPCOUNT(res[p]) > n_cards[p]) {
+      if (k >= poss.size()) goto try_again;
+      res[p] &= ~poss[k];
+      k++;
     }
   }
   for (int i = 0; i < N_PLAYERS; i++) {
-    res[i] = ~res[i] & deck;
-    if (PRINTING >= 6) print_card(res[i], game.trump);
+    if (POPCOUNT(res[i]) != n_cards[i]) goto try_again;
+    if (PRINTING >= 6)
+      print_card(res[i], game.trump);
   }
 }

@@ -1,9 +1,9 @@
 #include "template_ab.h"
 
-#define depth_print 3
+#define depth_print 6
 
-template <typename Value>
-card template_ab(Game g, card w[][N_PLAYERS], Algorithm algo) {
+template <typename Value, typename Alg>
+card template_ab(Game g, card w[][N_PLAYERS], Alg algo) {
   // init
   card card_res = 0;
   Value r;
@@ -14,6 +14,15 @@ card template_ab(Game g, card w[][N_PLAYERS], Algorithm algo) {
   algo.init_alpha(alpha);
   int parent[N_TEAMS] = {0, 1};
 
+  if (PRINTING > 5) {
+    for (int i = 0; i < algo.n_worlds; i++) {
+      cout << "world " << i << endl;
+      for (int p = 0; p < N_PLAYERS; p++) {
+        print_card(w[i][p], g.trump);
+      }
+    }
+  }
+
   // run aux
   template_ab_aux(card_res, r, g, w, valid_worlds, alpha, parent, algo, 0);
   if (PRINTING > 5) algo.print_value(r);
@@ -22,10 +31,10 @@ card template_ab(Game g, card w[][N_PLAYERS], Algorithm algo) {
   return card_res;
 }
 
-template <typename Value>
+template <typename Value, typename Alg>
 int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
                     unsigned& valid_worlds, Value alpha[N_TEAMS],
-                    int parent[N_TEAMS], Algorithm algo, int depth) {
+                    int parent[N_TEAMS], Alg algo, int depth) {
   int res = -1;
 
   // SPECIAL CASES
@@ -35,6 +44,8 @@ int template_ab_aux(card& card_res, Value& r, Game& g, card w[][N_PLAYERS],
     algo.leaf_case(g, w, valid_worlds, r);
   else if (depth == 0) {
     int id = g.turn;
+    int tm = g.team[id];
+    parent[tm] = id;
     Value v;
     algo.alloc(&v);
     algo.init_value(id, g, valid_worlds, r);

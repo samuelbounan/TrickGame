@@ -91,8 +91,8 @@ class Game {
 };
 
 template <>
-inline struct std::hash<Game> {
-  std::size_t operator()(const Game& g) const {
+struct std::hash<Game> {
+  inline std::size_t operator()(const Game& g) const {
     using std::hash;
     card x = (g.leader * (MAX_SCORE + 1) + g.min_points) * (MAX_SCORE + 1) +
              g.max_points;

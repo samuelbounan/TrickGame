@@ -1,7 +1,7 @@
 #include "alpha_beta.h"
 
 card alpha_beta(Game game, int id, card hand, card* have_not) {
-  Algorithm algo(1, id);
+  AlphaBeta algo(game.team[game.declarer]);
   for (int i = 0; i < N_PLAYERS; i++)
     if (game.team[i] == game.team[game.declarer])
       algo.node_type[i] = 0;

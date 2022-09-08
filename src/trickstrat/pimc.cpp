@@ -7,7 +7,7 @@ card pimc(Game game, int id, card hand, card *have_not) {
   int n_sample = 10;
 
   // init
-  Algorithm algo(n_sample, id);
+  Pimc algo(n_sample);
   for (int i = 0; i < N_PLAYERS; i++)
     if (game.team[i] == game.team[game.declarer])
       algo.node_type[i] = 0;
@@ -15,6 +15,7 @@ card pimc(Game game, int id, card hand, card *have_not) {
       algo.node_type[i] = 1;
   card w[n_sample][N_PLAYERS];
   algo.depth_leaf = 1;
+  algo.depth_rd = 24;
 
   // gen worlds and run ab
   for (int i = 0; i < n_sample; i++) {
@@ -23,5 +24,5 @@ card pimc(Game game, int id, card hand, card *have_not) {
   }
   if (PRINTING > 4) cout << "run ab " << endl;
   return template_ab<int *>(game, w, algo);
-  // return 0;
+  return 0;
 }
