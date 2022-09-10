@@ -4,7 +4,7 @@ card pimc(Game game, int id, card hand, card *have_not) {
   if (PRINTING >= 5) cout << "PIMC" << endl;
 
   // hyperparameters
-  int n_sample = 10;
+  int n_sample = 1;
 
   // init
   SamPimc algo(n_sample);
@@ -15,7 +15,7 @@ card pimc(Game game, int id, card hand, card *have_not) {
       algo.node_type[i] = 1;
   card w[n_sample][N_PLAYERS];
   algo.depth_leaf = 1;
-  algo.depth_rd = 24;
+  algo.depth_rd = 25;
 
   // gen worlds and run ab
   for (int i = 0; i < n_sample; i++) {

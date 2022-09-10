@@ -8,10 +8,9 @@ int main() {
   AI* ai[N_PLAYERS];
   Player player[N_PLAYERS];
   Game game;
-  int printing = 4;
   for (int i = 0; i < N_PLAYERS; i++)
     if (i % 2 == 0)
-      ai[i] = new Human;
+      ai[i] = new AI_samuel;
     else
       ai[i] = new CardAI;
 
@@ -30,14 +29,14 @@ int main() {
     int last_bid = -1;
     if (!game.bids.empty()) last_bid = game.bids.front();
     int b = ai[game.turn]->PlayBid(last_bid);
-    if (printing >= 2) {
+    if (PRINTING >= 2) {
       cout << "P" << game.turn << " bids ";
       print_bid({b});
       cout << endl;
     }
     update_bid(game, b);
   }
-  if (printing >= 2) cout << endl;
+  if (PRINTING >= 2) cout << endl;
 
   card trashskat;
   int trashbid[N_PLAYERS];
@@ -52,7 +51,7 @@ int main() {
   }
   // trickgame
   while (!end_trickgame(game)) {
-    if (printing >= 4) {
+    if (PRINTING >= 4) {
       cout << "Declarer P" << game.declarer << " - "
            << game.min_points << "/";
       print_bid({game.contract});
@@ -69,7 +68,7 @@ int main() {
       card sc = sort(c, game.trump);
       player[game.turn].hand &= ~sc;
 
-      if (printing >= 2) {
+      if (PRINTING >= 2) {
         cout << endl;
         cout << "P" << game.turn << " plays ";
         print_card(sc, game.trump);
@@ -79,10 +78,9 @@ int main() {
       for (int p = 0; p < N_PLAYERS; p++) ai[p]->CardPlayed(game.turn, c);
       update_card(game, sc);
     }
-    if (printing >= 2) cout << endl;
+    if (PRINTING >= 2) cout << endl;
   }
-  if (printing >= 1) {
-    cout << "score " << game.min_points << " - "
-         << MAX_SCORE - game.min_points << endl;
+  if (PRINTING >= 1) {
+    cout << "score " << game.min_points << endl;
   }
 }

@@ -60,7 +60,7 @@ void CardAI::StartGame(int pos, card hand) {
 }
 
 card CardAI::PlayCard() {
-  if (printing >= 2) cout << "[ Stefan ] ";
+  if (PRINTING >= 2) cout << "[ Stefan ] ";
 #ifdef KNOWLEDGEPRINT
   cout << myplay->kb.decl_score << " vs " << myplay->kb.opp_score;
 #endif

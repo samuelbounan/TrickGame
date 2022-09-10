@@ -16,7 +16,7 @@ void print_card(card hand, const card &trump) {
       to_print;  // for well oredered printing
       for (card i : to_print) {
         card c = unsort(i, trump);
-        cout << cardname[CTZ(c)] << ";";
+        cout << card_name[CTZ(c)] << ";";
         hand &= ~i;
       }
     }

@@ -3,6 +3,9 @@
 
 #include "ai.h"
 #include "play.h"
+#include "trickstrat/alpha_mu.h"
+#include "trickstrat/permutation.h"
+#include "trickstrat/pimc.h"
 #include "trickstrat/random_card.h"
 
 class AI_samuel : public AI {
