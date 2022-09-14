@@ -27,8 +27,8 @@ void AI_samuel::SetGame(GameDeclaration* gameDeclaration) {
 
 void AI_samuel::CardPlayed(int pos, card c) {
   card sc = sort(c, game.trump);
-  update_card(game, sc);
   player.updateBelief(game, sc);
+  update_card(game, sc);
 }
 
 card AI_samuel::PlayCard() {
