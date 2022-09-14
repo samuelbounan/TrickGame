@@ -15,9 +15,12 @@ void print_card(card hand, const card &trump) {
       list<card> to_print = set_cards(hand & mask & suit);
       to_print;  // for well oredered printing
       for (card i : to_print) {
-        card c = unsort(i, trump);
-        cout << card_name[CTZ(c)] << ";";
-        hand &= ~i;
+        card ui = unsort(i, trump);  // SE
+        int cards_per_suit = N_CARDS / N_SUITS;
+        int idx = CTZ(ui);
+        int x = cards_per_suit * (idx / cards_per_suit) + (cards_per_suit - 1 - idx % cards_per_suit);
+        cout << card_name[x] << " ";
+        hand &= ~ui;
       }
     }
   cout << endl;
