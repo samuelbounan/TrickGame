@@ -4,6 +4,8 @@ void AI_samuel::StartGame(int pos, card handcards) {
   player.id = pos;
   player.hand = handcards;
   player.trickstrat = &pimc;
+  for (int k = 0; k < N_PLAYERS; k++)
+    player.have_not[k] = 0;
 }
 
 int AI_samuel::PlayBid(int bidval) {
@@ -20,8 +22,13 @@ void AI_samuel::DeclareGame(card skat, GameDeclaration* gameDeclaration) {}
 void AI_samuel::SetGame(GameDeclaration* gameDeclaration) {
   game.trump = gameDeclaration->trumpmask;
   game.contract = 3;
+  game.leader = 0;
   game.declarer = game.leader;
   game.turn = 0;
+  game.max_points = MAX_SCORE;
+  game.min_points = 0;
+  game.remaining = deck;
+  game.round = 0;
   player.hand = sort(player.hand, game.trump);
 }
 
