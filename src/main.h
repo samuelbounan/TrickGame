@@ -5,7 +5,7 @@
 #include <list>      // lists
 
 #include "ai_samuel.h"
-#include "fox/fox.h"
+#include "ai_stefan.h"
 #include "human.h"
 
 #endif

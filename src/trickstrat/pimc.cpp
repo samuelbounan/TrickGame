@@ -4,7 +4,7 @@ card pimc(Game game, int id, card hand, card *have_not) {
   if (PRINTING >= 5) cout << "PIMC" << endl;
 
   // hyperparameters
-  int n_sample = 1;
+  int n_sample = 10;
 
   // init
   SamPimc algo(n_sample);

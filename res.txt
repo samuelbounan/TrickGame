@@ -1,0 +1,4 @@
+g++ -DRULES_BELOTE -O2 -DBELOTE -DCOPYRIGHT='"\nBelote playing program using expert knowledge, belief states, and-or search (c) 2022, Stefan Edelkamp, Samuel Bounan\n"' -DSUGGEST -DFULLIITRICK=18 -DDIFFERENCE=3 -DBSDEPTH=7 -DBSSIZE=20000 -DBSCONF=0.90 -DKILLER -o bin/exec obj/ai_samuel.o obj/ai_stefan.o obj/card.o obj/human.o obj/main.o obj/play.o obj/player.o obj/rules.o obj/rules/basic.o obj/rules/belote.o obj/rules/bridge.o obj/fox/alphamu.o obj/fox/aos.o obj/fox/fox.o obj/fox/game.o obj/fox/knowledge.o obj/fox/play.o obj/fox/suitplay.o obj/fox/util.o obj/trickstrat/alpha_beta.o obj/trickstrat/alpha_mu.o obj/trickstrat/interactive_card.o obj/trickstrat/permutation.o obj/trickstrat/pimc.o obj/trickstrat/random_card.o obj/trickstrat/utils.o obj/trickstrat/voting.o 
+./bin/exec
+
+

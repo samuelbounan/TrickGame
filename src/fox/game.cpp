@@ -303,10 +303,8 @@ card GamePlay::playable_cards(card hand, int issuer, card played, card table,
       playable = hand & trumpmask;
 #ifdef BELOTE
       if (higher_value(i[winner], trumpmask) & hand) {
-        if (shown > 1 && (team[winner] == team[player]))
-          playable = hand & trumpmask;
-        else
-          playable = higher_value(i[winner], trumpmask) & hand;
+        // cout << "higher trump" << endl;
+        playable = higher_value(i[winner], trumpmask) & hand;
       }
 #endif
     } else {

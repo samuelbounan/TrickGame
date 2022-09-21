@@ -35,6 +35,12 @@ void AI_samuel::SetGame(GameDeclaration* gameDeclaration) {
 void AI_samuel::CardPlayed(int pos, card c) {
   card sc = sort(c, game.trump);
   player.updateBelief(game, sc);
+
+  // cout << "Knowledge" << endl;
+  // for (int p = 0; p < N_PLAYERS; p++) {
+  //   print_card(player.have_not[p], game.trump);
+  // }
+  // cout << endl;
   update_card(game, sc);
 }
 

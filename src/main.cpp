@@ -1,7 +1,5 @@
 #include "main.h"
 
-#include "fox/fox.h"
-
 using namespace std;
 
 int main() {
@@ -10,9 +8,9 @@ int main() {
   for (int i = 0; i < N_PLAYERS; i++) {
     player[i].id = i;
     if (i % 2 == 0)
-      ai[i] = new AI_samuel;
+      ai[i] = new AI_stefan;
     else
-      ai[i] = new CardAI;
+      ai[i] = new AI_samuel;
   }
 
   // loop
